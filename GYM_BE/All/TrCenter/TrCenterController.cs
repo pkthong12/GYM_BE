@@ -1,4 +1,4 @@
-﻿using API;
+using API;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -6,67 +6,72 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.All.TestSystem
+namespace GYM_BE.All.TrCenter
 {
-    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class TestSystemController : ControllerBase
+    [Route("api/[controller]/[action]")]
+    public class TrCenterController : Controller
     {
         private readonly FullDbContext _dbContext;
-        private readonly ITestSystemRepository _TestSystemRepository;
+        private readonly ITrCenterRepository _TrCenterRepository;
         private readonly AppSettings _appSettings;
 
-        public TestSystemController(
+        public TrCenterController(
             DbContextOptions<FullDbContext> dbOptions,
             IOptions<AppSettings> options)
         {
             _dbContext = new FullDbContext(dbOptions, options);
-            _TestSystemRepository = new TestSystemRepository(_dbContext);
+            _TrCenterRepository = new TrCenterRepository(_dbContext);
             _appSettings = options.Value;
         }
+
         [HttpPost]
         public async Task<IActionResult> QueryList(long id)
         {
-            var response = await _TestSystemRepository.QueryList(id);
-            return Ok(new FormatedResponse() { InnerBody = response });
+            var response = await _TrCenterRepository.QueryList(id);
+            return Ok(response);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {
-            var response =await _TestSystemRepository.GetById(id);
+            var response = await _TrCenterRepository.GetById(id);
             return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(TrCenterDTO model)
         {
-            var response = await _TestSystemRepository.Create(model, "root");
+            var response = await _TrCenterRepository.Create(model, "root");
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<TrCenterDTO> models)
         {
-            var response = await _TestSystemRepository.CreateRange(models, "root");
-            return Ok(new FormatedResponse() { InnerBody = response });
+            var response = await _TrCenterRepository.CreateRange(models, "root");
+            return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> Update(TrCenterDTO model)
         {
-            var response = await _TestSystemRepository.Update(model, "root");
+            var response = await _TrCenterRepository.Update(model, "root");
             return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<TrCenterDTO> models)
         {
-            
-            var response = await _TestSystemRepository.UpdateRange(models, "root");
-            return Ok(new FormatedResponse() { InnerBody = response });
+            var response = await _TrCenterRepository.UpdateRange(models, "root");
+            return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> Delete(TrCenterDTO model)
         {
             if (model.Id != null)
             {
-                var response = await _TestSystemRepository.Delete((long)model.Id);
+                var response = await _TrCenterRepository.Delete((long)model.Id);
                 return Ok(response);
             }
             else
@@ -74,17 +79,21 @@ namespace GYM_BE.All.TestSystem
                 return Ok(new FormatedResponse() { ErrorType = EnumErrorType.CATCHABLE, MessageCode = "DELETE_REQUEST_NULL_ID" });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> DeleteIds(IdsRequest model)
         {
-            var response = await _TestSystemRepository.DeleteIds(model.Ids);
+            var response = await _TrCenterRepository.DeleteIds(model.Ids);
             return Ok(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _TestSystemRepository.ToggleActiveIds( model.Ids, model.ValueToBind, "root");
+            var response = await _TrCenterRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
             return Ok(response);
         }
+
     }
 }
+

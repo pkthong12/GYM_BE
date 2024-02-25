@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GYM_BE.ENTITIES
+namespace GYM_BE.Entities
 {
     public class BASE_ENTITY
     {

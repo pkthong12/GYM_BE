@@ -19,6 +19,10 @@ namespace GYM_BE.Core.Generic
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
         }
+        public Task<FormatedResponse> QueryList(long id)
+        {
+            throw new NotImplementedException();
+        }
         public virtual async Task<FormatedResponse> Create(TDTO dto, string sid)
         {
             _dbContext.Database.BeginTransaction();
@@ -307,5 +311,6 @@ namespace GYM_BE.Core.Generic
             throw new NotImplementedException();
         }
 
+        
     }
 }

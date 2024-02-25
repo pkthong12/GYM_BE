@@ -1,10 +1,7 @@
-﻿using API.DTO;
-using CORE.AutoMapper;
-using GYM_BE.Core.Dto;
+﻿using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
-using GYM_BE.ENTITIES;
-using Microsoft.EntityFrameworkCore;
+using GYM_BE.Entities;
 
 namespace GYM_BE.All.TestSystem
 {
@@ -20,7 +17,7 @@ namespace GYM_BE.All.TestSystem
         }
         public async Task<FormatedResponse> Create(TrCenterDTO dto, string sid)
         {
-            var join = await _genericRepository.Create(dto,"12344");
+            var join = await _genericRepository.Create(dto,sid);
             return new FormatedResponse()
             {
                 InnerBody = join,
@@ -28,29 +25,26 @@ namespace GYM_BE.All.TestSystem
             };
         }
 
-        public Task<FormatedResponse> CreateRange(List<TrCenterDTO> dtos, string sid)
+        public async Task<FormatedResponse> CreateRange(List<TrCenterDTO> dtos, string sid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<FormatedResponse> Delete(long id)
+        public async Task<FormatedResponse> Delete(long id)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.Delete(id);
+            return response;
         }
 
-        public Task<FormatedResponse> DeleteIds(List<long> ids)
+        public async Task<FormatedResponse> DeleteIds(List<long> ids)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.DeleteIds(ids);
+            return response;
         }
 
         public async Task<FormatedResponse> GetById(long id)
         {
-            var join = await _dbContext.AD_PROGRAMS.AsNoTracking().FirstAsync();
-            //AdProgramsDTO adProgramsDTO = new AdProgramsDTO()
-            //{
-            //    Code = "323",
-            //};
-            //var e = _genericRepository.Create(adProgramsDTO, "3232");
+            var join = 0;
             return new FormatedResponse()
             {
                 InnerBody = join,
@@ -58,7 +52,7 @@ namespace GYM_BE.All.TestSystem
             };
         }
 
-        public Task<FormatedResponse> GetById(string id)
+        public Task<FormatedResponse> QueryList(long id)
         {
             throw new NotImplementedException();
         }
@@ -68,14 +62,16 @@ namespace GYM_BE.All.TestSystem
             throw new NotImplementedException();
         }
 
-        public Task<FormatedResponse> Update(TrCenterDTO dto, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> Update(TrCenterDTO dto, string sid, bool patchMode = true)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.Update( dto, sid, patchMode);
+            return response;
         }
 
-        public Task<FormatedResponse> UpdateRange(List<TrCenterDTO> dtos, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> UpdateRange(List<TrCenterDTO> dtos, string sid, bool patchMode = true)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.UpdateRange( dtos, sid, patchMode);
+            return response;
         }
     }
 }

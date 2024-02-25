@@ -4,6 +4,8 @@ namespace GYM_BE.Core.Generic
 {
     public interface IGenericRepository<TEntity, TDTO> where TEntity : class where TDTO : class
     {
+        Task<FormatedResponse> QueryList(long id);
+
         Task<FormatedResponse> GetById(long id);
 
         Task<FormatedResponse> Create( TDTO dto, string sid);

@@ -1,6 +1,6 @@
 using API;
 using GYM_BE.Core.Dto;
-using GYM_BE.ENTITIES;
+using GYM_BE.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

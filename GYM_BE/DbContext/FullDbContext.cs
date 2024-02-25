@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.ENTITIES
+namespace GYM_BE.Entities
 {
     public partial class FullDbContext : DbContext
     {
@@ -22,12 +22,6 @@ namespace GYM_BE.ENTITIES
         {
             _appSettings = appSettings.Value;
         }
-
-        public virtual DbSet<AD_BOOKING> AD_BOOKING { get; set; }
-        public virtual DbSet<AD_PROGRAMS> AD_PROGRAMS { get; set; }
-        public virtual DbSet<AD_REQUESTS> AD_REQUESTS { get; set; }
-        public virtual DbSet<AD_REQUESTS_QUEUES> AD_REQUESTS_QUEUES { get; set; }
-        public virtual DbSet<AD_REQUEST_PARAMETERS> AD_REQUEST_PARAMETERS { get; set; }
         public virtual DbSet<TR_CENTER> TrCenters { get; set; }
 
         protected override void ConfigureConventions(
