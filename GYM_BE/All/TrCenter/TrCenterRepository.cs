@@ -1,7 +1,8 @@
-using GYM_BE.Core.Dto;
+﻿using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GYM_BE.All.TrCenter
 {
@@ -18,7 +19,26 @@ namespace GYM_BE.All.TrCenter
 
         public async Task<FormatedResponse> QueryList(long id)
         {
-            throw new NotImplementedException();
+            var joined = (from p in _dbContext.TrCenters.AsNoTracking()
+                             // JOIN OTHER ENTITIES BASED ON THE BUSINESS
+                         select new TrCenterDTO
+                         {
+                             Id = p.ID,
+                             CodeCenter = p.CODE_CENTER,
+                             NameCenter = p.NAME_CENTER,
+                             TrainingField = p.TRAINING_FIELD,
+                             Address = p.ADDRESS,
+                             Phone = p.PHONE,
+                             Representative = p.REPRESENTATIVE,
+                             ContactPerson = p.CONTACT_PERSON,
+                             PhoneContactPerson = p.PHONE_CONTACT_PERSON,
+                             Website = p.WEBSITE,
+                             Note = p.NOTE,
+                             AttachedFile = p.ATTACHED_FILE,
+                             IsActive = p.IS_ACTIVE,
+                             Status = p.IS_ACTIVE == true ? "Áp dụng" : "Ngừng áp dụng",
+                         }).ToList();
+            return new FormatedResponse() { InnerBody = joined };
         }
 
         public async Task<FormatedResponse> GetById(long id)

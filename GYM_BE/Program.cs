@@ -22,6 +22,21 @@ services.AddDbContext<FullDbContext>();
 #endregion DbContexts
 
 services.AddRouting(o => o.LowercaseQueryStrings = true);
+services.AddCors(options =>
+{
+    /* Latter, in Production, we need to add specific policy */
+    options.AddPolicy("Development",
+          builder =>
+              builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(_ =>
+                {
+                    return true;
+                })
+          );
+});
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
     //Disable The Default
@@ -43,7 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+/* Latter, in Production, we need to use specific policy */
+app.UseCors("Development");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

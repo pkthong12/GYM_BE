@@ -25,7 +25,7 @@ namespace GYM_BE.All.TrCenter
             _appSettings = options.Value;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> QueryList(long id)
         {
             var response = await _TrCenterRepository.QueryList(id);
