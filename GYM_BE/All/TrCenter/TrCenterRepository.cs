@@ -19,7 +19,7 @@ namespace GYM_BE.All.TrCenter
 
         public async Task<FormatedResponse> QueryList(long id)
         {
-            var joined = (from p in _dbContext.TrCenters.AsNoTracking()
+            var joined = await(from p in _dbContext.TrCenters.AsNoTracking()
                              // JOIN OTHER ENTITIES BASED ON THE BUSINESS
                          select new TrCenterDTO
                          {
@@ -37,8 +37,13 @@ namespace GYM_BE.All.TrCenter
                              AttachedFile = p.ATTACHED_FILE,
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE == true ? "Áp dụng" : "Ngừng áp dụng",
-                         }).ToList();
-            return new FormatedResponse() { InnerBody = joined };
+                         }).ToListAsync();
+            var response = new
+            {
+                List = joined,
+                Count = joined.Count,
+            };
+            return new FormatedResponse() { InnerBody = response };
         }
 
         public async Task<FormatedResponse> GetById(long id)
