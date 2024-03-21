@@ -26,9 +26,9 @@ namespace GYM_BE.All.SysOtherListType
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(long id)
+        public async Task<IActionResult> QueryList(PaginationDTO pagination)
         {
-            var response = await _SysOtherListTypeRepository.QueryList(id);
+            var response = await _SysOtherListTypeRepository.QueryList(pagination);
             return Ok(response);
         }
 
