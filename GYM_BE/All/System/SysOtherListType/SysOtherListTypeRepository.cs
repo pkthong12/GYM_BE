@@ -2,6 +2,7 @@ using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GYM_BE.All.SysOtherListType
 {
@@ -16,9 +17,19 @@ namespace GYM_BE.All.SysOtherListType
             _genericRepository = new GenericRepository<SYS_OTHER_LIST_TYPE, SysOtherListTypeDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(long id)
+        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
         {
-            throw new NotImplementedException();
+            var joined = from p in _dbContext.SysOtherListTypes.AsNoTracking()
+                             //tuy chinh
+                         select new SysOtherListTypeDTO
+                         {
+                             Id = p.ID,
+                         };
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            return new FormatedResponse
+            {
+                InnerBody = respose,
+            };
         }
 
         public async Task<FormatedResponse> GetById(long id)

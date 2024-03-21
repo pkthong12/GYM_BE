@@ -5,7 +5,8 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
-
+using PagedList;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace GYM_BE.Core.Generic
 {
     public class GenericRepository<TEntity, TDTO> : IGenericRepository<TEntity, TDTO> where TEntity : class where TDTO : class
@@ -19,9 +20,19 @@ namespace GYM_BE.Core.Generic
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
         }
-        public Task<FormatedResponse> QueryList(long id)
+        public virtual async Task<QueryListResponse<TDTO>> PagingQueryList(IQueryable<TDTO> dTOs, PaginationDTO pagination)
         {
-            throw new NotImplementedException();
+            var list = await Task.Run(() => dTOs.Take(pagination.Take).Skip(pagination.Page * pagination.Skip));
+            return new QueryListResponse<TDTO>
+            {
+                Count = dTOs.Count(),
+                List = list,
+                Page = pagination.Page,
+                PageCount = list.Count(),
+                Skip = pagination.Skip,
+                Take = pagination.Take,
+                MessageCode = "QUERY_LIST_SUCCESS",
+            };
         }
         public virtual async Task<FormatedResponse> Create(TDTO dto, string sid)
         {
@@ -29,7 +40,7 @@ namespace GYM_BE.Core.Generic
             object obj = Activator.CreateInstance(typeof(TEntity)) ?? throw new Exception("");
             TEntity entity = (TEntity)obj;
             TEntity mapped = CoreMapper<TDTO, TEntity>.DtoToEntity(dto, entity, true);
-            if(mapped != null)
+            if (mapped != null)
             {
                 Type typeFromHandle = typeof(TEntity);
                 ParameterExpression parameterExpression = Expression.Parameter(typeFromHandle);
@@ -188,8 +199,8 @@ namespace GYM_BE.Core.Generic
                 Type typeFromHandle = typeof(TEntity);
                 ParameterExpression parameterExpression = Expression.Parameter(typeFromHandle);
                 PropertyInfo propertyInfo2 = (from pi in typeFromHandle.GetProperties()
-                                             where pi.Name == "CREATED_DATE"
-                                             select pi).SingleOrDefault();
+                                              where pi.Name == "CREATED_DATE"
+                                              select pi).SingleOrDefault();
                 PropertyInfo? propertyInfo3 = (from pi in typeFromHandle.GetProperties()
                                                where pi.Name == "CREATED_BY"
                                                select pi).SingleOrDefault();
@@ -311,6 +322,6 @@ namespace GYM_BE.Core.Generic
             throw new NotImplementedException();
         }
 
-        
+
     }
 }
