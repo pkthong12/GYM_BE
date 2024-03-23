@@ -58,7 +58,7 @@ services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("system", new OpenApiInfo { Title = "SYSTEM API", Version = "v1" });
     c.SwaggerDoc("person", new OpenApiInfo { Title = "PERSON API", Version = "v1" });
-
+    c.SwaggerDoc("locker", new OpenApiInfo { Title = "LOCKER API", Version = "v1" });
     c.TagActionsBy(api =>
     {
         if (api.GroupName != null)
@@ -119,6 +119,7 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/system/swagger.json", "SYSTEM API");
         c.SwaggerEndpoint("/swagger/person/swagger.json", "PERSON API");
+        c.SwaggerEndpoint("/swagger/locker/swagger.json", "LOCKER API");
     });
 }
 /* Latter, in Production, we need to use specific policy */

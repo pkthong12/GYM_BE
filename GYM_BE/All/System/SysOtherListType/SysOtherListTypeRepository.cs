@@ -1,4 +1,4 @@
-using GYM_BE.Core.Dto;
+﻿using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -29,6 +29,7 @@ namespace GYM_BE.All.SysOtherListType
                              Note = p.NOTE,
                              Orders = p.ORDERS,
                              IsActive = p.IS_ACTIVE,
+                             Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -57,6 +58,7 @@ namespace GYM_BE.All.SysOtherListType
                                   Note = l.NOTE,
                                   Orders = l.ORDERS,
                                   IsActive = l.IS_ACTIVE,
+                                  Status = l.IS_ACTIVE.Value ? "Áp dụng":"Ngừng áp dụng"
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
