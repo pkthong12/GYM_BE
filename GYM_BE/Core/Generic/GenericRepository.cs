@@ -84,6 +84,7 @@ namespace GYM_BE.Core.Generic
         }
         public virtual async Task<FormatedResponse> CreateRange(List<TDTO> dtos, string sid)
         {
+            _dbContext.Database.BeginTransaction();
             List<TEntity> mappeds = new List<TEntity>();
             for (int i = 0; i < dtos.Count; i++)
             {
@@ -151,6 +152,7 @@ namespace GYM_BE.Core.Generic
         }
         public virtual async Task<FormatedResponse> Update(TDTO dto, string sid, bool patchMode = true)
         {
+            _dbContext.Database.BeginTransaction();
             PropertyInfo propertyInfo = (from pi in typeof(TDTO).GetProperties()
                                          where pi.Name == "Id"
                                          select pi).SingleOrDefault();
@@ -280,6 +282,7 @@ namespace GYM_BE.Core.Generic
         }
         public virtual async Task<FormatedResponse> DeleteIds(List<long> ids)
         {
+            _dbContext.Database.BeginTransaction();
             string idsString = ids.Aggregate("_", (string prev, long curr) => prev + $"{curr}_");
             string predicate = await Task.Run(() => "x => @0.Contains(@1 + x.ID.ToString() + @1)");
             IQueryable<TEntity> queryable = _dbSet.Where(predicate, idsString, "_");

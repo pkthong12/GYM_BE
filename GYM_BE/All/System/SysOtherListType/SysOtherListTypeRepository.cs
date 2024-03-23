@@ -24,6 +24,11 @@ namespace GYM_BE.All.SysOtherListType
                          select new SysOtherListTypeDTO
                          {
                              Id = p.ID,
+                             Code = p.CODE,
+                             Name = p.NAME,
+                             Note = p.NOTE,
+                             Orders = p.ORDERS,
+                             IsActive = p.IS_ACTIVE,
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -46,7 +51,12 @@ namespace GYM_BE.All.SysOtherListType
                               // JOIN OTHER ENTITIES BASED ON THE BUSINESS
                               select new SysOtherListTypeDTO
                               {
-                                  Id = l.ID
+                                  Id = l.ID,
+                                  Code = l.CODE,
+                                  Name = l.NAME,
+                                  Note = l.NOTE,
+                                  Orders = l.ORDERS,
+                                  IsActive = l.IS_ACTIVE,
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
