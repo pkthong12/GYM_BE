@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace GYM_BE.All.SysOtherListType
 {
+    [ApiExplorerSettings(GroupName = "005-SYSTEM-SYS_OTHER_LIST_TYPE")]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class SysOtherListTypeController : Controller
