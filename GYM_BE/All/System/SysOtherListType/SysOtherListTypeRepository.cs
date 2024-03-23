@@ -71,6 +71,7 @@ namespace GYM_BE.All.SysOtherListType
 
         public async Task<FormatedResponse> Create(SysOtherListTypeDTO dto, string sid)
         {
+            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
