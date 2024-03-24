@@ -6,72 +6,73 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.All.TrCenter
+namespace GYM_BE.All.SysOtherListType
 {
+    [ApiExplorerSettings(GroupName = "005-SYSTEM-SYS_OTHER_LIST_TYPE")]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class TrCenterController : Controller
+    public class SysOtherListTypeController : Controller
     {
         private readonly FullDbContext _dbContext;
-        private readonly ITrCenterRepository _TrCenterRepository;
+        private readonly ISysOtherListTypeRepository _SysOtherListTypeRepository;
         private readonly AppSettings _appSettings;
 
-        public TrCenterController(
+        public SysOtherListTypeController(
             DbContextOptions<FullDbContext> dbOptions,
             IOptions<AppSettings> options)
         {
             _dbContext = new FullDbContext(dbOptions, options);
-            _TrCenterRepository = new TrCenterRepository(_dbContext);
+            _SysOtherListTypeRepository = new SysOtherListTypeRepository(_dbContext);
             _appSettings = options.Value;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> QueryList(long id)
+        [HttpPost]
+        public async Task<IActionResult> QueryList(PaginationDTO pagination)
         {
-            var response = await _TrCenterRepository.QueryList(id);
+            var response = await _SysOtherListTypeRepository.QueryList(pagination);
             return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {
-            var response = await _TrCenterRepository.GetById(id);
+            var response = await _SysOtherListTypeRepository.GetById(id);
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TrCenterDTO model)
+        public async Task<IActionResult> Create(SysOtherListTypeDTO model)
         {
-            var response = await _TrCenterRepository.Create(model, "root");
+            var response = await _SysOtherListTypeRepository.Create(model, "root");
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRange(List<TrCenterDTO> models)
+        public async Task<IActionResult> CreateRange(List<SysOtherListTypeDTO> models)
         {
-            var response = await _TrCenterRepository.CreateRange(models, "root");
-            return Ok(response);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Update(TrCenterDTO model)
-        {
-            var response = await _TrCenterRepository.Update(model, "root");
+            var response = await _SysOtherListTypeRepository.CreateRange(models, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateRange(List<TrCenterDTO> models)
+        public async Task<IActionResult> Update(SysOtherListTypeDTO model)
         {
-            var response = await _TrCenterRepository.UpdateRange(models, "root");
+            var response = await _SysOtherListTypeRepository.Update(model, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(TrCenterDTO model)
+        public async Task<IActionResult> UpdateRange(List<SysOtherListTypeDTO> models)
+        {
+            var response = await _SysOtherListTypeRepository.UpdateRange(models, "root");
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(SysOtherListTypeDTO model)
         {
             if (model.Id != null)
             {
-                var response = await _TrCenterRepository.Delete((long)model.Id);
+                var response = await _SysOtherListTypeRepository.Delete((long)model.Id);
                 return Ok(response);
             }
             else
@@ -83,14 +84,14 @@ namespace GYM_BE.All.TrCenter
         [HttpPost]
         public async Task<IActionResult> DeleteIds(IdsRequest model)
         {
-            var response = await _TrCenterRepository.DeleteIds(model.Ids);
+            var response = await _SysOtherListTypeRepository.DeleteIds(model.Ids);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _TrCenterRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var response = await _SysOtherListTypeRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
             return Ok(response);
         }
 
