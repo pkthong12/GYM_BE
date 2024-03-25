@@ -26,6 +26,13 @@ namespace GYM_BE.All.SysOtherListType
             _appSettings = options.Value;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetList()
+        {
+            var response = await _SysOtherListTypeRepository.GetList();
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> QueryList(PaginationDTO pagination)
         {
