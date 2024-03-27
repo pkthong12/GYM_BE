@@ -22,7 +22,7 @@ namespace GYM_BE.Core.Generic
         }
         public virtual async Task<QueryListResponse<TDTO>> PagingQueryList(IQueryable<TDTO> dTOs, PaginationDTO pagination)
         {
-            var list = await Task.Run(() => dTOs.Take(pagination.Take).Skip(pagination.Page * pagination.Skip));
+            var list = await Task.Run(() => dTOs.Skip((pagination.Page - 1) * pagination.Take).Take(pagination.Take));
             return new QueryListResponse<TDTO>
             {
                 Count = dTOs.Count(),
@@ -154,7 +154,7 @@ namespace GYM_BE.Core.Generic
         {
             _dbContext.Database.BeginTransaction();
             PropertyInfo propertyInfo = (from pi in typeof(TDTO).GetProperties()
-                                         where pi.Name == "Id"
+                                         where pi.Name! == "Id"
                                          select pi).SingleOrDefault();
             if (propertyInfo == null)
             {
