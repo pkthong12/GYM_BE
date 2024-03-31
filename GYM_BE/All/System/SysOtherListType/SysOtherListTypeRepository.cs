@@ -120,7 +120,7 @@ namespace GYM_BE.All.SysOtherListType
                                 {
                                     Id = p.ID,
                                     Code = p.CODE,
-                                    Name = "[" + p.CODE + "] " + p.NAME,
+                                    Name = p.NAME,
                                 }).ToListAsync();
             return new FormatedResponse
             {
