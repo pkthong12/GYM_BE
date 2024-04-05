@@ -128,6 +128,10 @@ namespace GYM_BE.All.SysOtherListType
             };
         }
 
+        public Task<FormatedResponse> Delete(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

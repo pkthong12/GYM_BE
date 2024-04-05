@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using API;
+using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Options;
@@ -25,6 +26,7 @@ namespace GYM_BE.Entities
         public virtual DbSet<TR_CENTER> TrCenters { get; set; }
         public virtual DbSet<SYS_OTHER_LIST_TYPE> SysOtherListTypes { get; set; }
         public virtual DbSet<SYS_OTHER_LIST> SysOtherLists { get; set; }
+        public virtual DbSet<SYS_USER> SysUsers { get; set; }
         protected override void ConfigureConventions(
         ModelConfigurationBuilder configurationBuilder)
         {

@@ -280,6 +280,45 @@ namespace GYM_BE.Core.Generic
                 MessageCode = "ENTITY_NOT_FOUND"
             };
         }
+
+        public virtual async Task<FormatedResponse> Delete(string id)
+        {
+            TEntity val = await _dbSet.FindAsync(id);
+            if (val != null)
+            {
+                _dbContext.Database.BeginTransaction();
+                try
+                {
+                    _dbSet.Remove(val);
+                    await _dbContext.SaveChangesAsync();
+                    await _dbContext.Database.CommitTransactionAsync();
+                    return new FormatedResponse
+                    {
+                        InnerBody = val,
+                        MessageCode = "DELETE_SUCCESS",
+                        StatusCode = EnumStatusCode.StatusCode200
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await _dbContext.Database.RollbackTransactionAsync();
+                    await _dbContext.DisposeAsync();
+                    return new FormatedResponse()
+                    {
+                        MessageCode = ex.Message,
+                        StatusCode = EnumStatusCode.StatusCode400
+                    };
+                }
+            }
+
+            return new FormatedResponse
+            {
+                StatusCode = EnumStatusCode.StatusCode400,
+                ErrorType = EnumErrorType.CATCHABLE,
+                MessageCode = "ENTITY_NOT_FOUND"
+            };
+        }
+
         public virtual async Task<FormatedResponse> DeleteIds(List<long> ids)
         {
             _dbContext.Database.BeginTransaction();

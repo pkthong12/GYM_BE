@@ -16,6 +16,8 @@ namespace GYM_BE.Core.Generic
 
         Task<FormatedResponse> Delete(long id);
 
+        Task<FormatedResponse> Delete(string id);
+
         Task<FormatedResponse> DeleteIds(List<long> ids);
 
         Task<FormatedResponse> ToggleActiveIds(List<long> ids, bool valueToBind, string sid);
