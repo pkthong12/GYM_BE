@@ -29,7 +29,7 @@ namespace GYM_BE.All.System.SysOtherList
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<SysOtherListDTO> pagination)
         {
             var response = await _SysOtherListRepository.QueryList(pagination);
             return Ok(response);

@@ -17,7 +17,7 @@ namespace GYM_BE.All.SysOtherListType
             _genericRepository = new GenericRepository<SYS_OTHER_LIST_TYPE, SysOtherListTypeDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListTypeDTO> pagination)
         {
             var joined = from p in _dbContext.SysOtherListTypes.AsNoTracking()
                              //tuy chinh

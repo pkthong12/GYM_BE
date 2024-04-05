@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using PagedList;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using GYM_BE.DTO;
 namespace GYM_BE.Core.Generic
 {
     public class GenericRepository<TEntity, TDTO> : IGenericRepository<TEntity, TDTO> where TEntity : class where TDTO : class
@@ -20,7 +21,7 @@ namespace GYM_BE.Core.Generic
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
         }
-        public virtual async Task<QueryListResponse<TDTO>> PagingQueryList(IQueryable<TDTO> dTOs, PaginationDTO pagination)
+        public virtual async Task<QueryListResponse<TDTO>> PagingQueryList(IQueryable<TDTO> dTOs, PaginationDTO<TDTO> pagination)
         {
             var list = await Task.Run(() => dTOs.Skip((pagination.Page - 1) * pagination.Take).Take(pagination.Take));
             return new QueryListResponse<TDTO>

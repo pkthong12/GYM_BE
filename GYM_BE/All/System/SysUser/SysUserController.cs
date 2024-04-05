@@ -28,7 +28,7 @@ namespace GYM_BE.All.System.SysUser
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<SysUserDTO> pagination)
         {
             var response = await _SysUserRepository.QueryList(pagination);
             return Ok(response);

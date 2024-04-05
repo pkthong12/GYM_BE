@@ -19,7 +19,7 @@ namespace GYM_BE.All.System.SysUser
             _genericRepository = new GenericRepository<SYS_USER, SysUserDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<SysUserDTO> pagination)
         {
             var joined = from p in _dbContext.SysUsers.AsNoTracking()
                          select new SysUserDTO

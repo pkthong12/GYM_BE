@@ -19,7 +19,7 @@ namespace GYM_BE.All.System.SysOtherList
             _genericRepository = new GenericRepository<SYS_OTHER_LIST, SysOtherListDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListDTO> pagination)
         {
             var joined = from p in _dbContext.SysOtherLists.AsNoTracking()
                          from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
@@ -35,6 +35,13 @@ namespace GYM_BE.All.System.SysOtherList
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
+            if(pagination.Filter!= null)
+            {
+                if (pagination.Filter.TypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p=> p.TypeId == pagination.Filter.TypeId);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
