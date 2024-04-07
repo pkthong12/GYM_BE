@@ -5,6 +5,8 @@ using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace GYM_BE.All.System.SysOtherList
 {
@@ -129,6 +131,40 @@ namespace GYM_BE.All.System.SysOtherList
         public Task<FormatedResponse> Delete(string id)
         {
             throw new NotImplementedException();
+        }
+        public async Task<FormatedResponse> GetListByType(string type, long? id)
+        {
+            var res = await (from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(t => t.CODE!.ToUpper().Trim() == type!.ToUpper().Trim())
+                             from p in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.TYPE_ID == t.ID && x.IS_ACTIVE == true).DefaultIfEmpty()
+                             select new
+                             {
+                                 Id = p.ID,
+                                 Code = p.CODE,
+                                 Name = p.NAME,
+                             }).ToListAsync();
+            if (id != null)
+            {
+                var x = await (from p in _dbContext.SysOtherLists.Where(p => p.ID == id)
+                               select new
+                               {
+                                   Id = p.ID,
+                                   Code = p.CODE,
+                                   Name = p.NAME,
+                               }).FirstOrDefaultAsync();
+                if(x != null)
+                {
+                    var check = res.Find(p => p.Id == x.Id);
+                    if (check == null)
+                    {
+                        res.Add(x);
+                        res.OrderBy(p => p.Id);
+                    }
+                }
+            }
+            return new FormatedResponse
+            {
+                InnerBody = res,
+            };
         }
     }
 }
