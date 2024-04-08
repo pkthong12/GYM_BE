@@ -128,9 +128,10 @@ namespace GYM_BE.All.System.SysOtherList
             throw new NotImplementedException();
         }
 
-        public Task<FormatedResponse> Delete(string id)
+        public async Task<FormatedResponse> Delete(string id)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.Delete(id);
+            return response;
         }
 
         public async Task<FormatedResponse> GetListByCode(string typeCode)
