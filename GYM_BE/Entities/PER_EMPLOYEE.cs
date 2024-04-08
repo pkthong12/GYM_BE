@@ -1,5 +1,8 @@
-﻿namespace GYM_BE.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GYM_BE.Entities
 {
+    [Table("PER_EMPLOYEE")]
     public class PER_EMPLOYEE:BASE_ENTITY
     {
         public string? CODE{get;set;}

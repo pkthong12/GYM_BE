@@ -134,7 +134,10 @@ namespace GYM_BE.All.System.SysOtherList
         }
         public async Task<FormatedResponse> GetListByType(string type, long? id)
         {
-            var res = await (from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(t => t.CODE!.ToUpper().Trim() == type!.ToUpper().Trim())
+            var xe = _dbContext.SysOtherListTypes.AsNoTracking().ToList();
+            var xes = _dbContext.SysOtherLists.AsNoTracking().ToList();
+            var xd = type.ToUpper().Trim();
+            var res = await (from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(t => t.CODE!.ToUpper() == type.ToUpper())
                              from p in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.TYPE_ID == t.ID && x.IS_ACTIVE == true).DefaultIfEmpty()
                              select new
                              {
