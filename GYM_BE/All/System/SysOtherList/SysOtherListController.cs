@@ -7,6 +7,7 @@ using GYM_BE.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace GYM_BE.All.System.SysOtherList
 {
@@ -29,7 +30,7 @@ namespace GYM_BE.All.System.SysOtherList
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<SysOtherListDTO> pagination)
         {
             var response = await _SysOtherListRepository.QueryList(pagination);
             return Ok(response);
@@ -101,6 +102,11 @@ namespace GYM_BE.All.System.SysOtherList
         public async Task<IActionResult> GetOtherListByGroup(string code)
         {
             var response = await _SysOtherListRepository.GetOtherListByGroup(code);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetListByType(string type, long? id)
+        {
+            var response = await _SysOtherListRepository.GetListByType(type,id);
             return Ok(response);
         }
     }
