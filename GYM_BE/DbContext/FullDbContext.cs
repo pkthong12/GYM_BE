@@ -27,7 +27,11 @@ namespace GYM_BE.Entities
         public virtual DbSet<SYS_OTHER_LIST_TYPE> SysOtherListTypes { get; set; }
         public virtual DbSet<SYS_OTHER_LIST> SysOtherLists { get; set; }
         public virtual DbSet<SYS_USER> SysUsers { get; set; }
+<<<<<<< HEAD
+        public virtual DbSet<PER_CUSTOMER> PerCustomers { get; set; }
+=======
         public virtual DbSet<PER_EMPLOYEE> PerEmployees { get; set; }
+>>>>>>> d247561c8ed2d8d487b7432098e438a0f73ab9c1
         protected override void ConfigureConventions(
         ModelConfigurationBuilder configurationBuilder)
         {

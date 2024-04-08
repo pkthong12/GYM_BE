@@ -99,9 +99,21 @@ namespace GYM_BE.All.System.SysOtherList
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetListByCode(string typeCode)
+        {
+            var response = await _SysOtherListRepository.GetListByCode(typeCode);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOtherListByGroup(string code)
+        {
+            var response = await _SysOtherListRepository.GetOtherListByGroup(code);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetListByType(string type, long? id)
         {
-            var response = await _SysOtherListRepository.GetListByType(type,id);
+            var response = await _SysOtherListRepository.GetListByType(type, id);
             return Ok(response);
         }
     }

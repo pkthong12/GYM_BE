@@ -37,11 +37,11 @@ namespace GYM_BE.All.System.SysOtherList
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
-            if(pagination.Filter!= null)
+            if (pagination.Filter != null)
             {
                 if (pagination.Filter.TypeId != null)
                 {
-                    joined = joined.AsNoTracking().Where(p=> p.TypeId == pagination.Filter.TypeId);
+                    joined = joined.AsNoTracking().Where(p => p.TypeId == pagination.Filter.TypeId);
                 }
             }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
@@ -132,6 +132,39 @@ namespace GYM_BE.All.System.SysOtherList
         {
             throw new NotImplementedException();
         }
+
+        public async Task<FormatedResponse> GetListByCode(string typeCode)
+        {
+            var res = await (from p in _dbContext.SysOtherLists.AsNoTracking()
+                             from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
+                             where p.IS_ACTIVE == true && t.CODE == typeCode
+                             select new SysOtherListDTO
+                             {
+                                 Id = p.ID,
+                                 Code = p.CODE,
+                                 Name = p.NAME,
+                             }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
+        }
+
+        public async Task<FormatedResponse> GetOtherListByGroup(string code)
+        {
+            if (code == null || code.Trim().Length == 0)
+            {
+                return new() { ErrorType = EnumErrorType.UNCATCHABLE, StatusCode = EnumStatusCode.StatusCode500 };
+            }
+            var response = await (from p in _dbContext.SysOtherLists.AsNoTracking()
+                                  from o in _dbContext.SysOtherListTypes.Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
+                                  where p.IS_ACTIVE == true && o.CODE == code
+                                  select new
+                                  {
+                                      Id = p.ID,
+                                      Name = p.NAME,
+                                      Code = p.CODE,
+                                  }).ToListAsync();
+            return new FormatedResponse() { InnerBody = response };
+        }
+
         public async Task<FormatedResponse> GetListByType(string type, long? id)
         {
             var xe = _dbContext.SysOtherListTypes.AsNoTracking().ToList();
@@ -154,7 +187,7 @@ namespace GYM_BE.All.System.SysOtherList
                                    Code = p.CODE,
                                    Name = p.NAME,
                                }).FirstOrDefaultAsync();
-                if(x != null)
+                if (x != null)
                 {
                     var check = res.Find(p => p.Id == x.Id);
                     if (check == null)
