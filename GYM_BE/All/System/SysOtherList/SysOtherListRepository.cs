@@ -123,5 +123,19 @@ namespace GYM_BE.All.System.SysOtherList
         {
             throw new NotImplementedException();
         }
+
+        public async Task<FormatedResponse> GetListByCode(string typeCode)
+        {
+            var res = await(from p in _dbContext.SysOtherLists.AsNoTracking()
+                            from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
+                            where p.IS_ACTIVE == true && t.CODE == typeCode
+                            select new SysOtherListDTO
+                            {
+                                Id = p.ID,
+                                Code = p.CODE,
+                                Name = p.NAME,
+                            }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
+        }
     }
 }
