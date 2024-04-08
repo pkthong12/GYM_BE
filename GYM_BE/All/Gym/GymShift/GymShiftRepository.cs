@@ -105,6 +105,5 @@ namespace GYM_BE.All.Gym.GymShift
         {
             throw new NotImplementedException();
         }
-    {
     }
 }
