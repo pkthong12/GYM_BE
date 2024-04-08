@@ -22,6 +22,7 @@ namespace GYM_BE.All.PerEmployee
             var joined = from p in _dbContext.PerEmployees.AsNoTracking()
                          from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s1 => s1.ID == p.GENDER_ID).DefaultIfEmpty()
                          from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s2=> s2.ID == p.STAFF_GROUP_ID).DefaultIfEmpty()
+                         from stt in _dbContext.SysOtherLists.AsNoTracking().Where(stt=> stt.ID == p.STATUS_ID).DefaultIfEmpty()
 
                              //tuy chinh
                          select new PerEmployeeDTO
@@ -39,8 +40,17 @@ namespace GYM_BE.All.PerEmployee
                              StaffGroupId = p.STAFF_GROUP_ID,
                              StaffGroupName = s2.NAME,
                              StatusId = p.STATUS_ID,
+                             StatusName = stt.NAME,
                              Note = p.NOTE,
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.StaffGroupId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.StaffGroupId == pagination.Filter.StaffGroupId);
+                }
+            }
+
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
@@ -86,6 +96,9 @@ namespace GYM_BE.All.PerEmployee
 
         public async Task<FormatedResponse> Create(PerEmployeeDTO dto, string sid)
         {
+            dto.Code = CreateNewCode();
+            var stt = await _dbContext.SysOtherLists.AsNoTracking().FirstAsync(p => p.CODE == "ESW");
+            dto.StatusId = stt.ID;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
@@ -130,6 +143,23 @@ namespace GYM_BE.All.PerEmployee
         public Task<FormatedResponse> Delete(string id)
         {
             throw new NotImplementedException();
+        }
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.PerEmployees.Count() == 0)
+            {
+                newCode = "GYM001";
+            }
+            else
+            {
+                string lastestData = _dbContext.PerEmployees.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
         }
     }
 }

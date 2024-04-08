@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net;
 
-namespace GYM_BE.All.PerCustomer
+namespace GYM_BE.All.Profile.PerCustomer
 {
     public class PerCustomerRepository : IPerCustomerRepository
     {
@@ -39,6 +39,7 @@ namespace GYM_BE.All.PerCustomer
                              CustomerClassId = p.CUSTOMER_CLASS_ID,
                              CustomerClassName = gr.NAME,
                              BirthDate = p.BIRTH_DATE,
+                             BirthDateString = p.BIRTH_DATE!.Value.ToString("dd/MM/yyyy"),
                              GenderId = p.GENDER_ID,
                              GenderName = gender.NAME,
                              Address = p.ADDRESS,
@@ -66,37 +67,37 @@ namespace GYM_BE.All.PerCustomer
         public async Task<FormatedResponse> GetById(long id)
         {
             var joined = await (from l in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == id)
-                          from gr in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.CUSTOMER_CLASS_ID).DefaultIfEmpty()
-                          from gender in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.GENDER_ID).DefaultIfEmpty()
-                          from nav in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.NATIVE_ID).DefaultIfEmpty()
-                          from re in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.RELIGION_ID).DefaultIfEmpty()
-                          from b in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_ID).DefaultIfEmpty()
-                          from bb in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_BRANCH).DefaultIfEmpty()
-                          select new PerCustomerDTO
-                          {
-                              Id = l.ID,
-                              Avatar = l.AVATAR,
-                              FullName = l.FULL_NAME,
-                              Code = l.CODE,
-                              CustomerClassId = l.CUSTOMER_CLASS_ID,
-                              CustomerClassName = gr.NAME,
-                              BirthDate = l.BIRTH_DATE,
-                              GenderId = l.GENDER_ID,
-                              GenderName = gender.NAME,
-                              Address = l.ADDRESS,
-                              PhoneNumber = l.PHONE_NUMBER,
-                              Email = l.EMAIL,
-                              NativeId = l.NATIVE_ID,
-                              NativeName = nav.NAME,
-                              ReligionId = l.RELIGION_ID,
-                              ReligionName = re.NAME,
-                              BankId = l.BANK_ID,
-                              BankName = b.NAME,
-                              BankBranch = l.BANK_BRANCH,
-                              BankBranchName = bb.NAME,
-                              BankNo = l.BANK_NO,
-                              Note = l.NOTE,
-                          }).FirstOrDefaultAsync();
+                                from gr in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.CUSTOMER_CLASS_ID).DefaultIfEmpty()
+                                from gender in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.GENDER_ID).DefaultIfEmpty()
+                                from nav in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.NATIVE_ID).DefaultIfEmpty()
+                                from re in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.RELIGION_ID).DefaultIfEmpty()
+                                from b in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_ID).DefaultIfEmpty()
+                                from bb in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_BRANCH).DefaultIfEmpty()
+                                select new PerCustomerDTO
+                                {
+                                    Id = l.ID,
+                                    Avatar = l.AVATAR,
+                                    FullName = l.FULL_NAME,
+                                    Code = l.CODE,
+                                    CustomerClassId = l.CUSTOMER_CLASS_ID,
+                                    CustomerClassName = gr.NAME,
+                                    BirthDate = l.BIRTH_DATE,
+                                    GenderId = l.GENDER_ID,
+                                    GenderName = gender.NAME,
+                                    Address = l.ADDRESS,
+                                    PhoneNumber = l.PHONE_NUMBER,
+                                    Email = l.EMAIL,
+                                    NativeId = l.NATIVE_ID,
+                                    NativeName = nav.NAME,
+                                    ReligionId = l.RELIGION_ID,
+                                    ReligionName = re.NAME,
+                                    BankId = l.BANK_ID,
+                                    BankName = b.NAME,
+                                    BankBranch = l.BANK_BRANCH,
+                                    BankBranchName = bb.NAME,
+                                    BankNo = l.BANK_NO,
+                                    Note = l.NOTE,
+                                }).FirstOrDefaultAsync();
             if (joined != null)
             {
                 return new FormatedResponse() { InnerBody = joined };
@@ -155,6 +156,8 @@ namespace GYM_BE.All.PerCustomer
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }
 

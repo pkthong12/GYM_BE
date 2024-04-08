@@ -2,12 +2,11 @@ using API;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
-using GYM_BE.ENTITIES;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.All.PerCustomer
+namespace GYM_BE.All.Profile.PerCustomer
 {
     [ApiExplorerSettings(GroupName = "001-PERSONAL-PER_CUSTOMER")]
     [ApiController]
