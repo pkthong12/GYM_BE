@@ -96,5 +96,12 @@ namespace GYM_BE.All.System.SysOtherList
             var response = await _SysOtherListRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
             return Ok(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOtherListByGroup(string code)
+        {
+            var response = await _SysOtherListRepository.GetOtherListByGroup(code);
+            return Ok(response);
+        }
     }
 }

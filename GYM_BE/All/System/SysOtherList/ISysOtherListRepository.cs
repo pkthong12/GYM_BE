@@ -8,6 +8,7 @@ namespace GYM_BE.All.SysOtherList
     public interface ISysOtherListRepository : IGenericRepository<SYS_OTHER_LIST, SysOtherListDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO pagination);
+        Task<FormatedResponse> GetOtherListByGroup(string code);
 
     }
 }

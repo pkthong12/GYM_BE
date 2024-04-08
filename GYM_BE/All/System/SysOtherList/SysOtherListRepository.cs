@@ -5,6 +5,7 @@ using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace GYM_BE.All.System.SysOtherList
 {
@@ -122,6 +123,24 @@ namespace GYM_BE.All.System.SysOtherList
         public Task<FormatedResponse> Delete(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<FormatedResponse> GetOtherListByGroup(string code)
+        {
+            if (code == null || code.Trim().Length == 0)
+            {
+                return new() { ErrorType = EnumErrorType.UNCATCHABLE, StatusCode = EnumStatusCode.StatusCode500 };
+            }
+            var response = await (from p in _dbContext.SysOtherLists.AsNoTracking()
+                           from o in _dbContext.SysOtherListTypes.Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
+                           where p.IS_ACTIVE == true && o.CODE == code
+                           select new
+                           {
+                               Id = p.ID,
+                               Name = p.NAME,
+                               Code = p.CODE,
+                           }).ToListAsync();
+            return new FormatedResponse() { InnerBody = response };
         }
     }
 }
