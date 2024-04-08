@@ -28,7 +28,7 @@ namespace GYM_BE.All.PerCustomer
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<PerCustomerDTO> pagination)
         {
             var response = await _PerCustomerRepository.QueryList(pagination);
             return Ok(response);
@@ -42,34 +42,34 @@ namespace GYM_BE.All.PerCustomer
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Per_CustomerDTO model)
+        public async Task<IActionResult> Create(PerCustomerDTO model)
         {
             var response = await _PerCustomerRepository.Create(model, "root");
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRange(List<Per_CustomerDTO> models)
+        public async Task<IActionResult> CreateRange(List<PerCustomerDTO> models)
         {
             var response = await _PerCustomerRepository.CreateRange(models, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(Per_CustomerDTO model)
+        public async Task<IActionResult> Update(PerCustomerDTO model)
         {
             var response = await _PerCustomerRepository.Update(model, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateRange(List<Per_CustomerDTO> models)
+        public async Task<IActionResult> UpdateRange(List<PerCustomerDTO> models)
         {
             var response = await _PerCustomerRepository.UpdateRange(models, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Per_CustomerDTO model)
+        public async Task<IActionResult> Delete(PerCustomerDTO model)
         {
             if (model.Id != null)
             {

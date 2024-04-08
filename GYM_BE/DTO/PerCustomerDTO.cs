@@ -1,6 +1,6 @@
 ﻿namespace GYM_BE.DTO
 {
-    public class Per_CustomerDTO : BaseDTO
+    public class PerCustomerDTO : BaseDTO
     {
         public string? Avatar { get; set; }
         public string? Code { get; set; }

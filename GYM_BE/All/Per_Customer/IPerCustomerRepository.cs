@@ -5,9 +5,9 @@ using GYM_BE.ENTITIES;
 
 namespace GYM_BE.All.PerCustomer
 {
-    public interface IPerCustomerRepository: IGenericRepository<PER_CUSTOMER, Per_CustomerDTO>
+    public interface IPerCustomerRepository: IGenericRepository<PER_CUSTOMER, PerCustomerDTO>
     {
-        Task<FormatedResponse> QueryList(PaginationDTO pagination);
+        Task<FormatedResponse> QueryList(PaginationDTO<PerCustomerDTO> pagination);
     }
 }
 

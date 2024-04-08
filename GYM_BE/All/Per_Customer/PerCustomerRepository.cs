@@ -13,15 +13,15 @@ namespace GYM_BE.All.PerCustomer
     public class PerCustomerRepository : IPerCustomerRepository
     {
         private readonly FullDbContext _dbContext;
-        private readonly GenericRepository<PER_CUSTOMER, Per_CustomerDTO> _genericRepository;
+        private readonly GenericRepository<PER_CUSTOMER, PerCustomerDTO> _genericRepository;
 
         public PerCustomerRepository(FullDbContext context)
         {
             _dbContext = context;
-            _genericRepository = new GenericRepository<PER_CUSTOMER, Per_CustomerDTO>(_dbContext);
+            _genericRepository = new GenericRepository<PER_CUSTOMER, PerCustomerDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<PerCustomerDTO> pagination)
         {
             var joined = from p in _dbContext.PerCustomers.AsNoTracking()
                          from gr in _dbContext.SysOtherLists.Where(x => x.ID == p.CUSTOMER_CLASS_ID).DefaultIfEmpty()
@@ -30,7 +30,7 @@ namespace GYM_BE.All.PerCustomer
                          from re in _dbContext.SysOtherLists.Where(x => x.ID == p.RELIGION_ID).DefaultIfEmpty()
                          from b in _dbContext.SysOtherLists.Where(x => x.ID == p.BANK_ID).DefaultIfEmpty()
                          from bb in _dbContext.SysOtherLists.Where(x => x.ID == p.BANK_BRANCH).DefaultIfEmpty()
-                         select new Per_CustomerDTO
+                         select new PerCustomerDTO
                          {
                              Id = p.ID,
                              Avatar = p.AVATAR,
@@ -72,7 +72,7 @@ namespace GYM_BE.All.PerCustomer
                           from re in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.RELIGION_ID).DefaultIfEmpty()
                           from b in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_ID).DefaultIfEmpty()
                           from bb in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == l.BANK_BRANCH).DefaultIfEmpty()
-                          select new Per_CustomerDTO
+                          select new PerCustomerDTO
                           {
                               Id = l.ID,
                               Avatar = l.AVATAR,
@@ -107,27 +107,27 @@ namespace GYM_BE.All.PerCustomer
             }
         }
 
-        public async Task<FormatedResponse> Create(Per_CustomerDTO dto, string sid)
+        public async Task<FormatedResponse> Create(PerCustomerDTO dto, string sid)
         {
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> CreateRange(List<Per_CustomerDTO> dtos, string sid)
+        public async Task<FormatedResponse> CreateRange(List<PerCustomerDTO> dtos, string sid)
         {
-            var add = new List<Per_CustomerDTO>();
+            var add = new List<PerCustomerDTO>();
             add.AddRange(dtos);
             var response = await _genericRepository.CreateRange(add, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> Update(Per_CustomerDTO dto, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> Update(PerCustomerDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, "root", patchMode);
             return response;
         }
 
-        public async Task<FormatedResponse> UpdateRange(List<Per_CustomerDTO> dtos, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> UpdateRange(List<PerCustomerDTO> dtos, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
             return response;

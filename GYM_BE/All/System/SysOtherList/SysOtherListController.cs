@@ -102,12 +102,14 @@ namespace GYM_BE.All.System.SysOtherList
         public async Task<IActionResult> GetListByCode(string typeCode)
         {
             var response = await _SysOtherListRepository.GetListByCode(typeCode);
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOtherListByGroup(string code)
         {
             var response = await _SysOtherListRepository.GetOtherListByGroup(code);
+            return Ok(response);
         }
 
         [HttpGet]
