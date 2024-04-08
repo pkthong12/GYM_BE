@@ -1,5 +1,4 @@
-﻿using API;
-using GYM_BE.All.SysUser;
+using API;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -7,73 +6,73 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.All.System.SysUser
+namespace GYM_BE.All.PerEmployee
 {
-    [ApiExplorerSettings(GroupName = "017-SYSTEM-SYS_USER")]
+    [ApiExplorerSettings(GroupName = "003-PERSONAL-PER_EMPLOYEE")]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class SysUserController : Controller
+    public class PerEmployeeController : Controller
     {
         private readonly FullDbContext _dbContext;
-        private readonly ISysUserRepository _SysUserRepository;
+        private readonly IPerEmployeeRepository _PerEmployeeRepository;
         private readonly AppSettings _appSettings;
 
-        public SysUserController(
+        public PerEmployeeController(
             DbContextOptions<FullDbContext> dbOptions,
             IOptions<AppSettings> options)
         {
             _dbContext = new FullDbContext(dbOptions, options);
-            _SysUserRepository = new SysUserRepository(_dbContext);
+            _PerEmployeeRepository = new PerEmployeeRepository(_dbContext);
             _appSettings = options.Value;
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO<SysUserDTO> pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<PerEmployeeDTO> pagination)
         {
-            var response = await _SysUserRepository.QueryList(pagination);
+            var response = await _PerEmployeeRepository.QueryList(pagination);
             return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {
-            var response = await _SysUserRepository.GetById(id);
+            var response = await _PerEmployeeRepository.GetById(id);
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SysUserDTO model)
+        public async Task<IActionResult> Create(PerEmployeeDTO model)
         {
-            var response = await _SysUserRepository.Create(model, "root");
+            var response = await _PerEmployeeRepository.Create(model, "root");
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRange(List<SysUserDTO> models)
+        public async Task<IActionResult> CreateRange(List<PerEmployeeDTO> models)
         {
-            var response = await _SysUserRepository.CreateRange(models, "root");
-            return Ok(response);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Update(SysUserDTO model)
-        {
-            var response = await _SysUserRepository.Update(model, "root");
+            var response = await _PerEmployeeRepository.CreateRange(models, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateRange(List<SysUserDTO> models)
+        public async Task<IActionResult> Update(PerEmployeeDTO model)
         {
-            var response = await _SysUserRepository.UpdateRange(models, "root");
+            var response = await _PerEmployeeRepository.Update(model, "root");
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(SysUserDTO model)
+        public async Task<IActionResult> UpdateRange(List<PerEmployeeDTO> models)
+        {
+            var response = await _PerEmployeeRepository.UpdateRange(models, "root");
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(PerEmployeeDTO model)
         {
             if (model.Id != null)
             {
-                var response = await _SysUserRepository.Delete(model.Id);
+                var response = await _PerEmployeeRepository.Delete((long)model.Id);
                 return Ok(response);
             }
             else
@@ -85,15 +84,16 @@ namespace GYM_BE.All.System.SysUser
         [HttpPost]
         public async Task<IActionResult> DeleteIds(IdsRequest model)
         {
-            var response = await _SysUserRepository.DeleteIds(model.Ids);
+            var response = await _PerEmployeeRepository.DeleteIds(model.Ids);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _SysUserRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var response = await _PerEmployeeRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
             return Ok(response);
         }
     }
 }
+

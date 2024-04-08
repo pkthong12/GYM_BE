@@ -9,6 +9,8 @@ namespace GYM_BE.All.SysOtherList
     {
         Task<FormatedResponse> QueryList(PaginationDTO pagination);
         Task<FormatedResponse> GetListByCode(string typeCode);
+        Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListDTO> pagination);
+        Task<FormatedResponse> GetListByType(string type, long? id);
 
     }
 }

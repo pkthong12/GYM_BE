@@ -7,7 +7,7 @@ namespace GYM_BE.All.SysOtherListType
 {
     public interface ISysOtherListTypeRepository: IGenericRepository<SYS_OTHER_LIST_TYPE, SysOtherListTypeDTO>
     {
-        Task<FormatedResponse> QueryList(PaginationDTO pagination);
+        Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListTypeDTO> pagination);
 
         Task<FormatedResponse> GetList();
     }

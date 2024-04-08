@@ -5,6 +5,8 @@ using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace GYM_BE.All.System.SysOtherList
 {
@@ -19,7 +21,7 @@ namespace GYM_BE.All.System.SysOtherList
             _genericRepository = new GenericRepository<SYS_OTHER_LIST, SysOtherListDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListDTO> pagination)
         {
             var joined = from p in _dbContext.SysOtherLists.AsNoTracking()
                          from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
@@ -35,6 +37,13 @@ namespace GYM_BE.All.System.SysOtherList
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.TypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.TypeId == pagination.Filter.TypeId);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
@@ -126,16 +135,51 @@ namespace GYM_BE.All.System.SysOtherList
 
         public async Task<FormatedResponse> GetListByCode(string typeCode)
         {
-            var res = await(from p in _dbContext.SysOtherLists.AsNoTracking()
-                            from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
-                            where p.IS_ACTIVE == true && t.CODE == typeCode
-                            select new SysOtherListDTO
-                            {
-                                Id = p.ID,
-                                Code = p.CODE,
-                                Name = p.NAME,
-                            }).ToListAsync();
+            var res = await (from p in _dbContext.SysOtherLists.AsNoTracking()
+                             from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
+                             where p.IS_ACTIVE == true && t.CODE == typeCode
+                             select new SysOtherListDTO
+                             {
+                                 Id = p.ID,
+                                 Code = p.CODE,
+                                 Name = p.NAME,
+                             }).ToListAsync();
             return new FormatedResponse() { InnerBody = res };
+        }
+
+        public async Task<FormatedResponse> GetListByType(string type, long? id)
+        {
+            var res = await (from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(t => t.CODE!.ToUpper().Trim() == type!.ToUpper().Trim())
+                             from p in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.TYPE_ID == t.ID && x.IS_ACTIVE == true).DefaultIfEmpty()
+                             select new
+                             {
+                                 Id = p.ID,
+                                 Code = p.CODE,
+                                 Name = p.NAME,
+                             }).ToListAsync();
+            if (id != null)
+            {
+                var x = await (from p in _dbContext.SysOtherLists.Where(p => p.ID == id)
+                               select new
+                               {
+                                   Id = p.ID,
+                                   Code = p.CODE,
+                                   Name = p.NAME,
+                               }).FirstOrDefaultAsync();
+                if (x != null)
+                {
+                    var check = res.Find(p => p.Id == x.Id);
+                    if (check == null)
+                    {
+                        res.Add(x);
+                        res.OrderBy(p => p.Id);
+                    }
+                }
+            }
+            return new FormatedResponse
+            {
+                InnerBody = res,
+            };
         }
     }
 }

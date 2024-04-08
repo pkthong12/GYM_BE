@@ -1,35 +1,45 @@
-﻿using GYM_BE.Core.Dto;
+using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GYM_BE.All.SysOtherListType
+namespace GYM_BE.All.PerEmployee
 {
-    public class SysOtherListTypeRepository : ISysOtherListTypeRepository
+    public class PerEmployeeRepository : IPerEmployeeRepository
     {
         private readonly FullDbContext _dbContext;
-        private readonly GenericRepository<SYS_OTHER_LIST_TYPE, SysOtherListTypeDTO> _genericRepository;
+        private readonly GenericRepository<PER_EMPLOYEE, PerEmployeeDTO> _genericRepository;
 
-        public SysOtherListTypeRepository(FullDbContext context)
+        public PerEmployeeRepository(FullDbContext context)
         {
             _dbContext = context;
-            _genericRepository = new GenericRepository<SYS_OTHER_LIST_TYPE, SysOtherListTypeDTO>(_dbContext);
+            _genericRepository = new GenericRepository<PER_EMPLOYEE, PerEmployeeDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO<SysOtherListTypeDTO> pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<PerEmployeeDTO> pagination)
         {
-            var joined = from p in _dbContext.SysOtherListTypes.AsNoTracking()
+            var joined = from p in _dbContext.PerEmployees.AsNoTracking()
+                         from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s1 => s1.ID == p.GENDER_ID).DefaultIfEmpty()
+                         from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s2=> s2.ID == p.STAFF_GROUP_ID).DefaultIfEmpty()
+
                              //tuy chinh
-                         select new SysOtherListTypeDTO
+                         select new PerEmployeeDTO
                          {
                              Id = p.ID,
                              Code = p.CODE,
-                             Name = p.NAME,
+                             FullName = p.FULL_NAME,
+                             IdNo = p.ID_NO,
+                             Address = p.ADDRESS,
+                             BirthDate = p.BIRTH_DATE,
+                             PhoneNumber = p.PHONE_NUMBER,
+                             Email = p.EMAIL,
+                             GenderId = p.GENDER_ID,
+                             GenderName = s1.NAME,
+                             StaffGroupId = p.STAFF_GROUP_ID,
+                             StaffGroupName = s2.NAME,
+                             StatusId = p.STATUS_ID,
                              Note = p.NOTE,
-                             Orders = p.ORDERS,
-                             IsActive = p.IS_ACTIVE,
-                             Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -44,21 +54,26 @@ namespace GYM_BE.All.SysOtherListType
             if (res.InnerBody != null)
             {
                 var response = res.InnerBody;
-                var list = new List<SYS_OTHER_LIST_TYPE>
+                var list = new List<PER_EMPLOYEE>
                     {
-                        (SYS_OTHER_LIST_TYPE)response
+                        (PER_EMPLOYEE)response
                     };
                 var joined = (from l in list
-                              // JOIN OTHER ENTITIES BASED ON THE BUSINESS
-                              select new SysOtherListTypeDTO
+                                  // JOIN OTHER ENTITIES BASED ON THE BUSINESS
+                              select new PerEmployeeDTO
                               {
                                   Id = l.ID,
                                   Code = l.CODE,
-                                  Name = l.NAME,
+                                  FullName = l.FULL_NAME,
+                                  IdNo = l.ID_NO,
+                                  Address = l.ADDRESS,
+                                  BirthDate = l.BIRTH_DATE,
+                                  PhoneNumber = l.PHONE_NUMBER,
+                                  Email = l.EMAIL,
+                                  GenderId = l.GENDER_ID,
+                                  StaffGroupId = l.STAFF_GROUP_ID,
+                                  StatusId = l.STATUS_ID,
                                   Note = l.NOTE,
-                                  Orders = l.ORDERS,
-                                  IsActive = l.IS_ACTIVE,
-                                  Status = l.IS_ACTIVE!.Value ? "Áp dụng":"Ngừng áp dụng"
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
@@ -69,28 +84,27 @@ namespace GYM_BE.All.SysOtherListType
             }
         }
 
-        public async Task<FormatedResponse> Create(SysOtherListTypeDTO dto, string sid)
+        public async Task<FormatedResponse> Create(PerEmployeeDTO dto, string sid)
         {
-            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> CreateRange(List<SysOtherListTypeDTO> dtos, string sid)
+        public async Task<FormatedResponse> CreateRange(List<PerEmployeeDTO> dtos, string sid)
         {
-            var add = new List<SysOtherListTypeDTO>();
+            var add = new List<PerEmployeeDTO>();
             add.AddRange(dtos);
             var response = await _genericRepository.CreateRange(add, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> Update(SysOtherListTypeDTO dto, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> Update(PerEmployeeDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, "root", patchMode);
             return response;
         }
 
-        public async Task<FormatedResponse> UpdateRange(List<SysOtherListTypeDTO> dtos, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> UpdateRange(List<PerEmployeeDTO> dtos, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
             return response;
@@ -111,21 +125,6 @@ namespace GYM_BE.All.SysOtherListType
         public async Task<FormatedResponse> ToggleActiveIds(List<long> ids, bool valueToBind, string sid)
         {
             throw new NotImplementedException();
-        }
-
-        public async Task<FormatedResponse> GetList()
-        {
-            var res = await (from p in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.IS_ACTIVE == true)
-                                select new 
-                                {
-                                    Id = p.ID,
-                                    Code = p.CODE,
-                                    Name = p.NAME,
-                                }).ToListAsync();
-            return new FormatedResponse
-            {
-                InnerBody = res,
-            };
         }
 
         public Task<FormatedResponse> Delete(string id)
