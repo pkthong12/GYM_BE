@@ -33,12 +33,10 @@ services.AddCors(options =>
           builder =>
               builder
                 .AllowAnyHeader()
+                .WithExposedHeaders("X-Message-Code", "Content-Type")
                 .AllowAnyMethod()
                 .AllowCredentials()
-                .SetIsOriginAllowed(_ =>
-                {
-                    return true;
-                })
+                .SetIsOriginAllowed(_ => true)
           );
 });
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
