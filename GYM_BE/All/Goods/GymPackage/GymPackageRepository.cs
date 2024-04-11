@@ -21,9 +21,18 @@ namespace GYM_BE.All.Gym.GymPackage
         public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsPackageDTO> pagination)
         {
             var joined = from p in _dbContext.GymPackages.AsNoTracking()
+                         from s in _dbContext.GymShifts.AsNoTracking().Where(s => s.ID == p.SHIFT_ID).DefaultIfEmpty()
                          select new GoodsPackageDTO
                          {
                              Id = p.ID,
+                             Code = p.CODE,
+                             Money = p.MONEY,
+                             Period = p.PERIOD,
+                             ShiftId = p.SHIFT_ID,
+                             ShiftName = s.NAME,
+                             Description = p.DESCRIPTION,
+                             IsActive = p.IS_ACTIVE,
+                             Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -43,9 +52,17 @@ namespace GYM_BE.All.Gym.GymPackage
                         (GOODS_PACKAGE)response
                     };
                 var joined = (from l in list
+                              from s in _dbContext.GymShifts.AsNoTracking().Where(s => s.ID == l.SHIFT_ID).DefaultIfEmpty()
                               select new GoodsPackageDTO
                               {
                                   Id = l.ID,
+                                  Code = l.CODE,
+                                  Money = l.MONEY,
+                                  Period = l.PERIOD,
+                                  ShiftId = l.SHIFT_ID,
+                                  ShiftName = s.NAME,
+                                  Description = l.DESCRIPTION,
+                                  IsActive = l.IS_ACTIVE,
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
@@ -58,6 +75,7 @@ namespace GYM_BE.All.Gym.GymPackage
 
         public async Task<FormatedResponse> Create(GoodsPackageDTO dto, string sid)
         {
+            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }

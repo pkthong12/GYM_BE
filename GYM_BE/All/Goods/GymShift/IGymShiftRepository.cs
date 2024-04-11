@@ -9,5 +9,7 @@ namespace GYM_BE.All.Gym.GymShift
     {
         Task<FormatedResponse> QueryList(PaginationDTO<GoodsShiftDTO> pagination);
 
+        Task<FormatedResponse> GetList();
+
     }
 }

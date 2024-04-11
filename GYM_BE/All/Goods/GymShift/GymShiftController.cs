@@ -35,6 +35,13 @@ namespace GYM_BE.All.Gym.GymShift
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetList()
+        {
+            var response = await _GymShiftRepository.GetList();
+            return Ok(response);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {
             var response = await _GymShiftRepository.GetById(id);

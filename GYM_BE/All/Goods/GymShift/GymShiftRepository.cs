@@ -25,6 +25,16 @@ namespace GYM_BE.All.Gym.GymShift
                          select new GoodsShiftDTO
                          {
                              Id = p.ID,
+                             Code = p.CODE,
+                             Name = p.NAME,
+                             TotalDays = p.TOTAL_DAYS,
+                             HoursStart = p.HOURS_START,
+                             HoursStartString = p.HOURS_START! == null ? "" : p.HOURS_START!.Value.ToString("HH:mm"),
+                             HoursEnd = p.HOURS_END,
+                             HoursEndString = p.HOURS_END! == null ? "" : p.HOURS_END!.Value.ToString("HH:mm"),
+                             Note = p.NOTE,
+                             IsActive = p.IS_ACTIVE,
+                             Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -47,6 +57,16 @@ namespace GYM_BE.All.Gym.GymShift
                               select new GoodsShiftDTO
                               {
                                   Id = l.ID,
+                                  Code = l.CODE,
+                                  Name = l.NAME,
+                                  TotalDays = l.TOTAL_DAYS,
+                                  HoursStart = l.HOURS_START,
+                                  HoursStartString = l.HOURS_START! == null ? "" : l.HOURS_START!.Value.ToString("HH:mm"),
+                                  HoursEnd = l.HOURS_END,
+                                  HoursEndString = l.HOURS_END! == null ? "" : l.HOURS_END!.Value.ToString("HH:mm"),
+                                  Note = l.NOTE,
+                                  IsActive = l.IS_ACTIVE,
+                                  Status = l.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
@@ -59,6 +79,7 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> Create(GoodsShiftDTO dto, string sid)
         {
+            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
@@ -104,6 +125,19 @@ namespace GYM_BE.All.Gym.GymShift
         public async Task<FormatedResponse> ToggleActiveIds(List<long> ids, bool valueToBind, string sid)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<FormatedResponse> GetList()
+        {
+            var res = await (from p in _dbContext.GymShifts.AsNoTracking()
+                             where p.IS_ACTIVE == true 
+                             select new GoodsShiftDTO
+                             {
+                                 Id = p.ID,
+                                 Code = p.CODE,
+                                 Name = p.NAME,
+                             }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
         }
     }
 }
