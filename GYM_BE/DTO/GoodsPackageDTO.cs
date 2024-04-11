@@ -1,6 +1,6 @@
 ﻿namespace GYM_BE.DTO
 {
-    public class GymPackageDTO : BaseDTO
+    public class GoodsPackageDTO : BaseDTO
     {
         public string? Code { get; set; }
         public decimal? Money { get; set; }

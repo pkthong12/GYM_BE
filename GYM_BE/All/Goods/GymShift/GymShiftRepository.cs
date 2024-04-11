@@ -11,18 +11,18 @@ namespace GYM_BE.All.Gym.GymShift
     public class GymShiftRepository : IGymShiftRepository
     {
         private readonly FullDbContext _dbContext;
-        private readonly GenericRepository<GYM_SHIFT, GymShiftDTO> _genericRepository;
+        private readonly GenericRepository<GOODS_SHIFT, GoodsShiftDTO> _genericRepository;
 
         public GymShiftRepository(FullDbContext context)
         {
             _dbContext = context;
-            _genericRepository = new GenericRepository<GYM_SHIFT, GymShiftDTO>(_dbContext);
+            _genericRepository = new GenericRepository<GOODS_SHIFT, GoodsShiftDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO<GymShiftDTO> pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsShiftDTO> pagination)
         {
             var joined = from p in _dbContext.GymShifts.AsNoTracking()
-                         select new GymShiftDTO
+                         select new GoodsShiftDTO
                          {
                              Id = p.ID,
                          };
@@ -39,12 +39,12 @@ namespace GYM_BE.All.Gym.GymShift
             if (res.InnerBody != null)
             {
                 var response = res.InnerBody;
-                var list = new List<GYM_SHIFT>
+                var list = new List<GOODS_SHIFT>
                     {
-                        (GYM_SHIFT)response
+                        (GOODS_SHIFT)response
                     };
                 var joined = (from l in list
-                              select new GymShiftDTO
+                              select new GoodsShiftDTO
                               {
                                   Id = l.ID,
                               }).FirstOrDefault();
@@ -57,27 +57,27 @@ namespace GYM_BE.All.Gym.GymShift
             }
         }
 
-        public async Task<FormatedResponse> Create(GymShiftDTO dto, string sid)
+        public async Task<FormatedResponse> Create(GoodsShiftDTO dto, string sid)
         {
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> CreateRange(List<GymShiftDTO> dtos, string sid)
+        public async Task<FormatedResponse> CreateRange(List<GoodsShiftDTO> dtos, string sid)
         {
-            var add = new List<GymShiftDTO>();
+            var add = new List<GoodsShiftDTO>();
             add.AddRange(dtos);
             var response = await _genericRepository.CreateRange(add, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> Update(GymShiftDTO dto, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> Update(GoodsShiftDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, "root", patchMode);
             return response;
         }
 
-        public async Task<FormatedResponse> UpdateRange(List<GymShiftDTO> dtos, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> UpdateRange(List<GoodsShiftDTO> dtos, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
             return response;

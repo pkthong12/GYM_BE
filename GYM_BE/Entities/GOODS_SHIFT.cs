@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GYM_BE.ENTITIES
 {
-    [Table("GYM_SHIFT")]
+    [Table("GOODS_SHIFT")]
 
-    public class GYM_SHIFT : BASE_ENTITY 
+    public class GOODS_SHIFT : BASE_ENTITY 
     {
         public string? CODE { get; set; }
         public string? NAME { get; set; }

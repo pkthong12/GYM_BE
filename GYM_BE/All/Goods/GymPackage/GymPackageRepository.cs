@@ -10,18 +10,18 @@ namespace GYM_BE.All.Gym.GymPackage
     public class GymPackageRepository : IGymPackageRepository
     {
         private readonly FullDbContext _dbContext;
-        private readonly GenericRepository<GYM_PACKAGE, GymPackageDTO> _genericRepository;
+        private readonly GenericRepository<GOODS_PACKAGE, GoodsPackageDTO> _genericRepository;
 
         public GymPackageRepository(FullDbContext context)
         {
             _dbContext = context;
-            _genericRepository = new GenericRepository<GYM_PACKAGE, GymPackageDTO>(_dbContext);
+            _genericRepository = new GenericRepository<GOODS_PACKAGE, GoodsPackageDTO>(_dbContext);
         }
 
-        public async Task<FormatedResponse> QueryList(PaginationDTO<GymPackageDTO> pagination)
+        public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsPackageDTO> pagination)
         {
             var joined = from p in _dbContext.GymPackages.AsNoTracking()
-                         select new GymPackageDTO
+                         select new GoodsPackageDTO
                          {
                              Id = p.ID,
                          };
@@ -38,12 +38,12 @@ namespace GYM_BE.All.Gym.GymPackage
             if (res.InnerBody != null)
             {
                 var response = res.InnerBody;
-                var list = new List<GYM_PACKAGE>
+                var list = new List<GOODS_PACKAGE>
                     {
-                        (GYM_PACKAGE)response
+                        (GOODS_PACKAGE)response
                     };
                 var joined = (from l in list
-                              select new GymPackageDTO
+                              select new GoodsPackageDTO
                               {
                                   Id = l.ID,
                               }).FirstOrDefault();
@@ -56,27 +56,27 @@ namespace GYM_BE.All.Gym.GymPackage
             }
         }
 
-        public async Task<FormatedResponse> Create(GymPackageDTO dto, string sid)
+        public async Task<FormatedResponse> Create(GoodsPackageDTO dto, string sid)
         {
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> CreateRange(List<GymPackageDTO> dtos, string sid)
+        public async Task<FormatedResponse> CreateRange(List<GoodsPackageDTO> dtos, string sid)
         {
-            var add = new List<GymPackageDTO>();
+            var add = new List<GoodsPackageDTO>();
             add.AddRange(dtos);
             var response = await _genericRepository.CreateRange(add, "root");
             return response;
         }
 
-        public async Task<FormatedResponse> Update(GymPackageDTO dto, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> Update(GoodsPackageDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, "root", patchMode);
             return response;
         }
 
-        public async Task<FormatedResponse> UpdateRange(List<GymPackageDTO> dtos, string sid, bool patchMode = true)
+        public async Task<FormatedResponse> UpdateRange(List<GoodsPackageDTO> dtos, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
             return response;

@@ -23,8 +23,8 @@ namespace GYM_BE.Entities
         {
             _appSettings = appSettings.Value;
         }
-        public virtual DbSet<GYM_PACKAGE> GymPackages { get; set; }
-        public virtual DbSet<GYM_SHIFT> GymShifts { get; set; }
+        public virtual DbSet<GOODS_PACKAGE> GymPackages { get; set; }
+        public virtual DbSet<GOODS_SHIFT> GymShifts { get; set; }
 
         public virtual DbSet<TR_CENTER> TrCenters { get; set; }
         public virtual DbSet<SYS_OTHER_LIST_TYPE> SysOtherListTypes { get; set; }

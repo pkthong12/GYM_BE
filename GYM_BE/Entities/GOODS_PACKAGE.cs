@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GYM_BE.ENTITIES
 {
-    [Table("GYM_PACKAGE")]
-    public class GYM_PACKAGE : BASE_ENTITY 
+    [Table("GOODS_PACKAGE")]
+    public class GOODS_PACKAGE : BASE_ENTITY 
     {
         public string? CODE { get; set; }
         public decimal? MONEY { get; set; }

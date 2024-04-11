@@ -1,6 +1,6 @@
 ﻿namespace GYM_BE.DTO
 {
-    public class GymShiftDTO : BaseDTO
+    public class GoodsShiftDTO : BaseDTO
     {
         public string? Code { get; set; }
         public string? Name { get; set; }
