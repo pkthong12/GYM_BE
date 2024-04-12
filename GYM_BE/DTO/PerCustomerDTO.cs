@@ -25,6 +25,15 @@
         public long? BankBranch { get; set; }
         public string? BankBranchName { get; set; }
         public string? BankNo { get; set; }
+        public bool? IsGuestPass { get; set; }
+        public DateTime? JoinDate { get; set; }
+        public string? Height { get; set; }
+        public string? Weight { get; set; }
+        public long? CardId { get; set; }
+        public DateTime? ExpireDate { get; set; }
+        public long? GymPackageId { get; set; }
+        public long? PerPtId { get; set; }
+        public long? PerSaleId { get; set; }
         public string? Note { get; set; }
         public bool? IsActive { get; set; }
         public string? Status { get; set; }

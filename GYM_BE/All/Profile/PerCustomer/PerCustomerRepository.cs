@@ -54,6 +54,15 @@ namespace GYM_BE.All.Profile.PerCustomer
                              BankBranch = p.BANK_BRANCH,
                              BankBranchName = bb.NAME,
                              BankNo = p.BANK_NO,
+                             IsGuestPass = p.IS_GUEST_PASS,
+                             JoinDate = p.JOIN_DATE,
+                             Height = p.HEIGHT,
+                             Weight = p.WEIGHT,
+                             CardId = p.CARD_ID,
+                             ExpireDate = p.EXPIRE_DATE,
+                             GymPackageId = p.GYM_PACKAGE_ID,
+                             PerPtId = p.PER_PT_ID,
+                             PerSaleId = p.PER_SALE_ID,
                              Note = p.NOTE,
                              Status = p.IS_ACTIVE == true ? "Hoạt động" : "Ngừng hoạt động"
                          };
@@ -96,6 +105,15 @@ namespace GYM_BE.All.Profile.PerCustomer
                                     BankBranch = l.BANK_BRANCH,
                                     BankBranchName = bb.NAME,
                                     BankNo = l.BANK_NO,
+                                    IsGuestPass = l.IS_GUEST_PASS,
+                                    JoinDate = l.JOIN_DATE,
+                                    Height = l.HEIGHT,
+                                    Weight = l.WEIGHT,
+                                    CardId = l.CARD_ID,
+                                    ExpireDate = l.EXPIRE_DATE,
+                                    GymPackageId = l.GYM_PACKAGE_ID,
+                                    PerPtId = l.PER_PT_ID,
+                                    PerSaleId = l.PER_SALE_ID,
                                     Note = l.NOTE,
                                 }).FirstOrDefaultAsync();
             if (joined != null)

@@ -11,6 +11,7 @@ namespace GYM_BE.ENTITIES
         public double? PERIOD { get; set; }
         public long? SHIFT_ID { get; set; }
         public string? DESCRIPTION { get; set; }
+        public bool? IS_PRIVATE { get; set; }
         public bool? IS_ACTIVE { get; set; }
     }
 }
