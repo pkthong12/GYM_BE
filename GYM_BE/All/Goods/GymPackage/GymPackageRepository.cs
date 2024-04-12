@@ -31,6 +31,7 @@ namespace GYM_BE.All.Gym.GymPackage
                              ShiftId = p.SHIFT_ID,
                              ShiftName = s.NAME,
                              Description = p.DESCRIPTION,
+                             IsPrivate = p.IS_PRIVATE,
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
                          };
@@ -62,6 +63,7 @@ namespace GYM_BE.All.Gym.GymPackage
                                   ShiftId = l.SHIFT_ID,
                                   ShiftName = s.NAME,
                                   Description = l.DESCRIPTION,
+                                  IsPrivate = l.IS_PRIVATE,
                                   IsActive = l.IS_ACTIVE,
                               }).FirstOrDefault();
 
