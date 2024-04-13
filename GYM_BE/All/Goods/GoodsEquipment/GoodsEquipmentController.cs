@@ -95,6 +95,13 @@ namespace GYM_BE.All.GoodsEquipment
             return Ok(response);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetListByTypeCode(string typeCode)
+        {
+            var response = await _GoodsEquipmentRepository.GetListByCode(typeCode);
+            return Ok(response);
+        }
     }
 }
 

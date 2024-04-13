@@ -9,6 +9,8 @@ namespace GYM_BE.All.GoodsEquipment
     public interface IGoodsEquipmentRepository: IGenericRepository<GOODS_EQUIPMENT, GoodsEquipmentDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<GoodsEquipmentDTO> pagination);
+
+        Task<FormatedResponse> GetListByTypeCode(string typeCode);
     }
 }
 

@@ -27,6 +27,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
                          select new GoodsEquipmentFixDTO
                         {
                             Id = p.ID,
+                            Code = p.CODE,
                             EquipmentId = p.EQUIPMENT_ID,
                             EquipmentName = e.NAME,
                             TypeId = p.TYPE_ID,
@@ -66,6 +67,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
                               select new GoodsEquipmentFixDTO
                               {
                                   Id = p.ID,
+                                  Code = p.CODE,
                                   EquipmentId = p.EQUIPMENT_ID,
                                   EquipmentName = e.NAME,
                                   TypeId = p.TYPE_ID,

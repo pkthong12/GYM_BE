@@ -138,6 +138,21 @@ namespace GYM_BE.All.GoodsEquipment
             var response = await _genericRepository.Delete(id);
             return response;
         }
+
+        public async Task<FormatedResponse> GetListByTypeCode(string typeCode)
+        {
+            var res = await (from e in _dbContext.GoodsEquipments.AsNoTracking()
+                             from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.CODE == typeCode).DefaultIfEmpty()
+                             where e.EQUIPMENT_TYPE == s.ID
+                             select new SysOtherListDTO
+                             {
+                                 Id = e.ID,
+                                 Code = e.CODE,
+                                 Name = e.NAME,
+                             }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
+        }
+
     }
 }
 

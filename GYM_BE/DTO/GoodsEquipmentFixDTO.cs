@@ -2,7 +2,8 @@ namespace GYM_BE.DTO
 {
     public class GoodsEquipmentFixDTO : BaseDTO
     {
-       public long? EquipmentId  { get; set; }
+        public string? Code { get; set; }
+        public long? EquipmentId  { get; set; }
        public string? EquipmentName  { get; set; }
        public int? TypeId  { get; set; }
        public string? TypeName  { get; set; }

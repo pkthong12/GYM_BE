@@ -5,7 +5,9 @@ namespace GYM_BE.Entities
     [Table("GOODS_EQUIPMENT_FIX")]
     public class GOODS_EQUIPMENT_FIX : BASE_ENTITY
     {
-       public int? TYPE_ID  { get; set; }
+        public string? CODE { get; set; }
+
+        public int? TYPE_ID  { get; set; }
 
        public long? RESULT_ID  { get; set; }
 
