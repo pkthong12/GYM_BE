@@ -35,6 +35,8 @@ namespace GYM_BE.Entities
         public virtual DbSet<SYS_USER> SysUsers { get; set; }
         public virtual DbSet<PER_CUSTOMER> PerCustomers { get; set; }
         public virtual DbSet<PER_EMPLOYEE> PerEmployees { get; set; }
+        public virtual DbSet<CARD_CHECK_IN> CardCheckIns { get; set; }
+        public virtual DbSet<CARD_INFO> CardInfos { get; set; }
         protected override void ConfigureConventions(
         ModelConfigurationBuilder configurationBuilder)
         {
