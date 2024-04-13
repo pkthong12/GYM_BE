@@ -99,7 +99,7 @@ namespace GYM_BE.All.GoodsEquipment
         [HttpGet]
         public async Task<IActionResult> GetListByTypeCode(string typeCode)
         {
-            var response = await _GoodsEquipmentRepository.GetListByCode(typeCode);
+            var response = await _GoodsEquipmentRepository.GetListByTypeCode(typeCode);
             return Ok(response);
         }
     }
