@@ -1,7 +1,9 @@
 using API;
 using GYM_BE.Core.Dto;
 using GYM_BE.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
@@ -15,14 +17,39 @@ IConfiguration config = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
+// Add services to the container.
+
 services.Configure<AppSettings>(config.GetSection("AppSettings"));
 var _appSettings = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-// Add services to the container.
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            // If the request is for our hub...
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) &&
+                (path.StartsWithSegments("/hubs/signal")))
+            {
+                // Read the token out of the query string
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
 
 
 #region DbContexts
-services.AddDbContext<FullDbContext>();
+services.AddDbContext<FullDbContext>(options => options.UseSqlServer());
 #endregion DbContexts
 
 services.AddRouting(o => o.LowercaseQueryStrings = true);
@@ -73,6 +100,35 @@ services.AddSwaggerGen(c =>
 
         throw new InvalidOperationException("Unable to determine tag for endpoint.");
     });
+
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"JWT Authorization header using the Bearer scheme. 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      Example: 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
 
     c.DocInclusionPredicate((name, api) =>
     {
