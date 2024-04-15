@@ -67,6 +67,8 @@ namespace GYM_BE.All.CardInfo
                                     LockerId = p.LOCKER_ID,
                                     Status = p.IS_ACTIVE!.Value == true ? "Hoạt động" : "Ngừng hoạt động",
                                     Note = p.NOTE,
+                                    EffectedDate = p.EFFECTED_DATE,
+                                    ExpiredDate = p.EXPIRED_DATE,
                                 }).FirstAsync();
             if (joined != null)
             {
