@@ -180,7 +180,7 @@ if (app.Environment.IsDevelopment())
 }
 /* Latter, in Production, we need to use specific policy */
 app.UseCors("Development");
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
