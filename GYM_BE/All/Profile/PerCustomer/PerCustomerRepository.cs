@@ -70,6 +70,14 @@ namespace GYM_BE.All.Profile.PerCustomer
                              Note = p.NOTE,
                              Status = s.NAME
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.CustomerClassId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.CustomerClassId == pagination.Filter.CustomerClassId);
+                }
+            }
+
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
