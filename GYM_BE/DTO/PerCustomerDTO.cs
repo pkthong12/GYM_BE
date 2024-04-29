@@ -15,6 +15,7 @@
         public string? GenderName { get; set; }
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
+        public string? IdNo { get; set; }
         public string? Email { get; set; }
         public long? NativeId { get; set; }
         public string? NativeName { get; set; }
@@ -33,9 +34,11 @@
         public DateTime? ExpireDate { get; set; }
         public long? GymPackageId { get; set; }
         public long? PerPtId { get; set; }
+        public string? PerPtName { get; set; }
         public long? PerSaleId { get; set; }
         public string? Note { get; set; }
         public bool? IsActive { get; set; }
         public string? Status { get; set; }
+        public long? StatusId { get; set; }
     }
 }

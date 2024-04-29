@@ -12,6 +12,7 @@ public class PER_CUSTOMER : BASE_ENTITY
     public string? FIRST_NAME { get; set; }
     public string? LAST_NAME { get; set; }
     public string? FULL_NAME { get; set; }
+    public string? ID_NO { get; set; }
     public DateTime? BIRTH_DATE { get; set; }
     public long? GENDER_ID { get; set; }
     public string? ADDRESS { get; set; }
@@ -31,6 +32,7 @@ public class PER_CUSTOMER : BASE_ENTITY
     public long? GYM_PACKAGE_ID { get; set; }
     public long? PER_PT_ID { get; set; }
     public long? PER_SALE_ID { get; set; }
+    public long? STATUS_ID { get; set; }
     public string? NOTE { get; set; }
     public bool? IS_ACTIVE { get; set; }
     
