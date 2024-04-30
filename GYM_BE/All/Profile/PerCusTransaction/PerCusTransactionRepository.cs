@@ -9,7 +9,7 @@ namespace GYM_BE.All.PerCusTransaction
     public class PerCusTransactionRepository : IPerCusTransactionRepository
     {
         private readonly FullDbContext _dbContext;
-       private readonly GenericRepository<PER_CUS_TRANSACTION, PerCusTransactionDTO> _genericRepository;
+        private readonly GenericRepository<PER_CUS_TRANSACTION, PerCusTransactionDTO> _genericRepository;
 
         public PerCusTransactionRepository(FullDbContext context)
         {
@@ -20,16 +20,33 @@ namespace GYM_BE.All.PerCusTransaction
         public async Task<FormatedResponse> QueryList(PaginationDTO<PerCusTransactionDTO> pagination)
         {
             var joined = from p in _dbContext.PerCusTransactions.AsNoTracking()
-                                       //tuy chinh
-                       select new PerCusTransactionDTO
-                        {
-                            Id = p.ID,
-                        };
-         var respose = await _genericRepository.PagingQueryList(joined, pagination);
-         return new FormatedResponse
-         {
-             InnerBody = respose,
-         };
+                         from e in _dbContext.PerCustomers.AsNoTracking().Where(e => e.ID == p.CUSTOMER_ID).DefaultIfEmpty()
+                         from s in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == e.GENDER_ID).DefaultIfEmpty()
+                         from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s2=> s2.ID == e.CUSTOMER_CLASS_ID).DefaultIfEmpty()
+                             //tuy chinh
+                         select new PerCusTransactionDTO
+                         {
+                             Id = p.ID,
+                             FullName = e.FULL_NAME,
+                             Address = e.ADDRESS,
+                             BirthDateString = e.BIRTH_DATE!.Value.ToString("dd/MM/yyyy"),
+                             Code = p.CODE,
+                             CustomerCode = e.CODE,
+                             GenderName = s.NAME,
+                             TransDateString = p.TRANS_DATE!.Value.ToString("dd/MM/yyyy"),
+                             PhoneNumber = e.PHONE_NUMBER,
+                             IdNo = e.ID_NO,
+                             CustomerId = p.CUSTOMER_ID,
+                             TransDate = p.TRANS_DATE,
+                             TransForm = p.TRANS_FORM,
+                             CustomerClassName = s2.NAME,
+                             CustomerClassId = s2.ID,
+                         };
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            return new FormatedResponse
+            {
+                InnerBody = respose,
+            };
         }
 
         public async Task<FormatedResponse> GetById(long id)
@@ -43,7 +60,7 @@ namespace GYM_BE.All.PerCusTransaction
                         (PER_CUS_TRANSACTION)response
                     };
                 var joined = (from l in list
-                              // JOIN OTHER ENTITIES BASED ON THE BUSINESS
+                                  // JOIN OTHER ENTITIES BASED ON THE BUSINESS
                               select new PerCusTransactionDTO
                               {
                                   Id = l.ID
