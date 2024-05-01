@@ -82,6 +82,7 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> Create(CardInfoDTO dto, string sid)
         {
+            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }

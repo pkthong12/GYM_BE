@@ -1,10 +1,13 @@
-﻿using GYM_BE.All.SysUser;
+﻿using GYM_BE.All.System.Authentication;
+using GYM_BE.All.SysUser;
 using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace GYM_BE.All.System.SysUser
 {
@@ -17,6 +20,7 @@ namespace GYM_BE.All.System.SysUser
         {
             _dbContext = context;
             _genericRepository = new GenericRepository<SYS_USER, SysUserDTO>(_dbContext);
+
         }
 
         public async Task<FormatedResponse> QueryList(PaginationDTO<SysUserDTO> pagination)
@@ -103,6 +107,59 @@ namespace GYM_BE.All.System.SysUser
         public Task<FormatedResponse> Delete(long id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<FormatedResponse> ClientsLogin(string UserName, string password)
+        {
+            try
+            {
+                UserName = UserName.ToLower().Trim();
+                var r = await _dbContext.SysUsers.Where(p => p.USERNAME!.ToLower() == UserName).FirstOrDefaultAsync();
+                if (r != null)
+                {
+                    var userID = r.ID;
+                    var data = new AuthResponse()
+                    {
+                        Id = r.ID,
+                        UserName = r.USERNAME!,
+                        FullName = r.FULLNAME!,
+                        IsAdmin = r.IS_ADMIN,
+                        IsRoot = r.IS_ROOT,
+                        Avatar = r.AVATAR!,
+                        EmployeeId = r.EMPLOYEE_ID,
+                        IsLock = r.IS_LOCK,
+                    };
+                    return new FormatedResponse() { InnerBody = data };
+                    //if (BCrypt.Net.BCrypt.Verify(password, r.PASSWORDHASH))
+                    //{
+                    //    var userID = r.ID;
+                    //    var data = new
+                    //    {
+                    //        Id = r.ID,
+                    //        UserName = r.USERNAME!,
+                    //        FullName = r.FULLNAME!,
+                    //        IsAdmin = r.IS_ADMIN,
+                    //        IsRoot = r.IS_ROOT,
+                    //        Avatar = r.AVATAR!,
+                    //        EmployeeId = r.EMPLOYEE_ID,
+                    //    };
+                    //    return new FormatedResponse() { InnerBody = data };
+                    //}
+                    //else
+                    //{
+                    //    return new FormatedResponse() { MessageCode = "ERROR_PASSWORD_INCORRECT" };
+                    //}
+                }
+                else
+                {
+                    return new FormatedResponse() { MessageCode = "ERROR_USERNAME_INCORRECT" };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new FormatedResponse() { MessageCode = ex.Message };
+            }
+
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using API;
 using GYM_BE.All.SysOtherList;
 using GYM_BE.All.SysOtherListType;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -13,8 +15,10 @@ namespace GYM_BE.All.System.SysOtherList
 {
     [ApiExplorerSettings(GroupName = "014-SYSTEM-SYS_OTHER_LIST")]
     [ApiController]
+    [GymAuthorize]
     [Route("api/[controller]/[action]")]
-    public class SysOtherListController : Controller
+
+    public class SysOtherListController : ControllerBase
     {
         private readonly FullDbContext _dbContext;
         private readonly ISysOtherListRepository _SysOtherListRepository;

@@ -10,6 +10,7 @@ namespace GYM_BE.All.SysUser
     public interface ISysUserRepository : IGenericRepository<SYS_USER, SysUserDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<SysUserDTO> pagination);
+        Task<FormatedResponse> ClientsLogin(string UserName, string password);
 
     }
 }

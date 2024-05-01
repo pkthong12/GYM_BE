@@ -1,12 +1,21 @@
 using API;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.Entities;
+using GYM_BE.ENTITIES;
+using GYM_BE.Main;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +56,7 @@ services.AddAuthentication(options =>
     };
 });
 
+services.AddScoped<IJwtUtils, JwtUtils>();
 
 #region DbContexts
 services.AddDbContext<FullDbContext>(options => options.UseSqlServer());
@@ -166,6 +176,10 @@ services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseCors("Development");
+
+app.UseMiddleware<JwtMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -178,9 +192,58 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/goods/swagger.json", "GOODS API");
     });
 }
+
+app.UseWhen(
+    predicate: context =>
+    {
+        var sid = context.Request.Sid(_appSettings!);
+        if (
+            !context.Request.Path.StartsWithSegments("/api") ||
+            context.Request.Method != "POST" ||
+            context.Response.StatusCode != 200 ||
+            context.Request.Path.StartsWithSegments("/hubs/signal") ||
+            context.Request.Path.StartsWithSegments("/jobs") ||
+            context.Request.Path.StartsWithSegments("/assets") ||
+            sid == ""
+        ) return false;
+        return true;
+    },
+configuration: builder =>{
+    builder.UseMiddleware<RequestResponseLoggerMiddleware>();
+});
+
+app.UseWhen(
+predicate: context =>
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        try
+        {
+            var jwtToken = context.Request.Headers.Authorization[0]!.ToString().Split("Bearer ")[1];
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(jwtToken);
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+},
+configuration: builder =>
+{
+    builder.UseMiddleware<MessageCodeTranslationMiddleware>();
+});
+
 /* Latter, in Production, we need to use specific policy */
-app.UseCors("Development");
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
 
 app.UseAuthorization();
 

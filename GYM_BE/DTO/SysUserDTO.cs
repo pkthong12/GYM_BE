@@ -10,6 +10,7 @@
         public long? GroupId { get; set; }
         public bool? IsAdmin { get; set; }
         public bool? IsRoot { get; set; }
+        public bool? IsLock { get; set; }
         public string? Avatar { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? CreatedBy { get; set; }

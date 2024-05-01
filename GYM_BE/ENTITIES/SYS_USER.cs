@@ -1,4 +1,5 @@
 ﻿using GYM_BE.Entities;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GYM_BE.ENTITIES
@@ -15,6 +16,7 @@ namespace GYM_BE.ENTITIES
         public long? GROUP_ID { get; set; }
         public bool? IS_ADMIN { get; set; }
         public bool? IS_ROOT { get; set; }
+        public bool? IS_LOCK { get; set; }
         public string? AVATAR { get; set; }
         public DateTime? CREATED_DATE { get; set; }
         public string? CREATED_BY { get; set; }

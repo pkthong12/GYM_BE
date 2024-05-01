@@ -128,6 +128,7 @@ namespace GYM_BE.All.Profile.PerCustomer
 
         public async Task<FormatedResponse> Create(PerCustomerDTO dto, string sid)
         {
+            dto.IsActive = true;
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
