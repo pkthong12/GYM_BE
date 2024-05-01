@@ -24,18 +24,21 @@ namespace GYM_BE.All.Profile.PerCustomer
         public async Task<FormatedResponse> QueryList(PaginationDTO<PerCustomerDTO> pagination)
         {
             var joined = from p in _dbContext.PerCustomers.AsNoTracking()
+                         from e in _dbContext.PerEmployees.Where(x => x.ID == p.PER_PT_ID).DefaultIfEmpty()
                          from gr in _dbContext.SysOtherLists.Where(x => x.ID == p.CUSTOMER_CLASS_ID).DefaultIfEmpty()
                          from gender in _dbContext.SysOtherLists.Where(x => x.ID == p.GENDER_ID).DefaultIfEmpty()
                          from nav in _dbContext.SysOtherLists.Where(x => x.ID == p.NATIVE_ID).DefaultIfEmpty()
                          from re in _dbContext.SysOtherLists.Where(x => x.ID == p.RELIGION_ID).DefaultIfEmpty()
                          from b in _dbContext.SysOtherLists.Where(x => x.ID == p.BANK_ID).DefaultIfEmpty()
                          from bb in _dbContext.SysOtherLists.Where(x => x.ID == p.BANK_BRANCH).DefaultIfEmpty()
+                         from s in _dbContext.SysOtherLists.Where(x => x.ID == p.STATUS_ID).DefaultIfEmpty()
                          select new PerCustomerDTO
                          {
                              Id = p.ID,
                              Avatar = p.AVATAR,
                              FullName = p.FULL_NAME,
                              Code = p.CODE,
+                             IdNo = p.ID_NO,
                              CustomerClassId = p.CUSTOMER_CLASS_ID,
                              CustomerClassName = gr.NAME,
                              BirthDate = p.BIRTH_DATE,
@@ -62,10 +65,19 @@ namespace GYM_BE.All.Profile.PerCustomer
                              ExpireDate = p.EXPIRE_DATE,
                              GymPackageId = p.GYM_PACKAGE_ID,
                              PerPtId = p.PER_PT_ID,
+                             PerPtName = e.FULL_NAME,
                              PerSaleId = p.PER_SALE_ID,
                              Note = p.NOTE,
-                             Status = p.IS_ACTIVE == true ? "Hoạt động" : "Ngừng hoạt động"
+                             Status = s.NAME
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.CustomerClassId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.CustomerClassId == pagination.Filter.CustomerClassId);
+                }
+            }
+
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
@@ -90,6 +102,7 @@ namespace GYM_BE.All.Profile.PerCustomer
                                     Code = l.CODE,
                                     CustomerClassId = l.CUSTOMER_CLASS_ID,
                                     CustomerClassName = gr.NAME,
+                                    IdNo = l.ID_NO,
                                     BirthDate = l.BIRTH_DATE,
                                     GenderId = l.GENDER_ID,
                                     GenderName = gender.NAME,
@@ -114,6 +127,7 @@ namespace GYM_BE.All.Profile.PerCustomer
                                     GymPackageId = l.GYM_PACKAGE_ID,
                                     PerPtId = l.PER_PT_ID,
                                     PerSaleId = l.PER_SALE_ID,
+                                    StatusId = l.STATUS_ID,
                                     Note = l.NOTE,
                                 }).FirstOrDefaultAsync();
             if (joined != null)
@@ -129,6 +143,7 @@ namespace GYM_BE.All.Profile.PerCustomer
         public async Task<FormatedResponse> Create(PerCustomerDTO dto, string sid)
         {
             dto.IsActive = true;
+            dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }
@@ -176,7 +191,23 @@ namespace GYM_BE.All.Profile.PerCustomer
             throw new NotImplementedException();
         }
 
-        
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.PerCustomers.Count() == 0)
+            {
+                newCode = "CUS001";
+            }
+            else
+            {
+                string lastestData = _dbContext.PerCustomers.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
+        }
     }
 }
 

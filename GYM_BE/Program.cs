@@ -208,7 +208,8 @@ app.UseWhen(
         ) return false;
         return true;
     },
-configuration: builder =>{
+configuration: builder =>
+{
     builder.UseMiddleware<RequestResponseLoggerMiddleware>();
 });
 
@@ -244,6 +245,8 @@ configuration: builder =>
 
 app.UseAuthentication();
 
+app.UseCors("Development");
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
