@@ -202,10 +202,10 @@ namespace GYM_BE.Core.Generic
                 Type typeFromHandle = typeof(TEntity);
                 ParameterExpression parameterExpression = Expression.Parameter(typeFromHandle);
                 PropertyInfo propertyInfo2 = (from pi in typeFromHandle.GetProperties()
-                                              where pi.Name == "CREATED_DATE"
+                                              where pi.Name == "UPDATED_DATE"
                                               select pi).SingleOrDefault();
                 PropertyInfo? propertyInfo3 = (from pi in typeFromHandle.GetProperties()
-                                               where pi.Name == "CREATED_BY"
+                                               where pi.Name == "UPDATED_BY"
                                                select pi).SingleOrDefault();
                 propertyInfo2?.SetValue(entity, DateTime.UtcNow);
                 propertyInfo3?.SetValue(entity, sid);
