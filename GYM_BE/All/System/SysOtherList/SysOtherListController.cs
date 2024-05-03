@@ -52,13 +52,17 @@ namespace GYM_BE.All.System.SysOtherList
         [HttpPost]
         public async Task<IActionResult> Create(SysOtherListDTO model)
         {
-            var response = await _SysOtherListRepository.Create(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<SysOtherListDTO> models)
         {
-            var response = await _SysOtherListRepository.CreateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListRepository.CreateRange(models, sid);
             return Ok(response);
         }
 

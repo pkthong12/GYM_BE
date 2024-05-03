@@ -3,6 +3,7 @@ using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using GYM_BE.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -45,27 +46,35 @@ namespace GYM_BE.All.GoodsList
         [HttpPost]
         public async Task<IActionResult> Create(GoodsListDTO model)
         {
-            var response = await _GoodsListRepository.Create(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsListRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<GoodsListDTO> models)
         {
-            var response = await _GoodsListRepository.CreateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsListRepository.CreateRange(models, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(GoodsListDTO model)
         {
-            var response = await _GoodsListRepository.Update(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsListRepository.Update(model, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<GoodsListDTO> models)
         {
-            var response = await _GoodsListRepository.UpdateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsListRepository.UpdateRange(models, sid);
             return Ok(response);
         }
 
@@ -93,7 +102,9 @@ namespace GYM_BE.All.GoodsList
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _GoodsListRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsListRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
 

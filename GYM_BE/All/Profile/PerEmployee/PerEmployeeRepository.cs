@@ -99,7 +99,7 @@ namespace GYM_BE.All.PerEmployee
             dto.Code = CreateNewCode();
             var stt = await _dbContext.SysOtherLists.AsNoTracking().FirstAsync(p => p.CODE == "ESW");
             dto.StatusId = stt.ID;
-            var response = await _genericRepository.Create(dto, "root");
+            var response = await _genericRepository.Create(dto, sid);
             return response;
         }
 
@@ -107,19 +107,19 @@ namespace GYM_BE.All.PerEmployee
         {
             var add = new List<PerEmployeeDTO>();
             add.AddRange(dtos);
-            var response = await _genericRepository.CreateRange(add, "root");
+            var response = await _genericRepository.CreateRange(add, sid);
             return response;
         }
 
         public async Task<FormatedResponse> Update(PerEmployeeDTO dto, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.Update(dto, "root", patchMode);
+            var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }
 
         public async Task<FormatedResponse> UpdateRange(List<PerEmployeeDTO> dtos, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
+            var response = await _genericRepository.UpdateRange(dtos, sid, patchMode);
             return response;
         }
 

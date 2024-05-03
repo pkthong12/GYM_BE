@@ -59,7 +59,7 @@ namespace GYM_BE.All.PerCusListCard
 
         public async Task<FormatedResponse> Create(PerCusListCardDTO dto, string sid)
         {
-            var response = await _genericRepository.Create(dto, "root");
+            var response = await _genericRepository.Create(dto, sid);
             return response;
         }
 
@@ -67,19 +67,19 @@ namespace GYM_BE.All.PerCusListCard
         {
             var add = new List<PerCusListCardDTO>();
             add.AddRange(dtos);
-            var response = await _genericRepository.CreateRange(add, "root");
+            var response = await _genericRepository.CreateRange(add, sid);
             return response;
         }
 
         public async Task<FormatedResponse> Update(PerCusListCardDTO dto, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.Update(dto, "root", patchMode);
+            var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }
 
         public async Task<FormatedResponse> UpdateRange(List<PerCusListCardDTO> dtos, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
+            var response = await _genericRepository.UpdateRange(dtos, sid, patchMode);
             return response;
         }
 

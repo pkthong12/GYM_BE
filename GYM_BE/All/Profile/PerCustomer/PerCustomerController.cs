@@ -3,6 +3,7 @@ using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using GYM_BE.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -45,27 +46,35 @@ namespace GYM_BE.All.Profile.PerCustomer
         [HttpPost]
         public async Task<IActionResult> Create(PerCustomerDTO model)
         {
-            var response = await _PerCustomerRepository.Create(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _PerCustomerRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<PerCustomerDTO> models)
         {
-            var response = await _PerCustomerRepository.CreateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _PerCustomerRepository.CreateRange(models, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(PerCustomerDTO model)
         {
-            var response = await _PerCustomerRepository.Update(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _PerCustomerRepository.Update(model, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<PerCustomerDTO> models)
         {
-            var response = await _PerCustomerRepository.UpdateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _PerCustomerRepository.UpdateRange(models, sid);
             return Ok(response);
         }
 
@@ -93,7 +102,9 @@ namespace GYM_BE.All.Profile.PerCustomer
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _PerCustomerRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _PerCustomerRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
 

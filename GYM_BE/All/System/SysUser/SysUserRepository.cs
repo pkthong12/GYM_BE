@@ -64,7 +64,7 @@ namespace GYM_BE.All.System.SysUser
         public async Task<FormatedResponse> Create(SysUserDTO dto, string sid)
         {
             dto.Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Passwordhash);
-            var response = await _genericRepository.Create(dto, "root");
+            var response = await _genericRepository.Create(dto, sid);
             return response;
         }
 
@@ -72,19 +72,19 @@ namespace GYM_BE.All.System.SysUser
         {
             var add = new List<SysUserDTO>();
             add.AddRange(dtos);
-            var response = await _genericRepository.CreateRange(add, "root");
+            var response = await _genericRepository.CreateRange(add, sid);
             return response;
         }
 
         public async Task<FormatedResponse> Update(SysUserDTO dto, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.Update(dto, "root", patchMode);
+            var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }
 
         public async Task<FormatedResponse> UpdateRange(List<SysUserDTO> dtos, string sid, bool patchMode = true)
         {
-            var response = await _genericRepository.UpdateRange(dtos, "root", patchMode);
+            var response = await _genericRepository.UpdateRange(dtos, sid, patchMode);
             return response;
         }
 

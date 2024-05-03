@@ -45,27 +45,27 @@ namespace GYM_BE.All.CardCheckIn
         [HttpPost]
         public async Task<IActionResult> Create(CardCheckInDTO model)
         {
-            var response = await _CardCheckInRepository.Create(model, "root");
+            var response = await _CardCheckInRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<CardCheckInDTO> models)
         {
-            var response = await _CardCheckInRepository.CreateRange(models, "root");
+            var response = await _CardCheckInRepository.CreateRange(models, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(CardCheckInDTO model)
         {
-            var response = await _CardCheckInRepository.Update(model, "root");
+            var response = await _CardCheckInRepository.Update(model, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<CardCheckInDTO> models)
         {
-            var response = await _CardCheckInRepository.UpdateRange(models, "root");
+            var response = await _CardCheckInRepository.UpdateRange(models, sid);
             return Ok(response);
         }
 
@@ -93,7 +93,7 @@ namespace GYM_BE.All.CardCheckIn
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _CardCheckInRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var response = await _CardCheckInRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
 
