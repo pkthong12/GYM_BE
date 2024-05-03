@@ -1,4 +1,5 @@
 using API;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -10,6 +11,7 @@ namespace GYM_BE.All.SysOtherListType
 {
     [ApiExplorerSettings(GroupName = "005-SYSTEM-SYS_OTHER_LIST_TYPE")]
     [ApiController]
+    [GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class SysOtherListTypeController : Controller
     {

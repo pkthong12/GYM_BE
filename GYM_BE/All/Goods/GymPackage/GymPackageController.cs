@@ -1,4 +1,5 @@
 ﻿using API;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.All.System.SysUser;
 using GYM_BE.All.SysUser;
 using GYM_BE.Core.Dto;
@@ -12,6 +13,7 @@ namespace GYM_BE.All.Gym.GymPackage
 {
     [ApiExplorerSettings(GroupName = "034-GYM-GYM_PACKAGE")]
     [ApiController]
+    [GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class GymPackageController : Controller
     {

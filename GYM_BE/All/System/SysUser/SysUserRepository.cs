@@ -63,6 +63,7 @@ namespace GYM_BE.All.System.SysUser
 
         public async Task<FormatedResponse> Create(SysUserDTO dto, string sid)
         {
+            dto.Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Passwordhash);
             var response = await _genericRepository.Create(dto, "root");
             return response;
         }

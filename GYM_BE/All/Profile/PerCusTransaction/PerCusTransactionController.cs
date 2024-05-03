@@ -1,4 +1,5 @@
 using API;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -10,6 +11,7 @@ namespace GYM_BE.All.PerCusTransaction
 {
     [ApiExplorerSettings(GroupName = "037-PERSONAL-PER_CUS_TRANSACTION")]
     [ApiController]
+    [GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class PerCusTransactionController : Controller
     {
