@@ -3,9 +3,11 @@ using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using GYM_BE.Main;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 namespace GYM_BE.All.SysOtherListType
 {
@@ -52,27 +54,35 @@ namespace GYM_BE.All.SysOtherListType
         [HttpPost]
         public async Task<IActionResult> Create(SysOtherListTypeDTO model)
         {
-            var response = await _SysOtherListTypeRepository.Create(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListTypeRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<SysOtherListTypeDTO> models)
         {
-            var response = await _SysOtherListTypeRepository.CreateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListTypeRepository.CreateRange(models, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(SysOtherListTypeDTO model)
         {
-            var response = await _SysOtherListTypeRepository.Update(model, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListTypeRepository.Update(model, sid);
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<SysOtherListTypeDTO> models)
         {
-            var response = await _SysOtherListTypeRepository.UpdateRange(models, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListTypeRepository.UpdateRange(models, sid);
             return Ok(response);
         }
 
@@ -100,7 +110,9 @@ namespace GYM_BE.All.SysOtherListType
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-            var response = await _SysOtherListTypeRepository.ToggleActiveIds(model.Ids, model.ValueToBind, "root");
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListTypeRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
 
