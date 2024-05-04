@@ -6,7 +6,9 @@ using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Linq.Dynamic.Core;
 using System.Runtime.CompilerServices;
 
 namespace GYM_BE.All.System.SysUser
@@ -95,6 +97,7 @@ namespace GYM_BE.All.System.SysUser
 
         public async Task<FormatedResponse> Update(SysUserDTO dto, string sid, bool patchMode = true)
         {
+            dto.Decentralization = dto.DecentralizationList == null ? "" : string.Join(",", dto.DecentralizationList);
             var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }
@@ -154,6 +157,48 @@ namespace GYM_BE.All.System.SysUser
                 else
                 {
                     return new FormatedResponse() { MessageCode = "ERROR_USERNAME_INCORRECT" };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new FormatedResponse() { MessageCode = ex.Message };
+            }
+
+        }
+
+        public async Task<FormatedResponse> GetByIdString(string id)
+        {
+            try
+            {
+                var joined = await (from u in _dbContext.SysUsers.Where(p => p.ID!.ToLower() == id.ToLower())
+                              select new SysUserDTO
+                              {
+                                  Id = u.ID,
+                                  Username = u.USERNAME,
+                                  Fullname = u.FULLNAME,
+                                  IsAdmin = u.IS_ADMIN,
+                                  IsRoot = u.IS_ROOT,  
+                                  GroupId = u.GROUP_ID,
+                                  IsLock = u.IS_LOCK,
+                                  Avatar = u.AVATAR,
+                                  Decentralization = u.DECENTRALIZATION,
+                                  DecentralizationList = new List<long>()
+                              }).FirstOrDefaultAsync();
+                if(joined == null)
+                {
+                    return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                }
+                else
+                {
+                    if (!joined.Decentralization.IsNullOrEmpty())
+                    {
+                        var dec = joined.Decentralization!.Split(",").ToList();
+                        dec.ForEach(e =>
+                        {
+                            joined.DecentralizationList!.Add(Convert.ToInt64(e));
+                        });
+                    }
+                    return new FormatedResponse() { InnerBody = joined };
                 }
             }
             catch (Exception ex)

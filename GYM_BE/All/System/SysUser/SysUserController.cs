@@ -41,6 +41,12 @@ namespace GYM_BE.All.System.SysUser
             var response = await _SysUserRepository.GetById(id);
             return Ok(response);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetByIdString(string id)
+        {
+            var response = await _SysUserRepository.GetByIdString(id);
+            return Ok(response);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(SysUserDTO model)

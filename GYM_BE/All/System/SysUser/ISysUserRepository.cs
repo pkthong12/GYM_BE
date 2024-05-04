@@ -11,5 +11,6 @@ namespace GYM_BE.All.SysUser
     {
         Task<FormatedResponse> QueryList(PaginationDTO<SysUserDTO> pagination);
         Task<FormatedResponse> ClientsLogin(string UserName, string password);
+        Task<FormatedResponse> GetByIdString(string id);
     }
 }
