@@ -4,11 +4,13 @@ using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
+using GYM_BE.Main;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -70,7 +72,8 @@ namespace GYM_BE.All.System.Authentication
                         new Claim(JwtRegisteredClaimNames.Sid, user.Id),
                         new Claim(JwtRegisteredClaimNames.Typ, user.UserName),
                         new Claim(JwtRegisteredClaimNames.Iat, iat!),
-                        new Claim("IsAdmin", isAdmin!)
+                        new Claim("IsAdmin", isAdmin!),
+                        new Claim("Password", user.Password!)
                     };
 
                     string tokenString = BuildToken(claims, 1);
@@ -103,7 +106,87 @@ namespace GYM_BE.All.System.Authentication
             }
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Refresh(AuthResponse authResponse)
+        {
+            var response = Request.Refresh(_appSettings, authResponse);
+            if (response == null)
+            {
+                return Ok(new FormatedResponse()
+                {
+                    InnerBody = new
+                    {
+                        IsExpire = false
+                    }
+                });
+            }
+            var x = EpochTime.DateTime(response.TimeExpire!.Value);
+            if(DateTime.Now > x)
+            {
+                return Ok(new FormatedResponse()
+                {
+                    InnerBody = new
+                    {
+                        IsExpire = false
+                    }
+                });
+            }
+            var r = await _sysUserRepository.ClientsLogin(response.UserName, response.Password);
+            if (r.MessageCode != "")
+            {
+                return Ok(new FormatedResponse() { 
+                    InnerBody = new  
+                    { 
+                        IsExpire = false 
+                    } 
+                });
+            }
 
+            AuthResponse? user = r.InnerBody as AuthResponse;
+
+            if (user?.IsLock == true) // dù đang là Admin mà bị Lock thì vẫn Lock như thường (ví dụ cần khóa khẩn)
+            {
+                return Ok(new FormatedResponse() { StatusCode = EnumStatusCode.StatusCode400, ErrorType = EnumErrorType.CATCHABLE, MessageCode = "USER_LOCKED" });
+            }
+
+            if (user != null)
+            {
+                var iat = user.EmployeeId != null ? user.EmployeeId.ToString() : "0";
+                var isAdmin = (user.IsAdmin == true).ToString();
+                var claims = new[]
+                {
+                        new Claim(JwtRegisteredClaimNames.Sid, user.Id),
+                        new Claim(JwtRegisteredClaimNames.Typ, user.UserName),
+                        new Claim(JwtRegisteredClaimNames.Iat, iat!),
+                        new Claim("IsAdmin", isAdmin!),
+                        new Claim("Password", user.Password!)
+                    };
+
+                string tokenString = BuildToken(claims, 1);
+                AuthResponse data = new()
+                {
+                    Id = user.Id,
+                    EmployeeId = user.EmployeeId,
+                    UserName = user.UserName,
+                    FullName = user.FullName,
+                    Avatar = user.Avatar,
+                    IsAdmin = user.IsAdmin,
+                    IsRoot = user.IsRoot,
+                    Token = tokenString,
+                    DateExpire = x
+                };
+
+                return Ok(new FormatedResponse()
+                {
+                    InnerBody = data
+                });
+            }
+            else
+            {
+                return new JsonResult("WAR_UNABLE_TO_SIGN_IN") { StatusCode = 401 };
+            }
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -186,7 +269,7 @@ namespace GYM_BE.All.System.Authentication
         }
     }
 
-    
+
 
     public class LoginTenantViewModel
     {
@@ -199,6 +282,7 @@ namespace GYM_BE.All.System.Authentication
     {
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string Password { get; set; }
         public string FullName { get; set; }
         public string Avatar { get; set; }
         public string Token { get; set; }
@@ -206,5 +290,7 @@ namespace GYM_BE.All.System.Authentication
         public bool? IsRoot { get; set; }
         public bool? IsLock { get; set; }
         public long? EmployeeId { get; set; }
+        public long? TimeExpire { get; set; }
+        public DateTime? DateExpire { get; set; }
     }
 }

@@ -123,6 +123,7 @@ namespace GYM_BE.All.System.SysUser
                     {
                         Id = r.ID,
                         UserName = r.USERNAME!,
+                        Password = r.PASSWORDHASH!,
                         FullName = r.FULLNAME!,
                         IsAdmin = r.IS_ADMIN,
                         IsRoot = r.IS_ROOT,

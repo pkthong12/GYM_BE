@@ -1,4 +1,5 @@
 ﻿using API;
+using GYM_BE.All.System.Authentication;
 using GYM_BE.Core.Extentions;
 using GYM_BE.DTO;
 using Microsoft.IdentityModel.Tokens;
@@ -44,6 +45,49 @@ namespace GYM_BE.Main
             {
                 // return null if validation fails
                 return string.Empty;
+            }
+
+        }
+
+        public static AuthResponse Refresh(this HttpRequest request, AppSettings _appSettings, AuthResponse authResponse)
+        {
+            var token = authResponse.Token;
+
+            if (token == null)
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.JwtToken.SecretKey);
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var sid = jwtToken.Claims.First(x => x.Type == "sid").Value;
+                var user = jwtToken.Claims.First(x => x.Type == "typ").Value;
+                var pass = jwtToken.Claims.First(x => x.Type == "Password").Value;
+                var exp = jwtToken.Claims.First(x => x.Type == "exp").Value;
+                var response = new AuthResponse()
+                {
+                    Id = sid,
+                    UserName = user,
+                    Password = pass,
+                    TimeExpire =Convert.ToInt64(exp)
+                };
+
+                // return user id from JWT token if validation successful
+                return response;
+            }
+            catch
+            {
+                // return null if validation fails
+                return null;
             }
 
         }
