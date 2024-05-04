@@ -9,6 +9,7 @@ namespace GYM_BE.All.SysMenu
     {
         Task<FormatedResponse> QueryList(PaginationDTO<SysMenuDTO> pagination);
         Task<FormatedResponse> GetActionByUser(SysUserDTO userDTO);
+        Task<FormatedResponse> GetAllAction();
     }
 }
 

@@ -1,4 +1,5 @@
 using API;
+using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
@@ -11,6 +12,7 @@ namespace GYM_BE.All.SysMenu
 {
     [ApiExplorerSettings(GroupName = "046-SYSTEM-SYS_MENU")]
     [ApiController]
+    //[GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class SysMenuController : Controller
     {
@@ -111,6 +113,15 @@ namespace GYM_BE.All.SysMenu
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.GetActionByUser(userDTO);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAction()
+        {
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysMenuRepository.GetAllAction();
             return Ok(response);
         }
     }

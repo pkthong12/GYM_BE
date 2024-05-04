@@ -105,6 +105,21 @@ namespace GYM_BE.All.SysMenu
         {
             throw new NotImplementedException();
         }
+        public async Task<FormatedResponse> GetAllAction()
+        {
+            var response = await (from p in _dbContext.SysMenus.AsNoTracking() 
+                                  select new
+                                  {
+                                      Id = p.ID,
+                                      Code = p.NAME+ " ("+p.URL+")",
+                                      Name = p.NAME + " (" + p.URL + ")",
+                                  }).ToListAsync();
+            return new FormatedResponse
+            {
+                InnerBody = response,
+            };
+        }
+
         public async Task<FormatedResponse> GetActionByUser(SysUserDTO userDTO)
         {
             var user = _dbContext.SysUsers.AsNoTracking().SingleOrDefault(p => p.ID == userDTO.Id);

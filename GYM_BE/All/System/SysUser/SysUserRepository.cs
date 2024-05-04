@@ -25,10 +25,18 @@ namespace GYM_BE.All.System.SysUser
 
         public async Task<FormatedResponse> QueryList(PaginationDTO<SysUserDTO> pagination)
         {
-            var joined = from p in _dbContext.SysUsers.AsNoTracking()
+            var joined = from l in _dbContext.SysUsers.AsNoTracking()
+                         from s in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == l.GROUP_ID).DefaultIfEmpty()
+                         from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == l.EMPLOYEE_ID).DefaultIfEmpty()
                          select new SysUserDTO
                          {
-                             Id = p.ID,
+                             Id = l.ID,
+                             Username = l.USERNAME,
+                             Fullname = l.FULLNAME,
+                             GroupName = s.NAME,
+                             Avatar = l.AVATAR,
+                             EmployeeId = l.EMPLOYEE_ID,
+                             EmployeeCode = e.CODE
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -48,9 +56,17 @@ namespace GYM_BE.All.System.SysUser
                         (SYS_USER)response
                     };
                 var joined = (from l in list
+                              from s in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == l.GROUP_ID).DefaultIfEmpty()
+                              from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == l.EMPLOYEE_ID).DefaultIfEmpty()
                               select new SysUserDTO
                               {
                                   Id = l.ID,
+                                  Username = l.USERNAME,
+                                  Fullname = l.FULLNAME,
+                                  GroupName = s.NAME,
+                                  Avatar = l.AVATAR,
+                                  EmployeeId = l.EMPLOYEE_ID,
+                                  EmployeeCode = e.CODE
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
@@ -63,7 +79,8 @@ namespace GYM_BE.All.System.SysUser
 
         public async Task<FormatedResponse> Create(SysUserDTO dto, string sid)
         {
-            dto.Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Passwordhash);
+            //dto.Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Passwordhash);
+            dto.Decentralization = dto.DecentralizationList == null ? "" : string.Join(",", dto.DecentralizationList);
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -123,14 +140,14 @@ namespace GYM_BE.All.System.SysUser
                     {
                         Id = r.ID,
                         UserName = r.USERNAME!,
-                        Password = r.PASSWORDHASH!,
+                        Password = r.PASSWORDHASH??"",
                         FullName = r.FULLNAME!,
                         IsAdmin = r.IS_ADMIN,
                         IsRoot = r.IS_ROOT,
                         Avatar = r.AVATAR!,
                         EmployeeId = r.EMPLOYEE_ID,
                         IsLock = r.IS_LOCK,
-                        Decentralization =  r.DECENTRALIZATION != null? r.DECENTRALIZATION.Split(",").ToList(): new List<string>()
+                        Decentralization = r.DECENTRALIZATION != null ? r.DECENTRALIZATION.Split(",").ToList() : new List<string>()
                     };
                     return new FormatedResponse() { InnerBody = data };
                 }

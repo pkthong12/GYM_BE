@@ -7,7 +7,9 @@
         public string? Fullname { get; set; }
         public string? Passwordhash { get; set; }
         public long? EmployeeId { get; set; }
+        public string? EmployeeCode { get; set; }
         public long? GroupId { get; set; }
+        public string? GroupName { get; set; }
         public bool? IsAdmin { get; set; }
         public bool? IsRoot { get; set; }
         public bool? IsLock { get; set; }
@@ -17,5 +19,6 @@
         public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         public string? Decentralization { get; set; }
+        public List<long>? DecentralizationList { get; set; }
     }
 }
