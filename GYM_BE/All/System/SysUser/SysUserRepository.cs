@@ -132,25 +132,6 @@ namespace GYM_BE.All.System.SysUser
                         IsLock = r.IS_LOCK,
                     };
                     return new FormatedResponse() { InnerBody = data };
-                    //if (BCrypt.Net.BCrypt.Verify(password, r.PASSWORDHASH))
-                    //{
-                    //    var userID = r.ID;
-                    //    var data = new
-                    //    {
-                    //        Id = r.ID,
-                    //        UserName = r.USERNAME!,
-                    //        FullName = r.FULLNAME!,
-                    //        IsAdmin = r.IS_ADMIN,
-                    //        IsRoot = r.IS_ROOT,
-                    //        Avatar = r.AVATAR!,
-                    //        EmployeeId = r.EMPLOYEE_ID,
-                    //    };
-                    //    return new FormatedResponse() { InnerBody = data };
-                    //}
-                    //else
-                    //{
-                    //    return new FormatedResponse() { MessageCode = "ERROR_PASSWORD_INCORRECT" };
-                    //}
                 }
                 else
                 {

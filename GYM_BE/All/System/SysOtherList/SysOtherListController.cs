@@ -134,5 +134,14 @@ namespace GYM_BE.All.System.SysOtherList
             var response = await _SysOtherListRepository.GetListByType(type, id);
             return Ok(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysOtherListRepository.GetAllUser();
+            return Ok(response);
+        }
     }
 }

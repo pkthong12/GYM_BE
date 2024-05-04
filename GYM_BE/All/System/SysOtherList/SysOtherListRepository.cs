@@ -200,6 +200,19 @@ namespace GYM_BE.All.System.SysOtherList
                 InnerBody = res,
             };
         }
-
+        public async Task<FormatedResponse> GetAllUser()
+        {
+            var res = await (from u in _dbContext.SysUsers.AsNoTracking()
+                             select new
+                             {
+                                 Id = u.ID,
+                                 Code = u.USERNAME!,
+                                 Name = u.USERNAME!,
+                             }).ToListAsync();
+            return new FormatedResponse
+            {
+                InnerBody = res,
+            };
+        }
     }
 }

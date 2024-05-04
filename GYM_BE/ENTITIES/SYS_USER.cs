@@ -22,5 +22,6 @@ namespace GYM_BE.ENTITIES
         public string? CREATED_BY { get; set; }
         public DateTime? UPDATED_DATE { get; set; }
         public string? UPDATED_BY { get; set; }
+        public string? DECENTRALIZATION { get; set; }
     }
 }
