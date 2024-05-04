@@ -31,6 +31,7 @@ namespace GYM_BE.Entities
         public virtual DbSet<GOODS_SHIFT> GoodsLists { get; set; }
         public virtual DbSet<SYS_OTHER_LIST_TYPE> SysOtherListTypes { get; set; }
         public virtual DbSet<SYS_OTHER_LIST> SysOtherLists { get; set; }
+        public virtual DbSet<SYS_MENU> SysMenus { get; set; }
         public virtual DbSet<SYS_USER> SysUsers { get; set; }
         public virtual DbSet<PER_CUSTOMER> PerCustomers { get; set; }
         public virtual DbSet<PER_EMPLOYEE> PerEmployees { get; set; }

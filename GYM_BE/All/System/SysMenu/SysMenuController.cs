@@ -44,16 +44,16 @@ namespace GYM_BE.All.SysMenu
         [HttpPost]
         public async Task<IActionResult> Create(SysMenuDTO model)
         {
-             var sid = Request.Sid(_appSettings);
-             if (sid == null) return Unauthorized();
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRange(List<SysMenuDTO> models)
         {
-             var sid = Request.Sid(_appSettings);
-             if (sid == null) return Unauthorized();
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.CreateRange(models, sid);
             return Ok(response);
         }
@@ -62,7 +62,7 @@ namespace GYM_BE.All.SysMenu
         public async Task<IActionResult> Update(SysMenuDTO model)
         {
             var sid = Request.Sid(_appSettings);
-             if (sid == null) return Unauthorized();
+            if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.Update(model, sid);
             return Ok(response);
         }
@@ -70,8 +70,8 @@ namespace GYM_BE.All.SysMenu
         [HttpPost]
         public async Task<IActionResult> UpdateRange(List<SysMenuDTO> models)
         {
-             var sid = Request.Sid(_appSettings);
-             if (sid == null) return Unauthorized();
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.UpdateRange(models, sid);
             return Ok(response);
         }
@@ -100,12 +100,19 @@ namespace GYM_BE.All.SysMenu
         [HttpPost]
         public async Task<IActionResult> ToggleActiveIds(GenericToggleIsActiveDTO model)
         {
-             var sid = Request.Sid(_appSettings);
-             if (sid == null) return Unauthorized();
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
             var response = await _SysMenuRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
-
+        [HttpPost]
+        public async Task<IActionResult> GetActionByUser(SysUserDTO userDTO)
+        {
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _SysMenuRepository.GetActionByUser(userDTO);
+            return Ok(response);
+        }
     }
 }
 

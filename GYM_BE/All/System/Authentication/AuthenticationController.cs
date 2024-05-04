@@ -87,6 +87,7 @@ namespace GYM_BE.All.System.Authentication
                         IsAdmin = user.IsAdmin,
                         IsRoot = user.IsRoot,
                         Token = tokenString,
+                        Decentralization = user.Decentralization,
                     };
 
                     return Ok(new FormatedResponse()
@@ -174,7 +175,8 @@ namespace GYM_BE.All.System.Authentication
                     IsAdmin = user.IsAdmin,
                     IsRoot = user.IsRoot,
                     Token = tokenString,
-                    DateExpire = x
+                    DateExpire = x,
+                    Decentralization = user.Decentralization,
                 };
 
                 return Ok(new FormatedResponse()
@@ -292,5 +294,6 @@ namespace GYM_BE.All.System.Authentication
         public long? EmployeeId { get; set; }
         public long? TimeExpire { get; set; }
         public DateTime? DateExpire { get; set; }
+        public List<string> Decentralization { get; set; } = new List<string>();
     }
 }

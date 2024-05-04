@@ -9,7 +9,7 @@ namespace GYM_BE.All.SysMenu
     public class SysMenuRepository : ISysMenuRepository
     {
         private readonly FullDbContext _dbContext;
-       private readonly GenericRepository<SYS_MENU, SysMenuDTO> _genericRepository;
+        private readonly GenericRepository<SYS_MENU, SysMenuDTO> _genericRepository;
 
         public SysMenuRepository(FullDbContext context)
         {
@@ -20,16 +20,16 @@ namespace GYM_BE.All.SysMenu
         public async Task<FormatedResponse> QueryList(PaginationDTO<SysMenuDTO> pagination)
         {
             var joined = from p in _dbContext.SysMenus.AsNoTracking()
-                                       //tuy chinh
-                       select new SysMenuDTO
-                        {
-                            Id = p.ID,
-                        };
-         var respose = await _genericRepository.PagingQueryList(joined, pagination);
-         return new FormatedResponse
-         {
-             InnerBody = respose,
-         };
+                             //tuy chinh
+                         select new SysMenuDTO
+                         {
+                             Id = p.ID,
+                         };
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            return new FormatedResponse
+            {
+                InnerBody = respose,
+            };
         }
 
         public async Task<FormatedResponse> GetById(long id)
@@ -43,7 +43,7 @@ namespace GYM_BE.All.SysMenu
                         (SYS_MENU)response
                     };
                 var joined = (from l in list
-                              // JOIN OTHER ENTITIES BASED ON THE BUSINESS
+                                  // JOIN OTHER ENTITIES BASED ON THE BUSINESS
                               select new SysMenuDTO
                               {
                                   Id = l.ID
@@ -105,7 +105,50 @@ namespace GYM_BE.All.SysMenu
         {
             throw new NotImplementedException();
         }
+        public async Task<FormatedResponse> GetActionByUser(SysUserDTO userDTO)
+        {
+            var user = _dbContext.SysUsers.AsNoTracking().SingleOrDefault(p => p.ID == userDTO.Id);
+            if (user!.DECENTRALIZATION == null)
+            {
+                return new FormatedResponse
+                {
+                    InnerBody = null,
+                };
+            }
 
+            var de = user.DECENTRALIZATION!.Split(",");
+            return new FormatedResponse
+            {
+                InnerBody = de,
+            };
+            var action = await (from m in _dbContext.SysMenus.AsNoTracking().Where(m => de.Contains(m.ID.ToString()))
+                                orderby m.ID ascending
+                                select new SysMenuDTO
+                                {
+                                    Id = m.ID,
+                                    Name = m.NAME,
+                                    Url = m.URL,
+                                    Parent = m.PARENT,
+                                    Icon = m.ICON,
+                                    ChildMenu = new List<SysMenuDTO>()
+                                }).ToListAsync();
+            if (action.Count > 0)
+            {
+                var actionParent = action.Where(p => p.Parent == null).ToList();
+                actionParent.ForEach(p =>
+                {
+                    p.ChildMenu = action.Where(c=>c.Parent == p.Id).ToList();
+                });
+                return new FormatedResponse
+                {
+                    InnerBody = actionParent,
+                };
+            }
+            return new FormatedResponse
+            {
+                InnerBody = action,
+            };
+        }
     }
 }
 

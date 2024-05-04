@@ -130,6 +130,7 @@ namespace GYM_BE.All.System.SysUser
                         Avatar = r.AVATAR!,
                         EmployeeId = r.EMPLOYEE_ID,
                         IsLock = r.IS_LOCK,
+                        Decentralization =  r.DECENTRALIZATION != null? r.DECENTRALIZATION.Split(",").ToList(): new List<string>()
                     };
                     return new FormatedResponse() { InnerBody = data };
                 }

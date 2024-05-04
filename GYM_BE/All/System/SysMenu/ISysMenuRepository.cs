@@ -8,6 +8,7 @@ namespace GYM_BE.All.SysMenu
     public interface ISysMenuRepository: IGenericRepository<SYS_MENU, SysMenuDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<SysMenuDTO> pagination);
+        Task<FormatedResponse> GetActionByUser(SysUserDTO userDTO);
     }
 }
 
