@@ -1,4 +1,5 @@
-﻿using GYM_BE.All.System.Authentication;
+﻿using Azure;
+using GYM_BE.All.System.Authentication;
 using GYM_BE.All.SysUser;
 using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
@@ -77,11 +78,58 @@ namespace GYM_BE.All.System.SysUser
             }
         }
 
-        public async Task<FormatedResponse> Create(SysUserDTO dto, string sid)
+        public async Task<FormatedResponse> CreateUser(SysUserCreateUpdateRequest dto, string sid)
         {
-            //dto.Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Passwordhash);
-            dto.Decentralization = dto.DecentralizationList == null ? "" : string.Join(",", dto.DecentralizationList);
-            var response = await _genericRepository.Create(dto, sid);
+            var tryFind = _dbContext.SysUsers.SingleOrDefault(x => x.USERNAME!.ToLower() == dto.Username.ToLower());
+            if (dto.EmployeeId != null)
+            {
+                var checkDataBeforeAdd = await _dbContext.SysUsers.Where(x => x.EMPLOYEE_ID == dto.EmployeeId).ToListAsync();
+                if (checkDataBeforeAdd.Count > 0)
+                {
+                    return new()
+                    {
+                        ErrorType = EnumErrorType.CATCHABLE,
+                        MessageCode = "DUBLICATE_VALUE EMPLOYEE",
+                        StatusCode = EnumStatusCode.StatusCode400
+                    };
+                }
+            }
+
+            if (tryFind != null)
+            {
+                return new()
+                {
+                    ErrorType = EnumErrorType.CATCHABLE,
+                    MessageCode = "DUBLICATE_VALUE USERNAME",
+                    StatusCode = EnumStatusCode.StatusCode400
+                };
+            }
+
+            if (dto.Password != dto.RePassword)
+            {
+                return new()
+                {
+                    ErrorType = EnumErrorType.CATCHABLE,
+                    MessageCode = "PASSWORD_AND_PASSWORD_CONFIRN_DO_NOT_MATCH",
+                    StatusCode = EnumStatusCode.StatusCode400
+                };
+
+            }
+
+            SysUserDTO entityCreateRequest = new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Username = dto.Username,
+                GroupId = dto.GroupId,
+                Passwordhash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                IsAdmin = dto.IsAdmin,
+                EmployeeId = dto.EmployeeId,
+                EmployeeCode = dto.EmployeeCode,
+                Fullname = dto.Fullname,
+                Decentralization = dto.DecentralizationList == null ? "" : string.Join(",", dto.DecentralizationList)
+            //Avatar = avatar
+            };
+            var response = await _genericRepository.Create(entityCreateRequest, sid);
             return response;
         }
 
@@ -135,21 +183,28 @@ namespace GYM_BE.All.System.SysUser
                 var r = await _dbContext.SysUsers.Where(p => p.USERNAME!.ToLower() == UserName).FirstOrDefaultAsync();
                 if (r != null)
                 {
-                    var userID = r.ID;
-                    var data = new AuthResponse()
+                    if (BCrypt.Net.BCrypt.Verify(password, r.PASSWORDHASH))
                     {
-                        Id = r.ID,
-                        UserName = r.USERNAME!,
-                        Password = r.PASSWORDHASH??"",
-                        FullName = r.FULLNAME!,
-                        IsAdmin = r.IS_ADMIN,
-                        IsRoot = r.IS_ROOT,
-                        Avatar = r.AVATAR!,
-                        EmployeeId = r.EMPLOYEE_ID,
-                        IsLock = r.IS_LOCK,
-                        Decentralization = r.DECENTRALIZATION != null ? r.DECENTRALIZATION.Split(",").ToList() : new List<string>()
-                    };
-                    return new FormatedResponse() { InnerBody = data };
+                        var userID = r.ID;
+                        var data = new AuthResponse()
+                        {
+                            Id = r.ID,
+                            UserName = r.USERNAME!,
+                            Password = r.PASSWORDHASH ?? "",
+                            FullName = r.FULLNAME!,
+                            IsAdmin = r.IS_ADMIN,
+                            IsRoot = r.IS_ROOT,
+                            Avatar = r.AVATAR!,
+                            EmployeeId = r.EMPLOYEE_ID,
+                            IsLock = r.IS_LOCK,
+                            Decentralization = r.DECENTRALIZATION != null ? r.DECENTRALIZATION.Split(",").ToList() : new List<string>()
+                        };
+                        return new FormatedResponse() { InnerBody = data };
+                    }
+                    else
+                    {
+                        return new FormatedResponse() { MessageCode = "ERROR_PASSWORD_INCORRECT" };
+                    }
                 }
                 else
                 {
@@ -161,6 +216,77 @@ namespace GYM_BE.All.System.SysUser
                 return new FormatedResponse() { MessageCode = ex.Message };
             }
 
+        }
+
+        public Task<FormatedResponse> Create(SysUserDTO dto, string sid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<FormatedResponse> UpdateUser(SysUserCreateUpdateRequest request, string sid)
+        {
+            var tryFind = _dbContext.SysUsers.SingleOrDefault(x => x.USERNAME!.ToLower() == request.Username!.ToLower() && x.ID != request.Id);
+
+            if (request.EmployeeId != null)
+            {
+                var checkDataBeforeAdd = await _dbContext.SysUsers.Where(x => x.EMPLOYEE_ID == request.EmployeeId).ToListAsync();
+                if (checkDataBeforeAdd.Count > 1)
+                {
+                    return new()
+                    {
+                        ErrorType = EnumErrorType.CATCHABLE,
+                        MessageCode = "DUBLICATE_VALUE EMPLOYEE",
+                        StatusCode = EnumStatusCode.StatusCode400
+                    };
+                }
+            }
+
+            if (tryFind != null)
+            {
+                return new()
+                {
+                    ErrorType = EnumErrorType.CATCHABLE,
+                    MessageCode = "DUBLICATE_VALUE USERNAME",
+                    StatusCode = EnumStatusCode.StatusCode400
+                };
+            }
+
+            if (request.Id == null)
+            {
+                return new()
+                {
+                    ErrorType = EnumErrorType.CATCHABLE,
+                    MessageCode = "NO_ID_PROVIED",
+                    StatusCode = EnumStatusCode.StatusCode400
+                };
+            }
+
+            if (request.Password != request.RePassword)
+            {
+                return new()
+                {
+                    ErrorType = EnumErrorType.CATCHABLE,
+                    MessageCode = "PASSWORD_AND_PASSWORD_CONFIRN_DO_NOT_MATCH",
+                    StatusCode = EnumStatusCode.StatusCode400
+                };
+
+            }
+
+            SysUserDTO entityUpdateRequest = new()
+            {
+                Id = request.Id,
+                Username = request.Username,
+                GroupId = request.GroupId,
+                Passwordhash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                IsAdmin = request.IsAdmin,
+                EmployeeId = request.EmployeeId,
+                EmployeeCode = request.EmployeeCode,
+                Fullname = request.Fullname,
+                Decentralization = request.DecentralizationList == null ? "" : string.Join(",", request.DecentralizationList)
+                //Avatar = avatar
+            };
+            var response = await _genericRepository.Update(entityUpdateRequest, sid);
+            return response;
         }
     }
 }

@@ -43,11 +43,11 @@ namespace GYM_BE.All.System.SysUser
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SysUserDTO model)
+        public async Task<IActionResult> CreateUser(SysUserCreateUpdateRequest model)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _SysUserRepository.Create(model, sid);
+            var response = await _SysUserRepository.CreateUser(model, sid);
             return Ok(response);
         }
         [HttpPost]
@@ -60,11 +60,11 @@ namespace GYM_BE.All.System.SysUser
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(SysUserDTO model)
+        public async Task<IActionResult> UpdateUser(SysUserCreateUpdateRequest model)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _SysUserRepository.Update(model, sid);
+            var response = await _SysUserRepository.UpdateUser(model, sid);
             return Ok(response);
         }
 
