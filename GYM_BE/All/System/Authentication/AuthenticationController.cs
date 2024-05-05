@@ -73,7 +73,7 @@ namespace GYM_BE.All.System.Authentication
                         new Claim(JwtRegisteredClaimNames.Typ, user.UserName),
                         new Claim(JwtRegisteredClaimNames.Iat, iat!),
                         new Claim("IsAdmin", isAdmin!),
-                        new Claim("Password", user.Password!)
+                        new Claim("Password", Credentials.Password!)
                     };
 
                     string tokenString = BuildToken(claims, 1);
@@ -161,7 +161,7 @@ namespace GYM_BE.All.System.Authentication
                         new Claim(JwtRegisteredClaimNames.Typ, user.UserName),
                         new Claim(JwtRegisteredClaimNames.Iat, iat!),
                         new Claim("IsAdmin", isAdmin!),
-                        new Claim("Password", user.Password!)
+                        new Claim("Password", response.Password!)
                     };
 
                 string tokenString = BuildToken(claims, 1);
