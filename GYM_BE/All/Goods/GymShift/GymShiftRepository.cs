@@ -29,9 +29,9 @@ namespace GYM_BE.All.Gym.GymShift
                              Name = p.NAME,
                              TotalDays = p.TOTAL_DAYS,
                              HoursStart = p.HOURS_START,
-                             HoursStartString = p.HOURS_START! == null ? "" : p.HOURS_START!.Value.ToString("HH:mm"),
+                             HoursStartString = p.HOURS_START,
                              HoursEnd = p.HOURS_END,
-                             HoursEndString = p.HOURS_END! == null ? "" : p.HOURS_END!.Value.ToString("HH:mm"),
+                             HoursEndString = p.HOURS_END,
                              Note = p.NOTE,
                              IsActive = p.IS_ACTIVE,
                              Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
@@ -61,9 +61,9 @@ namespace GYM_BE.All.Gym.GymShift
                                   Name = l.NAME,
                                   TotalDays = l.TOTAL_DAYS,
                                   HoursStart = l.HOURS_START,
-                                  HoursStartString = l.HOURS_START! == null ? "" : l.HOURS_START!.Value.ToString("HH:mm"),
+                                  HoursStartString = l.HOURS_START,
                                   HoursEnd = l.HOURS_END,
-                                  HoursEndString = l.HOURS_END! == null ? "" : l.HOURS_END!.Value.ToString("HH:mm"),
+                                  HoursEndString = l.HOURS_END,
                                   Note = l.NOTE,
                                   IsActive = l.IS_ACTIVE,
                                   Status = l.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
