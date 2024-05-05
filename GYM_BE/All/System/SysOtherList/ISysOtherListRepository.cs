@@ -12,5 +12,7 @@ namespace GYM_BE.All.SysOtherList
         Task<FormatedResponse> GetListByType(string type, long? id);
         Task<FormatedResponse> GetOtherListByGroup(string code);
         Task<FormatedResponse> GetAllUser();
+
+        byte[] ExportMoveHistoryToExcel();
     }
 }
