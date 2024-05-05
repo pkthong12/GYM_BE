@@ -6,7 +6,7 @@ namespace GYM_BE.DTO
        public string? CustomerCode  { get; set; }
        public long? TransForm  { get; set; }
        public string? Code  { get; set; }
-       public DateTime? TransDate  { get; set; }
+       public string? TransDate  { get; set; }
        public string? TransDateString  { get; set; }
         public string? FullName { get; set; }
         public string? BirthDateString { get; set; }
