@@ -3,13 +3,17 @@
     public class CardInfoDTO : BaseDTO
     {
         public string? Code { get; set; }
-        public DateTime? EffectedDate { get; set; }
-        public DateTime? ExpiredDate { get; set; }
+        public string? EffectedDate { get; set; }
+        public string? ExpiredDate { get; set; }
         public long? CardTypeId { get; set; }
         public string? CardTypeName { get; set; }
         public string? GenderName { get; set; }
         public long? CustomerId { get; set; }
+        public bool? Wardrobe { get; set; }
+        public long? Price { get; set; }
+        public long? ShiftId { get; set; }
         public string? CustomerName { get; set; }
+        public string? ShiftName { get; set; }
         public long? LockerId { get; set; }
         public string? LockerName { get; set; }
         public string? Note { get; set; }

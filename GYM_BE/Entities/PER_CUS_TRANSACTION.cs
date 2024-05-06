@@ -11,7 +11,7 @@ namespace GYM_BE.Entities
 
        public string? CODE  { get; set; }
 
-       public DateTime? TRANS_DATE  { get; set; }
+       public string? TRANS_DATE  { get; set; }
 
 
     }

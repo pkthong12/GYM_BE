@@ -43,7 +43,7 @@ namespace GYM_BE.All.Profile.PerCustomer
                              CustomerClassId = p.CUSTOMER_CLASS_ID,
                              CustomerClassName = gr.NAME,
                              BirthDate = p.BIRTH_DATE,
-                             BirthDateString = p.BIRTH_DATE!.Value.ToString("dd/MM/yyyy"),
+                             BirthDateString = p.BIRTH_DATE!,
                              GenderId = p.GENDER_ID,
                              GenderName = gender.NAME,
                              Address = p.ADDRESS,

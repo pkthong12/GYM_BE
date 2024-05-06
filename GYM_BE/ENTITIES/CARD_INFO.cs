@@ -6,13 +6,16 @@ namespace GYM_BE.ENTITIES;
 public class CARD_INFO : BASE_ENTITY
 {
     public string? CODE { get; set; }
-    public DateTime? EFFECTED_DATE { get; set; }
-    public DateTime? EXPIRED_DATE { get; set; }
+    public string? EFFECTED_DATE { get; set; }
+    public string? EXPIRED_DATE { get; set; }
     public long? CARD_TYPE_ID { get; set; }
     public long? CUSTOMER_ID { get; set; }
     public long? LOCKER_ID { get; set; }
+    public long? SHIFT_ID { get; set; }
+    public long? PRICE { get; set; }
     public string? NOTE { get; set; }
+    public bool? WARDROBE { get; set; }
     public bool? IS_ACTIVE { get; set; }
-    public DateTime? TIME_START { get; set; }
-    public DateTime? TIME_END { get; set; }
+    public string? TIME_START { get; set; }
+    public string? TIME_END { get; set; }
 }

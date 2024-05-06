@@ -22,6 +22,7 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> QueryList(PaginationDTO<CardInfoDTO> pagination)
         {
             var joined = from p in _dbContext.CardInfos.AsNoTracking()
+                         from sh in _dbContext.GymShifts.AsNoTracking().Where(sh=> sh.ID == p.SHIFT_ID).DefaultIfEmpty()
                          from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                          from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                          from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -29,15 +30,19 @@ namespace GYM_BE.All.CardInfo
                          {
                              Id = p.ID,
                              Code = p.CODE,
-                             EffectDateString = p.EFFECTED_DATE!.Value.ToString("dd/MM/yyyy"),
-                             ExpiredDateString = p.EXPIRED_DATE!.Value.ToString("dd/MM/yyyy"),
+                             EffectDateString = p.EFFECTED_DATE!,
+                             ExpiredDateString = p.EXPIRED_DATE!,
                              CardTypeName = s.NAME,
                              CustomerName = c.FULL_NAME,
                              GenderName = g.NAME,
                              LockerId = p.LOCKER_ID,
                              Status = p.IS_ACTIVE!.Value == true ? "Hoạt động" : "Ngừng hoạt động",
                              Note = p.NOTE,
-                             CodeCus = c.CODE
+                             CodeCus = c.CODE,
+                             Wardrobe= p.WARDROBE,
+                             Price = p.PRICE,
+                             ShiftId = p.SHIFT_ID,
+                             ShiftName = sh.NAME,
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -49,6 +54,7 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> GetById(long id)
         {
             var joined = await (from p in _dbContext.CardInfos.AsNoTracking()
+                                from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
                                 from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                                 from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                                 from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -57,8 +63,8 @@ namespace GYM_BE.All.CardInfo
                                 {
                                     Id = p.ID,
                                     Code = p.CODE,
-                                    EffectDateString = p.EFFECTED_DATE!.Value.ToString("dd/MM/yyyy"),
-                                    ExpiredDateString = p.EXPIRED_DATE!.Value.ToString("dd/MM/yyyy"),
+                                    EffectDateString = p.EFFECTED_DATE!,
+                                    ExpiredDateString = p.EXPIRED_DATE!,
                                     CardTypeId = p.CARD_TYPE_ID,
                                     CardTypeName = s.NAME,
                                     CustomerId = p.CUSTOMER_ID,
@@ -69,6 +75,10 @@ namespace GYM_BE.All.CardInfo
                                     Note = p.NOTE,
                                     EffectedDate = p.EFFECTED_DATE,
                                     ExpiredDate = p.EXPIRED_DATE,
+                                    Wardrobe = p.WARDROBE,
+                                    Price = p.PRICE,
+                                    ShiftId = p.SHIFT_ID,
+                                    ShiftName = sh.NAME,
                                 }).FirstAsync();
             if (joined != null)
             {
@@ -83,6 +93,7 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> Create(CardInfoDTO dto, string sid)
         {
             dto.IsActive = true;
+            dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -139,6 +150,23 @@ namespace GYM_BE.All.CardInfo
                                  Name = p.FULL_NAME
                              }).ToListAsync();
             return new FormatedResponse() { InnerBody = res };
+        }
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.CardInfos.Count() == 0)
+            {
+                newCode = "CARD001";
+            }
+            else
+            {
+                string lastestData = _dbContext.CardInfos.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
         }
     }
 }

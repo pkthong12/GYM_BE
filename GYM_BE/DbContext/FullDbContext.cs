@@ -29,6 +29,7 @@ namespace GYM_BE.Entities
         public virtual DbSet<GOODS_PACKAGE> GymPackages { get; set; }
         public virtual DbSet<GOODS_SHIFT> GymShifts { get; set; }
         public virtual DbSet<GOODS_SHIFT> GoodsLists { get; set; }
+        public virtual DbSet<GOODS_LOCKER> GoodsLockers { get; set; }
         public virtual DbSet<SYS_OTHER_LIST_TYPE> SysOtherListTypes { get; set; }
         public virtual DbSet<SYS_OTHER_LIST> SysOtherLists { get; set; }
         public virtual DbSet<SYS_MENU> SysMenus { get; set; }

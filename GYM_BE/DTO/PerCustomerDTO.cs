@@ -9,7 +9,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? FullName { get; set; }
-        public DateTime? BirthDate { get; set; }
+        public string? BirthDate { get; set; }
         public string? BirthDateString { get; set; }
         public long? GenderId { get; set; }
         public string? GenderName { get; set; }
@@ -27,11 +27,11 @@
         public string? BankBranchName { get; set; }
         public string? BankNo { get; set; }
         public bool? IsGuestPass { get; set; }
-        public DateTime? JoinDate { get; set; }
+        public string? JoinDate { get; set; }
         public string? Height { get; set; }
         public string? Weight { get; set; }
         public long? CardId { get; set; }
-        public DateTime? ExpireDate { get; set; }
+        public string? ExpireDate { get; set; }
         public long? GymPackageId { get; set; }
         public long? PerPtId { get; set; }
         public string? PerPtName { get; set; }
