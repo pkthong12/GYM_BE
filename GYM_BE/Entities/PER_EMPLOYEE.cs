@@ -8,7 +8,7 @@ namespace GYM_BE.Entities
         public string? CODE{get;set;}
         public string? FULL_NAME{get;set;}
         public long? GENDER_ID{get;set;}
-        public DateTime? BIRTH_DATE{get;set;}
+        public string? BIRTH_DATE{get;set;}
         public string? ID_NO{get;set;}
         public long? STAFF_GROUP_ID{get;set;}
         public string? PHONE_NUMBER{get;set;}

@@ -4,6 +4,7 @@ using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.Main;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -111,6 +112,16 @@ namespace GYM_BE.All.System.SysUser
             if (sid == null) return Unauthorized();
             var response = await _SysUserRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
+        }
+
+        [HttpGet]
+        public IActionResult ExportExcelSysUser()
+        {
+            DateTime now = DateTime.Now;
+            string dateTimeStr = now.ToString("yyyyMMddHHmmss");
+            var result = _SysUserRepository.ExportExcelSysUser();
+
+            return File(result, "application/force-download", $"sys_user_{dateTimeStr}.xlsx");
         }
     }
 }

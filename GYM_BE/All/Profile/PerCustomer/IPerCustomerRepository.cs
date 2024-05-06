@@ -8,6 +8,8 @@ namespace GYM_BE.All.Profile.PerCustomer
     public interface IPerCustomerRepository : IGenericRepository<PER_CUSTOMER, PerCustomerDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<PerCustomerDTO> pagination);
+
+        byte[] ExportExcelPerCustomer();
     }
 }
 

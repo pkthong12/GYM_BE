@@ -1,4 +1,5 @@
 ﻿using Azure;
+using ClosedXML.Excel;
 using GYM_BE.All.System.Authentication;
 using GYM_BE.All.SysUser;
 using GYM_BE.Core.Dto;
@@ -333,5 +334,81 @@ namespace GYM_BE.All.System.SysUser
             }
 
         }
+
+        public byte[] ExportExcelSysUser()
+        {
+            var inventory = from u in _dbContext.SysUsers.AsNoTracking()
+                            from t in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == u.GROUP_ID).DefaultIfEmpty()
+                            from e in _dbContext.PerEmployees.AsNoTracking().Where(x => x.ID == u.EMPLOYEE_ID).DefaultIfEmpty()
+                            select new 
+                            {
+                                Username = u.USERNAME,
+                                Fullname = u.FULLNAME,
+                                EmployeeCode = e.CODE,
+                                IsAdmin = u.IS_ADMIN,
+                                IsRoot = u.IS_ROOT,
+                                GroupName = t.NAME,
+                                IsLock = u.IS_LOCK,
+                            };
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("SYS_USER");
+
+                worksheet.Range("A1", "H1").Merge();
+                worksheet.Range("A1", "H1").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                worksheet.Cell(1, 1).Value = "Danh sách tài khoản";
+                worksheet.Range("A1", "H1").Style.Font.FontSize = 15;
+                worksheet.Range("A1", "H1").Style.Font.Bold = true;
+
+                // Đặt header
+                worksheet.Cell(3, 1).Value = "STT";
+                worksheet.Cell(3, 2).Value = "USERNAME";
+                worksheet.Cell(3, 3).Value = "FULLNAME";
+                worksheet.Cell(3, 4).Value = "EMPLOYEE CODE";
+                worksheet.Cell(3, 5).Value = "ADMIN";
+                worksheet.Cell(3, 6).Value = "ROOT";
+                worksheet.Cell(3, 7).Value = "GROUP NAME";
+                worksheet.Cell(3, 8).Value = "LOCK";
+
+                // Đổ dữ liệu từ danh sách object vào file Excel
+                int row = 4;
+                int stt = 1;
+                foreach (var item in inventory)
+                {
+                    worksheet.Cell(row, 1).Value = stt;
+                    worksheet.Cell(row, 2).Value = item.Username;
+                    worksheet.Cell(row, 3).Value = item.Fullname;
+                    worksheet.Cell(row, 4).Value = item.EmployeeCode;
+                    worksheet.Cell(row, 5).Value = (item.IsAdmin == true ? "Có" : "Không");
+                    worksheet.Cell(row, 6).Value = (item.IsRoot == true ? "Có" : "Không");
+                    worksheet.Cell(row, 7).Value = item.GroupName;
+                    worksheet.Cell(row, 8).Value = (item.IsLock == true ? "Có" : "Không");
+                    row++;
+                    stt++;
+                }
+                worksheet.Range("A3", "H" + (row - 1)).Style.Border.TopBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "H" + (row - 1)).Style.Border.RightBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "H" + (row - 1)).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "H" + (row - 1)).Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                // Chỉnh kích thước của các cột
+                worksheet.Column(1).Width = 10;
+                worksheet.Column(2).Width = 30;
+                worksheet.Column(3).Width = 40;
+                worksheet.Column(4).Width = 40;
+                worksheet.Column(5).Width = 30;
+                worksheet.Column(6).Width = 30;
+                worksheet.Column(7).Width = 40;
+                worksheet.Column(8).Width = 30;
+
+                // Lưu workbook vào MemoryStream
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    return stream.ToArray();
+                }
+            }
+        }
+
     }
 }

@@ -108,6 +108,15 @@ namespace GYM_BE.All.Profile.PerCustomer
             return Ok(response);
         }
 
+        [HttpGet]
+        public IActionResult ExportExcelPerCustomer()
+        {
+            DateTime now = DateTime.Now;
+            string dateTimeStr = now.ToString("yyyyMMddHHmmss");
+            var result = _PerCustomerRepository.ExportExcelPerCustomer();
+
+            return File(result, "application/force-download", $"per_customer_{dateTimeStr}.xlsx");
+        }
     }
 }
 

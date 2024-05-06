@@ -216,7 +216,7 @@ namespace GYM_BE.All.System.SysOtherList
             };
         }
 
-        public byte[] ExportMoveHistoryToExcel()
+        public byte[] ExportExcelSysOtherList()
         {
             var inventory = from p in _dbContext.SysOtherLists.AsNoTracking()
                              from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == p.TYPE_ID).DefaultIfEmpty()
@@ -235,45 +235,50 @@ namespace GYM_BE.All.System.SysOtherList
 
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Users");
+                var worksheet = workbook.Worksheets.Add("SYS_OTHER_LIST");
 
-                worksheet.Range("A1", "F1").Merge();
-                worksheet.Range("A1", "F1").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                worksheet.Range("A1", "G1").Merge();
+                worksheet.Range("A1", "G1").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
                 worksheet.Cell(1, 1).Value = "Danh sách tham số hệ thống";
-                worksheet.Range("A1", "F1").Style.Font.FontSize = 15;
-                worksheet.Range("A1", "F1").Style.Font.Bold = true;
+                worksheet.Range("A1", "G1").Style.Font.FontSize = 15;
+                worksheet.Range("A1", "G1").Style.Font.Bold = true;
 
                 // Đặt header
-                worksheet.Cell(2, 1).Value = "Code";
-                worksheet.Cell(2, 2).Value = "Name";
-                worksheet.Cell(2, 3).Value = "Type Name";
-                worksheet.Cell(2, 4).Value = "Note";
-                worksheet.Cell(2, 5).Value = "Orders";
-                worksheet.Cell(2, 6).Value = "Status";
+                worksheet.Cell(3, 1).Value = "STT";
+                worksheet.Cell(3, 2).Value = "CODE";
+                worksheet.Cell(3, 3).Value = "NAME";
+                worksheet.Cell(3, 4).Value = "TYPE NAME";
+                worksheet.Cell(3, 5).Value = "NOTE";
+                worksheet.Cell(3, 6).Value = "ORDERS";
+                worksheet.Cell(3, 7).Value = "STATUS";
 
                 // Đổ dữ liệu từ danh sách object vào file Excel
-                int row = 3;
+                int row = 4;
+                int stt = 1;
                 foreach (var item in inventory)
                 {
-                    worksheet.Cell(row, 1).Value = item.Code;
-                    worksheet.Cell(row, 2).Value = item.Name;
-                    worksheet.Cell(row, 3).Value = item.TypeName;
-                    worksheet.Cell(row, 4).Value = item.Note;
-                    worksheet.Cell(row, 5).Value = item.Orders;
-                    worksheet.Cell(row, 6).Value = item.Status;
+                    worksheet.Cell(row, 1).Value = stt;
+                    worksheet.Cell(row, 2).Value = item.Code;
+                    worksheet.Cell(row, 3).Value = item.Name;
+                    worksheet.Cell(row, 4).Value = item.TypeName;
+                    worksheet.Cell(row, 5).Value = item.Note;
+                    worksheet.Cell(row, 6).Value = item.Orders;
+                    worksheet.Cell(row, 7).Value = item.Status;
                     row++;
+                    stt++;
                 }
-                worksheet.Range("A2", "F" + row).Style.Border.TopBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A2", "F" + row).Style.Border.RightBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A2", "F" + row).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A2", "F" + row).Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "G" + row).Style.Border.TopBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "G" + row).Style.Border.RightBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "G" + row).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A3", "G" + row).Style.Border.LeftBorder = XLBorderStyleValues.Thin;
                 // Chỉnh kích thước của các cột
                 worksheet.Column(1).Width = 10;
-                worksheet.Column(2).Width = 45;
-                worksheet.Column(3).Width = 45;
-                worksheet.Column(4).Width = 25;
-                worksheet.Column(5).Width = 25;
-                worksheet.Column(6).Width = 15;
+                worksheet.Column(2).Width = 30;
+                worksheet.Column(3).Width = 40;
+                worksheet.Column(4).Width = 40;
+                worksheet.Column(5).Width = 40;
+                worksheet.Column(6).Width = 30;
+                worksheet.Column(7).Width = 30;
 
                 // Lưu workbook vào MemoryStream
                 using (var stream = new MemoryStream())

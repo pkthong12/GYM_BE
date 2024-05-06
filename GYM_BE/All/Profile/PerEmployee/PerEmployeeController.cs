@@ -4,6 +4,7 @@ using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.Main;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -106,6 +107,17 @@ namespace GYM_BE.All.PerEmployee
             if (sid == null) return Unauthorized();
             var response = await _PerEmployeeRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
+        }
+        [AllowAnonymous]
+
+        [HttpGet]
+        public IActionResult ExportExcelPerEmployee()
+        {
+            DateTime now = DateTime.Now;
+            string dateTimeStr = now.ToString("yyyyMMddHHmmss");
+            var result = _PerEmployeeRepository.ExportExcelPerEmployee();
+
+            return File(result, "application/force-download", $"per_employee_{dateTimeStr}.xlsx");
         }
     }
 }

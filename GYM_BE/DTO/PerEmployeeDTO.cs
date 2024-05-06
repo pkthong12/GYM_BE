@@ -6,7 +6,7 @@
         public string? FullName { get; set; }
         public long? GenderId { get; set; }
         public string? GenderName { get; set; }
-        public DateTime? BirthDate { get; set; }
+        public string? BirthDate { get; set; }
         public string? IdNo { get; set; }
         public long? StaffGroupId { get; set; }
         public string? StaffGroupName { get; set; }

@@ -8,6 +8,8 @@ namespace GYM_BE.All.PerEmployee
     public interface IPerEmployeeRepository: IGenericRepository<PER_EMPLOYEE, PerEmployeeDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<PerEmployeeDTO> pagination);
+
+        byte[] ExportExcelPerEmployee();
     }
 }
 

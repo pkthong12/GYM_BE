@@ -143,16 +143,15 @@ namespace GYM_BE.All.System.SysOtherList
             var response = await _SysOtherListRepository.GetAllUser();
             return Ok(response);
         }
-        [AllowAnonymous]
 
-        [HttpGet(nameof(ExportExcelMoveHistory))]
-        public IActionResult ExportExcelMoveHistory()
+        [HttpGet]
+        public IActionResult ExportExcelSysOtherList()
         {
             DateTime now = DateTime.Now;
             string dateTimeStr = now.ToString("yyyyMMddHHmmss");
-            var result = _SysOtherListRepository.ExportMoveHistoryToExcel();
+            var result = _SysOtherListRepository.ExportExcelSysOtherList();
 
-            return File(result, "application/force-download", $"move_history_{dateTimeStr}.xlsx");
+            return File(result, "application/force-download", $"sys_other_list_{dateTimeStr}.xlsx");
         }
     }
 }
