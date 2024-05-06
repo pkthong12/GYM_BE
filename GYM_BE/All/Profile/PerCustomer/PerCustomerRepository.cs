@@ -203,7 +203,7 @@ namespace GYM_BE.All.Profile.PerCustomer
             {
                 string lastestData = _dbContext.PerCustomers.OrderByDescending(t => t.CODE).First().CODE!.ToString();
 
-                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 3)) + 1).ToString("D3");
             }
 
             return newCode;
@@ -228,7 +228,7 @@ namespace GYM_BE.All.Profile.PerCustomer
                                 IdNo = p.ID_NO,
                                 CustomerClassName = gr.NAME,
                                 BirthDate = p.BIRTH_DATE,
-                                BirthDateString = p.BIRTH_DATE!.Value.ToString("dd/MM/yyyy"),
+                                BirthDateString = p.BIRTH_DATE!,
                                 GenderName = gender.NAME,
                                 Address = p.ADDRESS,
                                 PhoneNumber = p.PHONE_NUMBER,

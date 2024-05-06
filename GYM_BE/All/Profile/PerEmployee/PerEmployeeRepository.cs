@@ -156,7 +156,7 @@ namespace GYM_BE.All.PerEmployee
             {
                 string lastestData = _dbContext.PerEmployees.OrderByDescending(t => t.CODE).First().CODE!.ToString();
 
-                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 3)) + 1).ToString("D3");
             }
 
             return newCode;
