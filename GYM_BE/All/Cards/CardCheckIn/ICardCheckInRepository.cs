@@ -8,6 +8,7 @@ namespace GYM_BE.All.CardCheckIn
     public interface ICardCheckInRepository: IGenericRepository<CARD_CHECK_IN, CardCheckInDTO>
     {
         Task<FormatedResponse> QueryList(PaginationDTO<CardCheckInDTO> pagination);
+        Task<FormatedResponse> CheckIn(string cardCode, string sid);
     }
 }
 

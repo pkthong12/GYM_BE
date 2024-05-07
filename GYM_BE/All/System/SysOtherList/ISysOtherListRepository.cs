@@ -14,5 +14,6 @@ namespace GYM_BE.All.SysOtherList
         Task<FormatedResponse> GetAllUser();
 
         byte[] ExportExcelSysOtherList();
+        byte[] ExportedPDFSysOtherList(long typeId);
     }
 }

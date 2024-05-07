@@ -4,6 +4,7 @@ using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.Main;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -108,6 +109,16 @@ namespace GYM_BE.All.CardCheckIn
             return Ok(response);
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> CheckIn(CardCheckInDTO model)
+        {
+            string cardCode = model.CardCode;
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _CardCheckInRepository.CheckIn(cardCode, sid);
+            return Ok(response);
+        }
     }
 }
 

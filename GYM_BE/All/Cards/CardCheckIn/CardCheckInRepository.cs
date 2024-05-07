@@ -29,14 +29,17 @@ namespace GYM_BE.All.CardCheckIn
                          select new CardCheckInDTO
                          {
                              Id = p.ID,
+                             CardCode = i.CODE,
                              CodeCus = c.CODE,
                              CustomerName = c.FULL_NAME,
                              CardTypeName = s.NAME,
                              TimeEnd = p.TIME_END,
                              GenderName = g.NAME,
                              TimeStart = p.TIME_START,
-                             TimeStartString = p.TIME_START!.Value.ToString("dd/MM/yyyy"),
-                             TimeEndString = p.TIME_END!.Value.ToString("dd/MM/yyyy"),
+                             DayCheckIn = p.DAY_CHECK_IN,
+                             DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
+                             TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
+                             TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -56,14 +59,17 @@ namespace GYM_BE.All.CardCheckIn
                                select new CardCheckInDTO
                                {
                                    Id = p.ID,
+                                   CardCode = i.CODE,
                                    CodeCus = c.CODE,
                                    CustomerName = c.FULL_NAME,
                                    CardTypeName = s.NAME,
                                    TimeEnd = p.TIME_END,
                                    GenderName = g.NAME,
                                    TimeStart = p.TIME_START,
-                                   TimeStartString = p.TIME_START!.Value.ToString("dd/MM/yyyy"),
-                                   TimeEndString = p.TIME_END!.Value.ToString("dd/MM/yyyy"),
+                                   DayCheckIn = p.DAY_CHECK_IN,
+                                   DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
+                                   TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
+                                   TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
                                }).FirstOrDefaultAsync();
             if (joined != null)
             {
@@ -121,6 +127,35 @@ namespace GYM_BE.All.CardCheckIn
         public Task<FormatedResponse> Delete(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<FormatedResponse> CheckIn(string cardCode, string sid)
+        {
+            var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE == cardCode)!.ID;
+            var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date).ToList();
+            if(checkExsist.Count() == 0)
+            {
+                var checkIn = new CardCheckInDTO
+                {
+                    CardInfoId = cardId,
+                    TimeStart = DateTime.Now,
+                    DayCheckIn = DateTime.Now.Date,
+                };
+                var response = await _genericRepository.Create(checkIn, sid);
+                return response;
+            }
+            else
+            {
+                var checkIn = _dbContext.CardCheckIns.FirstOrDefault(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date);
+                var card = new CardCheckInDTO();
+                card.Id = checkIn!.ID;
+                card.DayCheckIn = checkIn.DAY_CHECK_IN!.Value;
+                card.CardInfoId = cardId;
+                card.TimeStart = checkIn.TIME_START;
+                card.TimeEnd = DateTime.Now;
+                var response = await _genericRepository.Update(card, sid, true);
+                return response;
+            }
         }
     }
 }

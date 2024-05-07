@@ -153,5 +153,20 @@ namespace GYM_BE.All.System.SysOtherList
 
             return File(result, "application/force-download", $"sys_other_list_{dateTimeStr}.xlsx");
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ExportedPDFSysOtherList(long id)
+        {
+            DateTime now = DateTime.Now;
+            string dateTimeStr = now.ToString("yyyyMMddHHmmss");
+            var result = _SysOtherListRepository.ExportedPDFSysOtherList(id);
+            if (result == null)
+            {
+                return Ok(new { StatusCode = 404, StatusMessage = "Not Found!" }); // Handle case when invoice is not found
+            }
+
+            return File(result, "application/pdf", $"sys_other_list_{dateTimeStr}.pdf");
+        }
     }
 }

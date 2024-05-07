@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 using ClosedXML.Excel;
+using iText.Layout.Properties;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Kernel.Pdf;
 
 namespace GYM_BE.All.System.SysOtherList
 {
@@ -288,5 +292,91 @@ namespace GYM_BE.All.System.SysOtherList
                 }
             }
         }
+
+        public byte[] ExportedPDFSysOtherList(long typeId)
+        {
+            var type = (from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == typeId)
+                        select new 
+                        {
+                            Id = t.ID,
+                            Code = t.CODE,
+                            Name = t.NAME,
+                        }).FirstOrDefault();
+
+            var otherLists = from l in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.TYPE_ID == type!.Id).DefaultIfEmpty()
+                             from t in _dbContext.SysOtherListTypes.AsNoTracking().Where(x => x.ID == type!.Id).DefaultIfEmpty()
+                         select new SysOtherListDTO
+                         {
+                             Id = l.ID,
+                             Code = l.CODE,
+                             Name = l.NAME,
+                             TypeId = l.TYPE_ID,
+                             TypeName = t.NAME,
+                             Note = l.NOTE,
+                             Orders = l.ORDERS,
+                             IsActive = l.IS_ACTIVE,
+                             Status = l.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng",
+                             CreatedDate = l.CREATED_DATE,
+                             CreatedBy = l.CREATED_BY,
+                             UpdatedBy = l.UPDATED_BY,
+                             UpdatedDate = l.UPDATED_DATE,
+                         };
+
+            
+
+            if (otherLists == null)
+            {
+                // Handle case when invoice is not found
+                return null;
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                var writer = new PdfWriter(stream);
+                var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
+                var document = new Document(pdf);
+
+                // Add invoice information
+                document.Add(new Paragraph($"Transaction invoice:"));
+                document.Add(new Paragraph($"Code: {type!.Code}"));
+                document.Add(new Paragraph($"Type Name: {type!.Name}"));
+
+
+                // Create a table with 5 columns
+                var table = new Table(5);
+                table.SetWidth(UnitValue.CreatePercentValue(100));
+
+                // Add header row
+                table.AddHeaderCell(new iText.Layout.Element.Cell().Add(new Paragraph("Code")));
+                table.AddHeaderCell(new iText.Layout.Element.Cell().Add(new Paragraph("Name")));
+                table.AddHeaderCell(new iText.Layout.Element.Cell().Add(new Paragraph("Note")));
+                table.AddHeaderCell(new iText.Layout.Element.Cell().Add(new Paragraph("Order")));
+                table.AddHeaderCell(new iText.Layout.Element.Cell().Add(new Paragraph("Status")));
+
+                // Add invoice details
+                foreach (var otherList in otherLists)
+                {
+                    // first column
+                    table.AddCell(new iText.Layout.Element.Cell().Add(new Paragraph(otherList.Code == null ? "" : otherList.Code)));
+                    // second column
+                    table.AddCell(new iText.Layout.Element.Cell().Add(new Paragraph(otherList.Name == null ? "" : otherList.Name)));
+                    // third column
+                    table.AddCell(new iText.Layout.Element.Cell().Add(new Paragraph(otherList.Note == null ? "" : otherList.Note)));
+                    // fourth column
+                    table.AddCell(new iText.Layout.Element.Cell().Add(new Paragraph(otherList.Orders.ToString())));
+                    // fourth column
+                    table.AddCell(new iText.Layout.Element.Cell().Add(new Paragraph(otherList.Status == null ? "" : otherList.Status)));
+                }
+
+                // Add the table to the document
+                document.Add(table);
+
+                // Close the document
+                document.Close();
+
+                return stream.ToArray();
+            }
+        }
+
     }
 }
