@@ -131,7 +131,12 @@ namespace GYM_BE.All.CardCheckIn
 
         public async Task<FormatedResponse> CheckIn(string cardCode, string sid)
         {
-            var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE == cardCode)!.ID;
+            var checkExistCard =await _dbContext.CardInfos.AnyAsync(x => x.CODE!.ToUpper() == cardCode.ToUpper());
+            if (!checkExistCard)
+            {
+                return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+            var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE!.ToUpper() == cardCode.ToUpper())!.ID;
             var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date).ToList();
             if(checkExsist.Count() == 0)
             {

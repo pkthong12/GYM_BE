@@ -113,7 +113,7 @@ namespace GYM_BE.All.CardCheckIn
         [HttpPost]
         public async Task<IActionResult> CheckIn(CardCheckInDTO model)
         {
-            string cardCode = model.CardCode;
+            string cardCode = model.CardCode!;
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
             var response = await _CardCheckInRepository.CheckIn(cardCode, sid);
