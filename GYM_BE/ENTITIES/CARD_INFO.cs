@@ -16,6 +16,7 @@ public class CARD_INFO : BASE_ENTITY
     public string? NOTE { get; set; }
     public bool? WARDROBE { get; set; }
     public bool? IS_ACTIVE { get; set; }
+    public bool? IS_HAVE_PT { get; set; }
     public string? TIME_START { get; set; }
     public string? TIME_END { get; set; }
 }

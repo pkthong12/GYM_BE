@@ -20,6 +20,7 @@
         public string? EffectDateString { get; set; }
         public string? ExpiredDateString { get; set; }
         public bool? IsActive { get; set; }
+        public bool? IsHavePt { get; set; }
         public string? Status { get; set; }
         public string? CodeCus { get; set; }
     }

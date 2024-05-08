@@ -43,6 +43,7 @@ namespace GYM_BE.All.CardInfo
                              Price = p.PRICE,
                              ShiftId = p.SHIFT_ID,
                              ShiftName = sh.NAME,
+                             IsHavePt =p.IS_HAVE_PT,
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -79,6 +80,7 @@ namespace GYM_BE.All.CardInfo
                                     Price = p.PRICE,
                                     ShiftId = p.SHIFT_ID,
                                     ShiftName = sh.NAME,
+                                    IsHavePt = p.IS_HAVE_PT,
                                 }).FirstAsync();
             if (joined != null)
             {
