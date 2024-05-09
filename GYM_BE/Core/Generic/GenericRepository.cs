@@ -51,7 +51,7 @@ namespace GYM_BE.Core.Generic
                 PropertyInfo? propertyInfo2 = (from pi in typeFromHandle.GetProperties()
                                                where pi.Name == "CREATED_BY"
                                                select pi).SingleOrDefault();
-                propertyInfo?.SetValue(entity, DateTime.UtcNow);
+                propertyInfo?.SetValue(entity, DateTime.UtcNow.AddHours(7));
                 propertyInfo2?.SetValue(entity, sid);
                 try
                 {
@@ -207,7 +207,7 @@ namespace GYM_BE.Core.Generic
                 PropertyInfo? propertyInfo3 = (from pi in typeFromHandle.GetProperties()
                                                where pi.Name == "UPDATED_BY"
                                                select pi).SingleOrDefault();
-                propertyInfo2?.SetValue(entity, DateTime.UtcNow);
+                propertyInfo2?.SetValue(entity, DateTime.UtcNow.AddHours(7));
                 propertyInfo3?.SetValue(entity, sid);
                 try
                 {

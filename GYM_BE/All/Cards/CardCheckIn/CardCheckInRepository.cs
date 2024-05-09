@@ -136,28 +136,29 @@ namespace GYM_BE.All.CardCheckIn
             {
                 return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
+            var timeCheckIn = DateTime.UtcNow.AddHours(7);
             var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE!.ToUpper() == cardCode.ToUpper())!.ID;
-            var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date).ToList();
+            var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == timeCheckIn.Date).ToList();
             if(checkExsist.Count() == 0)
             {
                 var checkIn = new CardCheckInDTO
                 {
                     CardInfoId = cardId,
-                    TimeStart = DateTime.Now,
-                    DayCheckIn = DateTime.Now.Date,
+                    TimeStart = timeCheckIn,
+                    DayCheckIn = timeCheckIn.Date,
                 };
                 var response = await _genericRepository.Create(checkIn, sid);
                 return response;
             }
             else
             {
-                var checkIn = _dbContext.CardCheckIns.FirstOrDefault(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date);
+                var checkIn = _dbContext.CardCheckIns.FirstOrDefault(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == timeCheckIn.Date);
                 var card = new CardCheckInDTO();
                 card.Id = checkIn!.ID;
                 card.DayCheckIn = checkIn.DAY_CHECK_IN!.Value;
                 card.CardInfoId = cardId;
                 card.TimeStart = checkIn.TIME_START;
-                card.TimeEnd = DateTime.Now;
+                card.TimeEnd = timeCheckIn;
                 var response = await _genericRepository.Update(card, sid, true);
                 return response;
             }
