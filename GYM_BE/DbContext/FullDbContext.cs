@@ -40,6 +40,7 @@ namespace GYM_BE.Entities
         public virtual DbSet<PER_CUS_LIST_CARD> PerCusListCards { get; set; }
         public virtual DbSet<CARD_CHECK_IN> CardCheckIns { get; set; }
         public virtual DbSet<CARD_INFO> CardInfos { get; set; }
+        public virtual DbSet<CARD_HISTORY> CardHistorys { get; set; }
         protected override void ConfigureConventions(
         ModelConfigurationBuilder configurationBuilder)
         {
