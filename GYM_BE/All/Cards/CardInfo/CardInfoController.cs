@@ -12,7 +12,7 @@ namespace GYM_BE.All.CardInfo
 {
     [ApiExplorerSettings(GroupName = "004-CARD-CARD_INFO")]
     [ApiController]
-    [GymAuthorize]
+    //[GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class CardInfoController : Controller
     {
@@ -113,7 +113,19 @@ namespace GYM_BE.All.CardInfo
             var response = await _CardInfoRepository.GetListCustomer();
             return Ok(response);
         }
-
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAllCardValid(long? id)
+        {
+            var response = await _CardInfoRepository.GetAllCardValid(id);
+            return Ok(response);
+        }
+        [HttpGet]
+        public async Task<IActionResult> CalculateByCardId(long? id)
+        {
+            var response = await _CardInfoRepository.CalculateByCardId(id);
+            return Ok(response);
+        }
     }
 }
 

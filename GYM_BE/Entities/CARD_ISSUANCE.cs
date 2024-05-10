@@ -26,6 +26,7 @@ namespace GYM_BE.Entities
        public long? PER_PT_ID  { get; set; }
 
        public bool? IS_REAL_PRICE  { get; set; }
+       public bool? IS_ACTIVE { get; set; }
 
        public long? CARD_PRICE  { get; set; }
 

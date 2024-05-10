@@ -24,4 +24,18 @@
         public string? Status { get; set; }
         public string? CodeCus { get; set; }
     }
+
+    public class CardInfoOutputDTO
+    {
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
+        public bool? Wardrobe { get; set; }
+        public long? Price { get; set; }
+        public int? TotalDay { get; set; }
+        public int? HourCard { get; set; }
+        public string? PracticeTime { get; set; }
+        public bool? IsHavePt { get; set; }
+        public string? HoursStart { get; set; }
+        public string? HoursEnd { get; set; }
+    }
 }

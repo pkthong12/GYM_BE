@@ -10,6 +10,8 @@ namespace GYM_BE.All.CardInfo
     {
         Task<FormatedResponse> QueryList(PaginationDTO<CardInfoDTO> pagination);
         Task<FormatedResponse> GetListCustomer();
+        Task<FormatedResponse> GetAllCardValid(long? id);
+        Task<FormatedResponse> CalculateByCardId(long? id);
     }
 }
 

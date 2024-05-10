@@ -27,7 +27,7 @@ namespace GYM_BE.DTO
         public long? MoneyHavePay { get; set; }
         public long? PaidMoney { get; set; }
         public string? Note { get; set; }
-
+        public bool? IsActive { get; set; }
     }
 }
 
