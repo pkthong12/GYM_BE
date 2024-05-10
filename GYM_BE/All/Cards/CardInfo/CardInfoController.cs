@@ -12,7 +12,7 @@ namespace GYM_BE.All.CardInfo
 {
     [ApiExplorerSettings(GroupName = "004-CARD-CARD_INFO")]
     [ApiController]
-    //[GymAuthorize]
+    [GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class CardInfoController : Controller
     {

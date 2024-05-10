@@ -210,6 +210,13 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> DeleteNew(long id, string sid)
         {
+
+            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => id == c.SHIFT_ID);
+            if (checkUsed)
+            {
+                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+
             var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
             // lưu lịch sử
             var updateCard = new CARD_HISTORY()
@@ -237,7 +244,13 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> DeleteIdsNew(List<long> ids, string sid)
         {
-            foreach(var id in ids)
+            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => ids.Contains(c.SHIFT_ID!.Value));
+            if (checkUsed)
+            {
+                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+
+            foreach (var id in ids)
             {
                 var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
                 // lưu lịch sử

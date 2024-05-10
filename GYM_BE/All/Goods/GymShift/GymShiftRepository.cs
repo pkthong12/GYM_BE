@@ -5,6 +5,7 @@ using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 
 namespace GYM_BE.All.Gym.GymShift
 {
@@ -94,6 +95,13 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> Update(GoodsShiftDTO dto, string sid, bool patchMode = true)
         {
+            var checkUsed = await (from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.SHIFT_ID == dto.Id)
+                                   from i in _dbContext.CardIssuances.AsNoTracking().Where(i => i.CARD_ID == c.ID)
+                                   select i.ID).AnyAsync();
+            if (checkUsed)
+            {
+                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }
@@ -106,18 +114,29 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> Delete(long id)
         {
+            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => c.SHIFT_ID == id);
+            if (checkUsed)
+            {
+                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             var response = await _genericRepository.Delete(id);
             return response;
         }
 
         public async Task<FormatedResponse> Delete(string id)
         {
+
             var response = await _genericRepository.Delete(id);
             return response;
         }
 
         public async Task<FormatedResponse> DeleteIds(List<long> ids)
         {
+            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => ids.Contains(c.SHIFT_ID!.Value));
+            if (checkUsed)
+            {
+                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             var response = await _genericRepository.DeleteIds(ids);
             return response;
         }
