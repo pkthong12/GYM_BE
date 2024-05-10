@@ -366,7 +366,7 @@ namespace GYM_BE.All.CardInfo
                                     StartDate = p.EFFECTED_DATE,
                                     EndDate = p.EXPIRED_DATE,
                                     Wardrobe = p.WARDROBE,
-                                    Price = p.PRICE,
+                                    CardPrice = p.PRICE,
                                     TotalDay = sh.TOTAL_DAYS,
                                     PracticeTime = sh.HOURS_START + " - " + sh.HOURS_END,
                                     IsHavePt = p.IS_HAVE_PT,

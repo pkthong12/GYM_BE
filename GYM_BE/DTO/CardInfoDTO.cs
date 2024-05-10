@@ -30,7 +30,7 @@
         public string? StartDate { get; set; }
         public string? EndDate { get; set; }
         public bool? Wardrobe { get; set; }
-        public long? Price { get; set; }
+        public long? CardPrice { get; set; }
         public int? TotalDay { get; set; }
         public int? HourCard { get; set; }
         public string? PracticeTime { get; set; }

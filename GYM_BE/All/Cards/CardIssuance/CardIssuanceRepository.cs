@@ -20,11 +20,15 @@ namespace GYM_BE.All.CardIssuance
         public async Task<FormatedResponse> QueryList(PaginationDTO<CardIssuanceDTO> pagination)
         {
             var joined = from p in _dbContext.CardIssuances.AsNoTracking()
-                         from e in _dbContext.PerEmployees.AsNoTracking().Where(e=> e.ID == p.PER_SELL_ID).DefaultIfEmpty()
-                         from e1 in _dbContext.PerEmployees.AsNoTracking().Where(e1=> e1.ID == p.PER_PT_ID).DefaultIfEmpty()
-                         from c in _dbContext.CardInfos.AsNoTracking().Where(c=> c.ID == p.CARD_ID).DefaultIfEmpty()
-                         from cu in _dbContext.PerCustomers.AsNoTracking().Where(cu=> cu.ID == p.CUSTOMER_ID).DefaultIfEmpty()
-                         from l in _dbContext.GoodsLockers.AsNoTracking().Where(l=> l.ID== p.LOCKER_ID).DefaultIfEmpty()
+
+                         from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.PER_SELL_ID).DefaultIfEmpty()
+                         from e1 in _dbContext.PerEmployees.AsNoTracking().Where(e1 => e1.ID == p.PER_PT_ID).DefaultIfEmpty()
+                         from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
+                         from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == c.SHIFT_ID).DefaultIfEmpty()
+                         from cu in _dbContext.PerCustomers.AsNoTracking().Where(cu => cu.ID == p.CUSTOMER_ID).DefaultIfEmpty()
+                         from l in _dbContext.GoodsLockers.AsNoTracking().Where(l => l.ID == p.LOCKER_ID).DefaultIfEmpty()
+                         from s in _dbContext.SysUsers.AsNoTracking().Where(s => s.ID == p.CREATED_BY).DefaultIfEmpty()
+                         from ot in _dbContext.SysOtherLists.AsNoTracking().Where(ot=> ot.ID == c.CARD_TYPE_ID).DefaultIfEmpty()
                              //tuy chinh
                          select new CardIssuanceDTO
                          {
@@ -35,6 +39,16 @@ namespace GYM_BE.All.CardIssuance
                              CardId = p.CARD_ID,
                              CardPrice = p.CARD_PRICE,
                              CustomerId = p.CUSTOMER_ID,
+                             CustomerName = cu.FULL_NAME,
+                             CustomerCode = cu.CODE,
+                             CardCode = c.CODE,
+                             StartDate = c.EFFECTED_DATE,
+                             EndDate = c.EXPIRED_DATE,
+                             CardTypeName =ot.NAME,
+                             PracticeTime = sh.HOURS_START + " - " + sh.HOURS_END,
+                             LockerCode = c.CODE,
+                             PerPtName = e1.FULL_NAME,
+                             CreatedByUsername = s.USERNAME,
                              HourCard = p.HOUR_CARD,
                              HourCardBonus = p.HOUR_CARD_BONUS,
                              IsHavePt = p.IS_HAVE_PT,
@@ -66,6 +80,7 @@ namespace GYM_BE.All.CardIssuance
                                 from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
                                 from cu in _dbContext.PerCustomers.AsNoTracking().Where(cu => cu.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                                 from l in _dbContext.GoodsLockers.AsNoTracking().Where(l => l.ID == p.LOCKER_ID).DefaultIfEmpty()
+                                from s in _dbContext.SysUsers.AsNoTracking().Where(s=> s.ID == p.CREATED_BY).DefaultIfEmpty()
                                     //tuy chinh
                                 select new CardIssuanceDTO
                                 {
@@ -76,6 +91,12 @@ namespace GYM_BE.All.CardIssuance
                                     CardId = p.CARD_ID,
                                     CardPrice = p.CARD_PRICE,
                                     CustomerId = p.CUSTOMER_ID,
+                                    CustomerName= cu.FULL_NAME,
+                                    CustomerCode = cu.CODE,
+                                    CardCode = c.CODE,
+                                    LockerCode = c.CODE,
+                                    PerPtName = e1.FULL_NAME,
+                                    CreatedByUsername = s.USERNAME,
                                     HourCard = p.HOUR_CARD,
                                     HourCardBonus = p.HOUR_CARD_BONUS,
                                     IsHavePt = p.IS_HAVE_PT,
@@ -104,6 +125,7 @@ namespace GYM_BE.All.CardIssuance
 
         public async Task<FormatedResponse> Create(CardIssuanceDTO dto, string sid)
         {
+            dto.DocumentNumber = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -150,7 +172,23 @@ namespace GYM_BE.All.CardIssuance
         {
             throw new NotImplementedException();
         }
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.CardIssuances.Count() == 0)
+            {
+                newCode = "GYM_HEX/0001";
+            }
+            else
+            {
+                string lastestData = _dbContext.CardIssuances.OrderByDescending(t => t.DOCUMENT_NUMBER).First().DOCUMENT_NUMBER!.ToString();
 
+                newCode = lastestData.Substring(0, 7) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
+        }
     }
 }
 
