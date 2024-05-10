@@ -8,84 +8,82 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace GYM_BE.All.CardInfo
+namespace GYM_BE.All.CardHistory
 {
-    [ApiExplorerSettings(GroupName = "004-CARD-CARD_INFO")]
+    [ApiExplorerSettings(GroupName = "004-CARD-CARD_HISTORY")]
     [ApiController]
-    //[GymAuthorize]
     [Route("api/[controller]/[action]")]
-    public class CardInfoController : Controller
+    [GymAuthorize]
+    public class CardHistoryController : Controller
     {
         private readonly FullDbContext _dbContext;
-        private readonly ICardInfoRepository _CardInfoRepository;
+        private readonly ICardHistoryRepository _CardHistoryRepository;
         private readonly AppSettings _appSettings;
 
-        public CardInfoController(
+        public CardHistoryController(
             DbContextOptions<FullDbContext> dbOptions,
             IOptions<AppSettings> options)
         {
             _dbContext = new FullDbContext(dbOptions, options);
-            _CardInfoRepository = new CardInfoRepository(_dbContext);
+            _CardHistoryRepository = new CardHistoryRepository(_dbContext);
             _appSettings = options.Value;
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryList(PaginationDTO<CardInfoDTO> pagination)
+        public async Task<IActionResult> QueryList(PaginationDTO<CardHistoryDTO> pagination)
         {
-            var response = await _CardInfoRepository.QueryList(pagination);
+            var response = await _CardHistoryRepository.QueryList(pagination);
             return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {
-            var response = await _CardInfoRepository.GetById(id);
+            var response = await _CardHistoryRepository.GetById(id);
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CardInfoDTO model)
+        public async Task<IActionResult> Create(CardHistoryDTO model)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.Create(model, sid);
+            var response = await _CardHistoryRepository.Create(model, sid);
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRange(List<CardInfoDTO> models)
+        public async Task<IActionResult> CreateRange(List<CardHistoryDTO> models)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.CreateRange(models, sid);
-            return Ok(response);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Update(CardInfoDTO model)
-        {
-            var sid = Request.Sid(_appSettings);
-            if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.Update(model, sid);
+            var response = await _CardHistoryRepository.CreateRange(models, sid);
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateRange(List<CardInfoDTO> models)
+        public async Task<IActionResult> Update(CardHistoryDTO model)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.UpdateRange(models, sid);
+            var response = await _CardHistoryRepository.Update(model, sid);
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(CardInfoDTO model)
+        public async Task<IActionResult> UpdateRange(List<CardHistoryDTO> models)
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
+            var response = await _CardHistoryRepository.UpdateRange(models, sid);
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(CardHistoryDTO model)
+        {
             if (model.Id != null)
             {
-                var response = await _CardInfoRepository.DeleteNew((long)model.Id, sid);
+                var response = await _CardHistoryRepository.Delete((long)model.Id);
                 return Ok(response);
             }
             else
@@ -97,9 +95,7 @@ namespace GYM_BE.All.CardInfo
         [HttpPost]
         public async Task<IActionResult> DeleteIds(IdsRequest model)
         {
-            var sid = Request.Sid(_appSettings);
-            if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.DeleteIdsNew(model.Ids, sid);
+            var response = await _CardHistoryRepository.DeleteIds(model.Ids);
             return Ok(response);
         }
 
@@ -108,27 +104,17 @@ namespace GYM_BE.All.CardInfo
         {
             var sid = Request.Sid(_appSettings);
             if (sid == null) return Unauthorized();
-            var response = await _CardInfoRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
-            return Ok(response);
-        } 
-        [HttpGet]
-        public async Task<IActionResult> GetListCustomer()
-        {
-            var response = await _CardInfoRepository.GetListCustomer();
+            var response = await _CardHistoryRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetAllCardValid(long? id)
+        public async Task<IActionResult> GetListCardCode()
         {
-            var response = await _CardInfoRepository.GetAllCardValid(id);
+            var response = await _CardHistoryRepository.GetListCardCode();
             return Ok(response);
         }
-        [HttpGet]
-        public async Task<IActionResult> CalculateByCardId(long? id)
-        {
-            var response = await _CardInfoRepository.CalculateByCardId(id);
-            return Ok(response);
-        }
+
     }
 }
 

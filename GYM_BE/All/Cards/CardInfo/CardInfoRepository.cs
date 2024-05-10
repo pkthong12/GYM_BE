@@ -5,7 +5,11 @@ using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System;
 using System.Net.NetworkInformation;
+using CORE.AutoMapper;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace GYM_BE.All.CardInfo
 {
@@ -81,7 +85,6 @@ namespace GYM_BE.All.CardInfo
                                     Price = p.PRICE,
                                     ShiftId = p.SHIFT_ID,
                                     ShiftName = sh.NAME,
-                                    IsHavePt = p.IS_HAVE_PT,
                                 }).FirstAsync();
             if (joined != null)
             {
@@ -98,6 +101,27 @@ namespace GYM_BE.All.CardInfo
             dto.IsActive = true;
             dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
+
+            // lưu lịch sử
+            var createCard = new CARD_HISTORY()
+            {
+                CODE = dto.Code,
+                CARD_TYPE_ID = dto.CardTypeId,
+                EFFECTED_DATE = dto.EffectedDate,
+                EXPIRED_DATE = dto.ExpiredDate,
+                WARDROBE = dto.Wardrobe,
+                IS_HAVE_PT = dto.IsHavePt,
+                SHIFT_ID = dto.ShiftId,
+                PRICE = dto.Price,
+                NOTE = dto.Note,
+                ACTION = 1,
+                IS_ACTIVE = dto.IsActive,
+                CREATED_DATE = DateTime.UtcNow,
+                CREATED_BY = sid
+            };
+
+            var result = await _dbContext.CardHistorys.AddAsync(createCard);
+            await _dbContext.SaveChangesAsync();
             return response;
         }
 
@@ -112,6 +136,69 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> Update(CardInfoDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, sid, patchMode);
+            var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == dto.Id);
+
+            int different = 0;
+            // so sanh 2 du lieu moi va cu
+            if(oldDate!.CARD_TYPE_ID != dto.CardTypeId)
+            {
+                different++;
+            }
+            else if (oldDate!.EFFECTED_DATE != dto.EffectedDate)
+            {
+                different++;
+            }
+            else if (oldDate!.EXPIRED_DATE != dto.ExpiredDate)
+            {
+                different++;
+            }
+            else if (oldDate!.WARDROBE != dto.Wardrobe)
+            {
+                different++;
+            }
+            else if (oldDate!.IS_HAVE_PT != dto.IsHavePt)
+            {
+                different++;
+            }
+            else if (oldDate!.SHIFT_ID != dto.ShiftId)
+            {
+                different++;
+            }
+            else if (oldDate!.PRICE != dto.Price)
+            {
+                different++;
+            }
+            else if (oldDate!.NOTE != dto.Note)
+            {
+                different++;
+            }
+            else if (oldDate!.IS_ACTIVE != dto.IsActive)
+            {
+                different++;
+            }
+            if(different != 0)
+            {
+                // lưu lịch sử
+                var updateCard = new CARD_HISTORY()
+                {
+                    CODE = dto.Code,
+                    CARD_TYPE_ID = dto.CardTypeId,
+                    EFFECTED_DATE = dto.EffectedDate,
+                    EXPIRED_DATE = dto.ExpiredDate,
+                    WARDROBE = dto.Wardrobe,
+                    IS_HAVE_PT = dto.IsHavePt,
+                    SHIFT_ID = dto.ShiftId,
+                    PRICE = dto.Price,
+                    NOTE = dto.Note,
+                    ACTION = 2,
+                    IS_ACTIVE = dto.IsActive,
+                    CREATED_DATE = DateTime.UtcNow,
+                    CREATED_BY = sid
+                };
+
+                var result = await _dbContext.CardHistorys.AddAsync(updateCard);
+                await _dbContext.SaveChangesAsync();
+            }
             return response;
         }
 
@@ -121,14 +208,59 @@ namespace GYM_BE.All.CardInfo
             return response;
         }
 
-        public async Task<FormatedResponse> Delete(long id)
+        public async Task<FormatedResponse> DeleteNew(long id, string sid)
         {
+            var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
+            // lưu lịch sử
+            var updateCard = new CARD_HISTORY()
+            {
+                CODE = oldDate!.CODE,
+                CARD_TYPE_ID = oldDate!.CARD_TYPE_ID,
+                EFFECTED_DATE = oldDate!.EFFECTED_DATE,
+                EXPIRED_DATE = oldDate!.EXPIRED_DATE,
+                WARDROBE = oldDate!.WARDROBE,
+                IS_HAVE_PT = oldDate!.IS_HAVE_PT,
+                SHIFT_ID = oldDate!.SHIFT_ID,
+                PRICE = oldDate!.PRICE,
+                NOTE = oldDate!.NOTE,
+                ACTION = 3,
+                IS_ACTIVE = oldDate!.IS_ACTIVE,
+                CREATED_DATE = DateTime.UtcNow,
+                CREATED_BY = sid
+            };
+
+            var result = await _dbContext.CardHistorys.AddAsync(updateCard);
+            await _dbContext.SaveChangesAsync();
             var response = await _genericRepository.Delete(id);
             return response;
         }
 
-        public async Task<FormatedResponse> DeleteIds(List<long> ids)
+        public async Task<FormatedResponse> DeleteIdsNew(List<long> ids, string sid)
         {
+            foreach(var id in ids)
+            {
+                var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
+                // lưu lịch sử
+                var updateCard = new CARD_HISTORY()
+                {
+                    CODE = oldDate!.CODE,
+                    CARD_TYPE_ID = oldDate!.CARD_TYPE_ID,
+                    EFFECTED_DATE = oldDate!.EFFECTED_DATE,
+                    EXPIRED_DATE = oldDate!.EXPIRED_DATE,
+                    WARDROBE = oldDate!.WARDROBE,
+                    IS_HAVE_PT = oldDate!.IS_HAVE_PT,
+                    SHIFT_ID = oldDate!.SHIFT_ID,
+                    PRICE = oldDate!.PRICE,
+                    NOTE = oldDate!.NOTE,
+                    ACTION = 3,
+                    IS_ACTIVE = oldDate!.IS_ACTIVE,
+                    CREATED_DATE = DateTime.UtcNow,
+                    CREATED_BY = sid
+                };
+
+                var result = await _dbContext.CardHistorys.AddAsync(updateCard);
+                await _dbContext.SaveChangesAsync();
+            }
             var response = await _genericRepository.DeleteIds(ids);
             return response;
         }
@@ -256,6 +388,18 @@ namespace GYM_BE.All.CardInfo
             {
                 return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
+
+        }
+        public async Task<FormatedResponse> Delete(long id)
+        {
+            var response = await _genericRepository.Delete(id);
+            return response;
+        }
+
+        public async Task<FormatedResponse> DeleteIds(List<long> ids)
+        {
+            var response = await _genericRepository.DeleteIds(ids);
+            return response;
         }
     }
 }
