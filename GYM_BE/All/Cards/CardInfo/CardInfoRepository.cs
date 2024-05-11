@@ -27,7 +27,7 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> QueryList(PaginationDTO<CardInfoDTO> pagination)
         {
             var joined = from p in _dbContext.CardInfos.AsNoTracking()
-                         from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
+                         from sh in _dbContext.GoodsShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
                          from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                          from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                          from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -60,7 +60,7 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> GetById(long id)
         {
             var joined = await (from p in _dbContext.CardInfos.AsNoTracking()
-                                from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
+                                from sh in _dbContext.GoodsShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
                                 from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                                 from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                                 from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -369,7 +369,7 @@ namespace GYM_BE.All.CardInfo
                 };
             }
             var joined = await (from p in _dbContext.CardInfos.AsNoTracking()
-                                from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
+                                from sh in _dbContext.GoodsShifts.AsNoTracking().Where(sh => sh.ID == p.SHIFT_ID).DefaultIfEmpty()
                                 from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                                 from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                                 from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()

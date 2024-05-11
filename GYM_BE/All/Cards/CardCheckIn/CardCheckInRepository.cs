@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
@@ -25,6 +26,7 @@ namespace GYM_BE.All.CardCheckIn
         {
             var joined = from p in _dbContext.CardCheckIns.AsNoTracking()
                          from i in _dbContext.CardInfos.Where(x => x.ID == p.CARD_INFO_ID).DefaultIfEmpty()
+                         from sh in _dbContext.GoodsShifts.Where(x => x.ID == i.SHIFT_ID).DefaultIfEmpty()
                          from c in _dbContext.PerCustomers.Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
                          from s in _dbContext.SysOtherLists.Where(x => x.ID == i.CARD_TYPE_ID).DefaultIfEmpty()
                          from g in _dbContext.SysOtherLists.Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -42,6 +44,9 @@ namespace GYM_BE.All.CardCheckIn
                              DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
                              TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
                              TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
+                             TimeStartShiftString = sh.HOURS_START,
+                             TimeEndShiftString = sh.HOURS_END,
+                             ShiftName = sh.NAME,
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -54,6 +59,7 @@ namespace GYM_BE.All.CardCheckIn
         {
             var joined = await (from p in _dbContext.CardCheckIns.AsNoTracking()
                                 from i in _dbContext.CardInfos.Where(x => x.ID == p.CARD_INFO_ID).DefaultIfEmpty()
+                                from sh in _dbContext.GoodsShifts.Where(x => x.ID == i.SHIFT_ID).DefaultIfEmpty()
                                 from c in _dbContext.PerCustomers.Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
                                 from s in _dbContext.SysOtherLists.Where(x => x.ID == i.CARD_TYPE_ID).DefaultIfEmpty()
                                 from g in _dbContext.SysOtherLists.Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
@@ -72,6 +78,9 @@ namespace GYM_BE.All.CardCheckIn
                                     DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
                                     TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
                                     TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
+                                    TimeStartShiftString = sh.HOURS_START,
+                                    TimeEndShiftString = sh.HOURS_END,
+                                    ShiftName = sh.NAME,
                                 }).FirstOrDefaultAsync();
             if (joined != null)
             {

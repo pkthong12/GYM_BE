@@ -14,5 +14,9 @@
         public string? CardTypeName { get; set; }//loai the
         public string? TimeStartString { get; set; }
         public string? TimeEndString { get; set; }
+        public string? TimeStartShiftString { get; set; }
+        public string? TimeEndShiftString { get; set; }
+        public string? ShiftName { get; set; }
+
     }
 }

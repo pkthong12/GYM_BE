@@ -22,7 +22,7 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsShiftDTO> pagination)
         {
-            var joined = from p in _dbContext.GymShifts.AsNoTracking()
+            var joined = from p in _dbContext.GoodsShifts.AsNoTracking()
                          select new GoodsShiftDTO
                          {
                              Id = p.ID,
@@ -148,7 +148,7 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> GetList()
         {
-            var res = await (from p in _dbContext.GymShifts.AsNoTracking()
+            var res = await (from p in _dbContext.GoodsShifts.AsNoTracking()
                              where p.IS_ACTIVE == true 
                              select new GoodsShiftDTO
                              {

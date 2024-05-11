@@ -24,7 +24,7 @@ namespace GYM_BE.All.CardIssuance
                          from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.PER_SELL_ID).DefaultIfEmpty()
                          from e1 in _dbContext.PerEmployees.AsNoTracking().Where(e1 => e1.ID == p.PER_PT_ID).DefaultIfEmpty()
                          from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
-                         from sh in _dbContext.GymShifts.AsNoTracking().Where(sh => sh.ID == c.SHIFT_ID).DefaultIfEmpty()
+                         from sh in _dbContext.GoodsShifts.AsNoTracking().Where(sh => sh.ID == c.SHIFT_ID).DefaultIfEmpty()
                          from cu in _dbContext.PerCustomers.AsNoTracking().Where(cu => cu.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                          from l in _dbContext.GoodsLockers.AsNoTracking().Where(l => l.ID == p.LOCKER_ID).DefaultIfEmpty()
                          from s in _dbContext.SysUsers.AsNoTracking().Where(s => s.ID == p.CREATED_BY).DefaultIfEmpty()

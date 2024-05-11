@@ -21,7 +21,7 @@ namespace GYM_BE.All.Gym.GymPackage
         public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsPackageDTO> pagination)
         {
             var joined = from p in _dbContext.GymPackages.AsNoTracking()
-                         from s in _dbContext.GymShifts.AsNoTracking().Where(s => s.ID == p.SHIFT_ID).DefaultIfEmpty()
+                         from s in _dbContext.GoodsShifts.AsNoTracking().Where(s => s.ID == p.SHIFT_ID).DefaultIfEmpty()
                          select new GoodsPackageDTO
                          {
                              Id = p.ID,
@@ -53,7 +53,7 @@ namespace GYM_BE.All.Gym.GymPackage
                         (GOODS_PACKAGE)response
                     };
                 var joined = (from l in list
-                              from s in _dbContext.GymShifts.AsNoTracking().Where(s => s.ID == l.SHIFT_ID).DefaultIfEmpty()
+                              from s in _dbContext.GoodsShifts.AsNoTracking().Where(s => s.ID == l.SHIFT_ID).DefaultIfEmpty()
                               select new GoodsPackageDTO
                               {
                                   Id = l.ID,
