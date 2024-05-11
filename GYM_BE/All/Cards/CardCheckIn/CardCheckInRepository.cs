@@ -149,13 +149,13 @@ namespace GYM_BE.All.CardCheckIn
                 var checkExistCard = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.CODE!.ToUpper() == cardCode.ToUpper());
                 if (checkExistCard == null)
                 {
-                    return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                    return new FormatedResponse() { MessageCode = "Không tìm được thông tin thẻ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
                 }
 
                 // check the gan voi hoi vien
                 if (checkExistCard.CUSTOMER_ID == null)
                 {
-                    return new FormatedResponse() { MessageCode = "CARD_HAS_NOT_CUSTOMER", StatusCode = EnumStatusCode.StatusCode400 };
+                    return new FormatedResponse() { MessageCode = "Thẻ chưa được gắn với hội viên", StatusCode = EnumStatusCode.StatusCode400 };
                 }
 
                 string notification = "";
