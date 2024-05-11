@@ -51,37 +51,31 @@ namespace GYM_BE.All.GoodsEquipment
 
         public async Task<FormatedResponse> GetById(long id)
         {
-            var res = await _genericRepository.GetById(id);
-            if (res.InnerBody != null)
-            {
-                var response = res.InnerBody;
-                var list = new List<GOODS_EQUIPMENT>
-                    {
-                        (GOODS_EQUIPMENT)response
-                    };
-                var joined = (from p in list
-                              from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.EQUIPMENT_TYPE).DefaultIfEmpty()
-                              from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.STATUS_ID).DefaultIfEmpty()
-                              from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.MANAGER_ID).DefaultIfEmpty()
-                              select new GoodsEquipmentDTO
-                              {
-                                  Id = p.ID,
-                                  Code = p.CODE,
-                                  Name = p.NAME,
-                                  EquipmentType = p.EQUIPMENT_TYPE,
-                                  EquipmentTypeName = s1.NAME,
-                                  Manufacturer = p.MANUFACTURER,
-                                  PurchaseDate = p.PURCHASE_DATE,
-                                  StatusId = p.STATUS_ID,
-                                  Status = s2.NAME,
-                                  WarrantyExpiryDate = p.WARRANTY_EXPIRY_DATE,
-                                  Cost = p.COST,
-                                  Address = p.ADDRESS,
-                                  ManagerId = p.MANAGER_ID,
-                                  ManagerName = e.FULL_NAME,
-                                  Note = p.NOTE,
-                              }).FirstOrDefault();
 
+            var joined = await (from p in _dbContext.GoodsEquipments.AsNoTracking().Where(x => x.ID == id)
+                                from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.EQUIPMENT_TYPE).DefaultIfEmpty()
+                                from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.STATUS_ID).DefaultIfEmpty()
+                                from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.MANAGER_ID).DefaultIfEmpty()
+                                select new GoodsEquipmentDTO
+                                {
+                                    Id = p.ID,
+                                    Code = p.CODE,
+                                    Name = p.NAME,
+                                    EquipmentType = p.EQUIPMENT_TYPE,
+                                    EquipmentTypeName = s1.NAME,
+                                    Manufacturer = p.MANUFACTURER,
+                                    PurchaseDate = p.PURCHASE_DATE,
+                                    StatusId = p.STATUS_ID,
+                                    Status = s2.NAME,
+                                    WarrantyExpiryDate = p.WARRANTY_EXPIRY_DATE,
+                                    Cost = p.COST,
+                                    Address = p.ADDRESS,
+                                    ManagerId = p.MANAGER_ID,
+                                    ManagerName = e.FULL_NAME,
+                                    Note = p.NOTE,
+                                }).FirstOrDefaultAsync();
+            if (joined != null)
+            {
                 return new FormatedResponse() { InnerBody = joined };
             }
             else
@@ -92,6 +86,8 @@ namespace GYM_BE.All.GoodsEquipment
 
         public async Task<FormatedResponse> Create(GoodsEquipmentDTO dto, string sid)
         {
+            dto.Code = CreateNewCode();
+            dto.StatusId = 10042;
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -153,6 +149,23 @@ namespace GYM_BE.All.GoodsEquipment
             return new FormatedResponse() { InnerBody = res };
         }
 
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.CardIssuances.Count() == 0)
+            {
+                newCode = "TB0001";
+            }
+            else
+            {
+                string lastestData = _dbContext.GoodsEquipments.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 3) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
+        }
     }
 }
 
