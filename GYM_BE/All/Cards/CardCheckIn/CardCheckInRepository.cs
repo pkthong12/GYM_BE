@@ -155,7 +155,7 @@ namespace GYM_BE.All.CardCheckIn
                 // check the gan voi hoi vien
                 if (checkExistCard.CUSTOMER_ID == null)
                 {
-                    return new FormatedResponse() { MessageCode = "CARD_HAS_NOT_CUSTOOMER", StatusCode = EnumStatusCode.StatusCode400 };
+                    return new FormatedResponse() { MessageCode = "CARD_HAS_NOT_CUSTOMER", StatusCode = EnumStatusCode.StatusCode400 };
                 }
 
                 string notification = "";

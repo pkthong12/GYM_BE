@@ -144,14 +144,14 @@ namespace GYM_BE.All.System.SysOtherList
             return Ok(response);
         }
 
-        [HttpGet]
+        [HttpPost]
         public IActionResult ExportExcelSysOtherList()
         {
             DateTime now = DateTime.Now;
             string dateTimeStr = now.ToString("yyyyMMddHHmmss");
             var result = _SysOtherListRepository.ExportExcelSysOtherList();
 
-            return File(result, "application/force-download", $"sys_other_list_{dateTimeStr}.xlsx");
+            return File(result, "application/octet-stream", $"sys_other_list_{dateTimeStr}.xlsx");
         }
 
         [AllowAnonymous]

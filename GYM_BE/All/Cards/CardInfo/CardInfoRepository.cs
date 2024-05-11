@@ -211,10 +211,10 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> DeleteNew(long id, string sid)
         {
 
-            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => id == c.SHIFT_ID);
+            var checkUsed = await _dbContext.CardIssuances.AsNoTracking().AnyAsync(c => id == c.CARD_ID);
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Không thể xóa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
@@ -244,10 +244,10 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> DeleteIdsNew(List<long> ids, string sid)
         {
-            var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => ids.Contains(c.SHIFT_ID!.Value));
+            var checkUsed = await _dbContext.CardIssuances.AsNoTracking().AnyAsync(c => ids.Contains(c.CARD_ID!.Value));
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Không thể xóa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             foreach (var id in ids)
@@ -332,10 +332,11 @@ namespace GYM_BE.All.CardInfo
             if (id != null)
             {
                 var x = await (from p in _dbContext.CardInfos.Where(p => p.ID == id)
+                               from t in _dbContext.SysOtherLists.AsNoTracking().Where(t => t.ID == p.CARD_TYPE_ID).DefaultIfEmpty()
                                select new
                                {
                                    Id = p.ID,
-                                   Name = p.CODE,
+                                   Name = p.CODE + " (" + t.NAME + ")",
                                }).FirstOrDefaultAsync();
                 if (x != null)
                 {
