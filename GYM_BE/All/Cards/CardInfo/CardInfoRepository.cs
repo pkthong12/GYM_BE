@@ -365,7 +365,8 @@ namespace GYM_BE.All.CardInfo
                         Price = "",
                         PracticeTime = "",
                         IsHavePt = "",
-                        HourCard = ""
+                        HourCard = "",
+                        CardPrice =""
                     }
                 };
             }

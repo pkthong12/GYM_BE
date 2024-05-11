@@ -42,6 +42,12 @@ namespace GYM_BE.All.GoodsLocker
             var response = await _GoodsLockerRepository.GetById(id);
             return Ok(response);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllLockerValid(long? id, long? cusId, long cardId)
+        {
+            var response = await _GoodsLockerRepository.GetAllLockerValid(id, cusId, cardId);
+            return Ok(response);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(GoodsLockerDTO model)
