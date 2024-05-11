@@ -141,6 +141,57 @@ namespace GYM_BE.All.GoodsLocker
             return newCode;
 
         }
+
+        public async Task<FormatedResponse> GetAllLockerValid(long? id,long? cusId,long cardId)
+        {
+            var card = await _dbContext.CardInfos.AsNoTracking().SingleAsync(p=> p.ID == cardId);
+            var genderId = _dbContext.PerCustomers.AsNoTracking().First(p => p.ID == cusId).GENDER_ID;
+            if(card == null)
+            {
+                return new FormatedResponse() { InnerBody = null };
+            }
+            else if(card.WARDROBE ==  null || card.WARDROBE == false)
+            {
+                return new FormatedResponse() { InnerBody = null };
+            }
+            else if (genderId == null && id == null)
+            {
+                return new FormatedResponse() { InnerBody = null };
+            }
+            else
+            {
+                var shift = await _dbContext.GoodsShifts.AsNoTracking().SingleAsync(p => p.ID == card.SHIFT_ID);
+
+                var lockerInvalid = await (from ci in _dbContext.CardIssuances.AsNoTracking()
+                                           select ci.LOCKER_ID).Distinct().ToListAsync();
+
+                var res = await (from p in _dbContext.GoodsLockers.AsNoTracking().Where(p => !lockerInvalid.Contains(p.ID) && p.AREA == genderId).DefaultIfEmpty()
+                                 select new
+                                 {
+                                     Id = p.ID,
+                                     Name = p.CODE,
+                                 }).ToListAsync();
+                if (id != null)
+                {
+                    var x = await (from p in _dbContext.GoodsLockers.Where(p => p.ID == id).DefaultIfEmpty()
+                                   select new
+                                   {
+                                       Id = p.ID,
+                                       Name = p.CODE,
+                                   }).FirstOrDefaultAsync();
+                    if (x != null)
+                    {
+                        var check = res.Find(p => p.Id == x.Id);
+                        if (check == null)
+                        {
+                            res.Add(x);
+                            res.OrderBy(p => p.Id);
+                        }
+                    }
+                }
+                return new FormatedResponse() { InnerBody = res };
+            }
+        }
     }
 }
 

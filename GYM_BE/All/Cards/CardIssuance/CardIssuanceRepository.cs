@@ -2,6 +2,8 @@ using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
+using GYM_BE.ENTITIES;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace GYM_BE.All.CardIssuance
@@ -78,6 +80,7 @@ namespace GYM_BE.All.CardIssuance
                                 from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.PER_SELL_ID).DefaultIfEmpty()
                                 from e1 in _dbContext.PerEmployees.AsNoTracking().Where(e1 => e1.ID == p.PER_PT_ID).DefaultIfEmpty()
                                 from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
+                                from sh in _dbContext.GoodsShifts.AsNoTracking().Where(sh => sh.ID == c.SHIFT_ID).DefaultIfEmpty()
                                 from cu in _dbContext.PerCustomers.AsNoTracking().Where(cu => cu.ID == p.CUSTOMER_ID).DefaultIfEmpty()
                                 from l in _dbContext.GoodsLockers.AsNoTracking().Where(l => l.ID == p.LOCKER_ID).DefaultIfEmpty()
                                 from s in _dbContext.SysUsers.AsNoTracking().Where(s=> s.ID == p.CREATED_BY).DefaultIfEmpty()
@@ -99,6 +102,9 @@ namespace GYM_BE.All.CardIssuance
                                     CreatedByUsername = s.USERNAME,
                                     HourCard = p.HOUR_CARD,
                                     HourCardBonus = p.HOUR_CARD_BONUS,
+                                    PracticeTime = sh.HOURS_START + " - " + sh.HOURS_END,
+                                    StartDate = c.EFFECTED_DATE,
+                                    EndDate = c.EXPIRED_DATE,
                                     IsHavePt = p.IS_HAVE_PT,
                                     IsRealPrice = p.IS_REAL_PRICE,
                                     LockerId = p.LOCKER_ID,
@@ -127,7 +133,33 @@ namespace GYM_BE.All.CardIssuance
         {
             dto.DocumentNumber = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
-            return response;
+            if(response!= null)
+            {
+                if(response.StatusCode == EnumStatusCode.StatusCode200)
+                {
+                    var card =await _dbContext.CardInfos.SingleAsync(x => x.ID == dto.Id);
+                    if(card == null)
+                    {
+                        return new FormatedResponse() { MessageCode = "CARD_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                    }
+                    else
+                    {
+                        try
+                        {
+                            card.CUSTOMER_ID = dto.CustomerId;
+                            _dbContext.CardInfos.Update(card);
+                            await _dbContext.SaveChangesAsync();
+                            return response;
+                        }
+                        catch (Exception ex)
+                        {
+                            return new FormatedResponse() { MessageCode = ex.Message, ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                        }
+
+                    }
+                }
+            }
+            return new FormatedResponse() { MessageCode = "CREATE_FAILED", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
         }
 
         public async Task<FormatedResponse> CreateRange(List<CardIssuanceDTO> dtos, string sid)
@@ -141,7 +173,33 @@ namespace GYM_BE.All.CardIssuance
         public async Task<FormatedResponse> Update(CardIssuanceDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, sid, patchMode);
-            return response;
+            if (response != null)
+            {
+                if (response.StatusCode == EnumStatusCode.StatusCode200)
+                {
+                    var card = await _dbContext.CardInfos.SingleAsync(x => x.ID == dto.Id);
+                    if (card == null)
+                    {
+                        return new FormatedResponse() { MessageCode = "CARD_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                    }
+                    else
+                    {
+                        try
+                        {
+                            card.CUSTOMER_ID = dto.CustomerId;
+                            _dbContext.CardInfos.Update(card);
+                            await _dbContext.SaveChangesAsync();
+                            return response;
+                        }
+                        catch (Exception ex)
+                        {
+                            return new FormatedResponse() { MessageCode = ex.Message, ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                        }
+
+                    }
+                }
+            }
+            return new FormatedResponse() { MessageCode = "UPDATE_FAILED", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
         }
 
         public async Task<FormatedResponse> UpdateRange(List<CardIssuanceDTO> dtos, string sid, bool patchMode = true)
