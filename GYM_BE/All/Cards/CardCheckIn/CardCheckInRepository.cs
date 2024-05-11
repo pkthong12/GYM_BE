@@ -1,10 +1,12 @@
-﻿using GYM_BE.Core.Dto;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using GYM_BE.Core.Dto;
 using GYM_BE.Core.Generic;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace GYM_BE.All.CardCheckIn
 {
@@ -51,26 +53,26 @@ namespace GYM_BE.All.CardCheckIn
         public async Task<FormatedResponse> GetById(long id)
         {
             var joined = await (from p in _dbContext.CardCheckIns.AsNoTracking()
-                               from i in _dbContext.CardInfos.Where(x => x.ID == p.CARD_INFO_ID).DefaultIfEmpty()
-                               from c in _dbContext.PerCustomers.Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
-                               from s in _dbContext.SysOtherLists.Where(x => x.ID == i.CARD_TYPE_ID).DefaultIfEmpty()
-                               from g in _dbContext.SysOtherLists.Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
-                               where p.ID == id
-                               select new CardCheckInDTO
-                               {
-                                   Id = p.ID,
-                                   CardCode = i.CODE,
-                                   CodeCus = c.CODE,
-                                   CustomerName = c.FULL_NAME,
-                                   CardTypeName = s.NAME,
-                                   TimeEnd = p.TIME_END,
-                                   GenderName = g.NAME,
-                                   TimeStart = p.TIME_START,
-                                   DayCheckIn = p.DAY_CHECK_IN,
-                                   DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
-                                   TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
-                                   TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
-                               }).FirstOrDefaultAsync();
+                                from i in _dbContext.CardInfos.Where(x => x.ID == p.CARD_INFO_ID).DefaultIfEmpty()
+                                from c in _dbContext.PerCustomers.Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
+                                from s in _dbContext.SysOtherLists.Where(x => x.ID == i.CARD_TYPE_ID).DefaultIfEmpty()
+                                from g in _dbContext.SysOtherLists.Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
+                                where p.ID == id
+                                select new CardCheckInDTO
+                                {
+                                    Id = p.ID,
+                                    CardCode = i.CODE,
+                                    CodeCus = c.CODE,
+                                    CustomerName = c.FULL_NAME,
+                                    CardTypeName = s.NAME,
+                                    TimeEnd = p.TIME_END,
+                                    GenderName = g.NAME,
+                                    TimeStart = p.TIME_START,
+                                    DayCheckIn = p.DAY_CHECK_IN,
+                                    DayCheckInString = p.DAY_CHECK_IN!.Value.ToString("dd/MM/yyyy"),
+                                    TimeStartString = p.TIME_START!.Value.ToString("HH:mm:ss"),
+                                    TimeEndString = p.TIME_END!.Value.ToString("HH:mm:ss"),
+                                }).FirstOrDefaultAsync();
             if (joined != null)
             {
                 return new FormatedResponse() { InnerBody = joined };
@@ -129,38 +131,70 @@ namespace GYM_BE.All.CardCheckIn
             throw new NotImplementedException();
         }
 
+
         public async Task<FormatedResponse> CheckIn(string cardCode, string sid)
         {
-            var checkExistCard =await _dbContext.CardInfos.AnyAsync(x => x.CODE!.ToUpper() == cardCode.ToUpper());
-            if (!checkExistCard)
+            try
             {
-                return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
-            }
-            var timeCheckIn = DateTime.UtcNow.AddHours(7);
-            var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE!.ToUpper() == cardCode.ToUpper())!.ID;
-            var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == timeCheckIn.Date).ToList();
-            if(checkExsist.Count() == 0)
-            {
-                var checkIn = new CardCheckInDTO
+                var timeCheckIn = DateTime.UtcNow.AddHours(7);
+                var checkExistCard = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.CODE!.ToUpper() == cardCode.ToUpper());
+                if (checkExistCard == null)
                 {
-                    CardInfoId = cardId,
-                    TimeStart = timeCheckIn,
-                    DayCheckIn = timeCheckIn.Date,
-                };
-                var response = await _genericRepository.Create(checkIn, sid);
-                return response;
+                    return new FormatedResponse() { MessageCode = "ENTITY_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                }
+
+                // check the gan voi hoi vien
+                if (checkExistCard.CUSTOMER_ID == null)
+                {
+                    return new FormatedResponse() { MessageCode = "CARD_HAS_NOT_CUSTOOMER", StatusCode = EnumStatusCode.StatusCode400 };
+                }
+
+                string notification = "";
+                // thong bao het han the
+                var expireDate = _dbContext.CardInfos.FirstOrDefault(x => x.CODE!.ToUpper() == cardCode.ToUpper())!.EXPIRED_DATE;
+                TimeSpan difference = DateTime.ParseExact(expireDate!, "yyyy-MM-dd", CultureInfo.InvariantCulture) - DateTime.UtcNow;
+                double days = difference.TotalDays;
+                if (days <= 0)
+                {
+                    return new FormatedResponse() { MessageCode = "CARD_EXPIRED", StatusCode = EnumStatusCode.StatusCode400 };
+                }
+                else if (days <= 7)
+                {
+                    notification = "THIS CARD HAS " + days + " DAYS LEFT";
+                }
+
+
+                var cardId = _dbContext.CardInfos.FirstOrDefault(x => x.CODE!.ToUpper() == cardCode.ToUpper())!.ID;
+                var checkExsist = _dbContext.CardCheckIns.Where(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date).ToList();
+                if (checkExsist.Count() == 0)
+                {
+                    var checkIn = new CardCheckInDTO
+                    {
+                        CardInfoId = cardId,
+                        TimeStart = timeCheckIn,
+                        DayCheckIn = timeCheckIn.Date,
+                    };
+                    var response = await _genericRepository.Create(checkIn, sid);
+                    response.MessageCode = notification;
+                    return response;
+                }
+                else
+                {
+                    var checkIn = _dbContext.CardCheckIns.FirstOrDefault(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == DateTime.Now.Date);
+                    var card = new CardCheckInDTO();
+                    card.Id = checkIn!.ID;
+                    card.DayCheckIn = checkIn.DAY_CHECK_IN!.Value;
+                    card.CardInfoId = cardId;
+                    card.TimeStart = checkIn.TIME_START;
+                    card.TimeEnd = timeCheckIn;
+                    var response = await _genericRepository.Update(card, sid, true);
+                    response.MessageCode = notification;
+                    return response;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var checkIn = _dbContext.CardCheckIns.FirstOrDefault(x => x.CARD_INFO_ID == cardId && x.DAY_CHECK_IN!.Value.Date == timeCheckIn.Date);
-                var card = new CardCheckInDTO();
-                card.Id = checkIn!.ID;
-                card.DayCheckIn = checkIn.DAY_CHECK_IN!.Value;
-                card.CardInfoId = cardId;
-                card.TimeStart = checkIn.TIME_START;
-                card.TimeEnd = timeCheckIn;
-                var response = await _genericRepository.Update(card, sid, true);
-                return response;
+                return new FormatedResponse() { MessageCode = ex.Message, ErrorType = EnumErrorType.UNCATCHABLE, StatusCode = EnumStatusCode.StatusCode500 };
             }
         }
     }
