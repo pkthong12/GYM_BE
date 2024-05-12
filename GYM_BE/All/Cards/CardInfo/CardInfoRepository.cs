@@ -420,6 +420,26 @@ namespace GYM_BE.All.CardInfo
             var response = await _genericRepository.DeleteIds(ids);
             return response;
         }
+
+        public async Task<FormatedResponse> GetCardInfoPortal(string code)
+        {
+            var card = await (from p in _dbContext.CardInfos.AsNoTracking().Where(p => p.CODE!.ToUpper() == code.ToUpper())
+                              from cus in _dbContext.PerCustomers.AsNoTracking().Where(cus => cus.ID == p.CUSTOMER_ID).DefaultIfEmpty()
+                              from s in _dbContext.GoodsShifts.AsNoTracking().Where(s => s.ID == p.SHIFT_ID).DefaultIfEmpty()
+                              from c in _dbContext.CardCheckIns.AsNoTracking().Where(c=> c.CARD_INFO_ID == p.ID && DateTime.Now.Date == c.DAY_CHECK_IN!.Value.Date).DefaultIfEmpty()
+                              select new CardInfoPortalDTO
+                              {
+                                  CustomerCode = cus.CODE,
+                                  CustomerName = cus.FULL_NAME,
+                                  CardCode = p.CODE,
+                                  StartDate = p.EFFECTED_DATE_TIME!.Value.ToString("dd/MM/yyyy"),
+                                  EndDate = p.EXPIRED_DATE_TIME!.Value.ToString("dd/MM/yyyy"),
+                                  PracticeTime = s.HOURS_START + " - " + s.HOURS_END,
+                                  CheckInTime = c.TIME_START!.Value.ToString("HH:mm"),
+                                  CheckOutTime = c.TIME_END != null? c.TIME_END!.Value.ToString("HH:mm"):"",
+                              }).FirstOrDefaultAsync();
+            return new FormatedResponse() { InnerBody = card };
+        }
     }
 }
 

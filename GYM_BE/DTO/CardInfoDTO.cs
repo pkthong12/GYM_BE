@@ -40,4 +40,19 @@
         public string? HoursStart { get; set; }
         public string? HoursEnd { get; set; }
     }
+
+    public class CardInfoPortalDTO : BaseDTO
+    {
+
+        public long? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerCode { get; set; }
+        public long? CardId { get; set; }
+        public string? CardCode { get; set; }
+        public string? PracticeTime { get; set; }
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
+        public string? CheckInTime { get; set; }
+        public string? CheckOutTime { get; set; }
+    }
 }

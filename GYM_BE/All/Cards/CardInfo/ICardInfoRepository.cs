@@ -14,6 +14,7 @@ namespace GYM_BE.All.CardInfo
         Task<FormatedResponse> CalculateByCardId(long? id);
         Task<FormatedResponse> DeleteNew(long id, string sid);
         Task<FormatedResponse> DeleteIdsNew(List<long> ids, string sid);
+        Task<FormatedResponse> GetCardInfoPortal(string code);
     }
 }
 

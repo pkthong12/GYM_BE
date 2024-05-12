@@ -186,6 +186,20 @@ namespace GYM_BE.All.CardIssuance
 
         public async Task<FormatedResponse> Update(CardIssuanceDTO dto, string sid, bool patchMode = true)
         {
+            var startDate = Convert.ToDateTime(dto.StartDate).Date;
+            var endDate = Convert.ToDateTime(dto.EndDate).Date;
+            var checkExist = await (from p in _dbContext.CardIssuances.AsNoTracking().Where(p => p.CUSTOMER_ID == dto.CustomerId && p.ID != dto.Id).DefaultIfEmpty()
+                                    from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
+                                    where (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && c.EXPIRED_DATE_TIME!.Value.Date <= endDate) ||
+                                          (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && startDate <= c.EXPIRED_DATE_TIME!.Value.Date) ||
+                                          (c.EFFECTED_DATE_TIME!.Value.Date <= endDate && endDate <= c.EXPIRED_DATE_TIME!.Value.Date)
+                                    select p
+                                    ).AnyAsync();
+            if (checkExist)
+            {
+                return new FormatedResponse() { MessageCode = "Khách hàng đã được cấp thẻ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+
             var response = await _genericRepository.Update(dto, sid, patchMode);
             if (response != null)
             {

@@ -4,6 +4,7 @@ using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
 using GYM_BE.Entities;
 using GYM_BE.Main;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -127,6 +128,13 @@ namespace GYM_BE.All.CardInfo
         public async Task<IActionResult> CalculateByCardId(long? id)
         {
             var response = await _CardInfoRepository.CalculateByCardId(id);
+            return Ok(response);
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetCardInfoPortal(string code)
+        {
+            var response = await _CardInfoRepository.GetCardInfoPortal(code);
             return Ok(response);
         }
     }
