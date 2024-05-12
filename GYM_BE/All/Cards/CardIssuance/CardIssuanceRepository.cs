@@ -137,9 +137,9 @@ namespace GYM_BE.All.CardIssuance
             var endDate = Convert.ToDateTime(dto.EndDate).Date;
             var checkExist = await (from p in _dbContext.CardIssuances.AsNoTracking().Where(p => p.CUSTOMER_ID == dto.CustomerId).DefaultIfEmpty()
                                     from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
-                                    where (Convert.ToDateTime(c.EFFECTED_DATE).Date <= startDate && Convert.ToDateTime(c.EXPIRED_DATE) <= endDate) ||
-                                          (Convert.ToDateTime(c.EFFECTED_DATE).Date <= startDate && startDate <= Convert.ToDateTime(c.EXPIRED_DATE)) ||
-                                          (Convert.ToDateTime(c.EFFECTED_DATE).Date <= endDate && endDate <= Convert.ToDateTime(c.EXPIRED_DATE))
+                                    where (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && c.EXPIRED_DATE_TIME!.Value.Date <= endDate) ||
+                                          (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && startDate <= c.EXPIRED_DATE_TIME!.Value.Date) ||
+                                          (c.EFFECTED_DATE_TIME!.Value.Date <= endDate && endDate <= c.EXPIRED_DATE_TIME!.Value.Date)
                                     select p
                                     ).AnyAsync();
             if (checkExist)
