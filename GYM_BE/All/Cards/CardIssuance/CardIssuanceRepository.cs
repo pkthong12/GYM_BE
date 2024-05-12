@@ -132,12 +132,15 @@ namespace GYM_BE.All.CardIssuance
         public async Task<FormatedResponse> Create(CardIssuanceDTO dto, string sid)
         {
             dto.DocumentNumber = CreateNewCode();
+            
+            
+
             var response = await _genericRepository.Create(dto, sid);
             if(response!= null)
             {
                 if(response.StatusCode == EnumStatusCode.StatusCode200)
                 {
-                    var card =await _dbContext.CardInfos.SingleAsync(x => x.ID == dto.Id);
+                    var card = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == dto.CardId);
                     if(card == null)
                     {
                         return new FormatedResponse() { MessageCode = "CARD_NOT_FOUND", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
@@ -241,7 +244,7 @@ namespace GYM_BE.All.CardIssuance
             {
                 string lastestData = _dbContext.CardIssuances.OrderByDescending(t => t.DOCUMENT_NUMBER).First().DOCUMENT_NUMBER!.ToString();
 
-                newCode = lastestData.Substring(0, 7) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+                newCode = lastestData.Substring(0, 8) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D4");
             }
 
             return newCode;
