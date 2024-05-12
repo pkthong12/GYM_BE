@@ -9,6 +9,7 @@ namespace GYM_BE.Entities
         public string? URL { get; set; }
         public string? NAME { get; set; }
         public string? ICON { get; set; }
+        public bool? IS_HIDDEN { get; set; }
 
 
     }
