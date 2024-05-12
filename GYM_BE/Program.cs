@@ -1,4 +1,5 @@
 using API;
+using GYM_BE.All.Report;
 using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.Entities;
@@ -57,6 +58,7 @@ services.AddAuthentication(options =>
 });
 
 services.AddScoped<IJwtUtils, JwtUtils>();
+services.AddScoped<IReportRepository, ReportRepository>();
 
 #region DbContexts
 services.AddDbContext<FullDbContext>(options => options.UseSqlServer());
