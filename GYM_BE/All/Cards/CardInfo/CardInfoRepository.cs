@@ -99,6 +99,8 @@ namespace GYM_BE.All.CardInfo
         public async Task<FormatedResponse> Create(CardInfoDTO dto, string sid)
         {
             dto.IsActive = true;
+            dto.EffectedDateTime = Convert.ToDateTime(dto.EffectedDate);
+            dto.ExpiredDateTime = Convert.ToDateTime(dto.ExpiredDate);
             dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
 
@@ -135,6 +137,8 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> Update(CardInfoDTO dto, string sid, bool patchMode = true)
         {
+            dto.EffectedDateTime = Convert.ToDateTime(dto.EffectedDate);
+            dto.ExpiredDateTime = Convert.ToDateTime(dto.ExpiredDate);
             var response = await _genericRepository.Update(dto, sid, patchMode);
             var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == dto.Id);
 

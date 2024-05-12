@@ -5,6 +5,8 @@
         public string? Code { get; set; }
         public string? EffectedDate { get; set; }
         public string? ExpiredDate { get; set; }
+        public DateTime? EffectedDateTime { get; set; }
+        public DateTime? ExpiredDateTime { get; set; }
         public long? CardTypeId { get; set; }
         public string? CardTypeName { get; set; }
         public string? GenderName { get; set; }

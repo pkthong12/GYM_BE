@@ -7,7 +7,9 @@ public class CARD_INFO : BASE_ENTITY
 {
     public string? CODE { get; set; }
     public string? EFFECTED_DATE { get; set; }
-    public string? EXPIRED_DATE { get; set; }
+    public string? EXPIRED_DATE { get; set; } 
+    public DateTime? EFFECTED_DATE_TIME { get; set; }
+    public DateTime? EXPIRED_DATE_TIME { get; set; }
     public long? CARD_TYPE_ID { get; set; }
     public long? CUSTOMER_ID { get; set; }
     public long? LOCKER_ID { get; set; }
