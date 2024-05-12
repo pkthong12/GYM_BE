@@ -115,6 +115,20 @@ namespace GYM_BE.All.GoodsEquipment
             var response = await _GoodsEquipmentRepository.GetListByTypeCode(typeCode);
             return Ok(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListByTypeId(long id)
+        {
+            var response = await _GoodsEquipmentRepository.GetListByTypeId(id);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetList()
+        {
+            var response = await _GoodsEquipmentRepository.GetList();
+            return Ok(response);
+        }
     }
 }
 

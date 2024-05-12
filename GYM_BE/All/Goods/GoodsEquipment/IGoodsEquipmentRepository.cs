@@ -11,6 +11,8 @@ namespace GYM_BE.All.GoodsEquipment
         Task<FormatedResponse> QueryList(PaginationDTO<GoodsEquipmentDTO> pagination);
 
         Task<FormatedResponse> GetListByTypeCode(string typeCode);
+        Task<FormatedResponse> GetListByTypeId(long id);
+        Task<FormatedResponse> GetList();
     }
 }
 

@@ -42,6 +42,13 @@ namespace GYM_BE.All.GoodsEquipment
                             ManagerName = e.FULL_NAME,
                             Note = p.NOTE,  
                         };
+        if (pagination.Filter != null)
+        {
+            if (pagination.Filter.EquipmentType != null)
+            {
+                joined = joined.AsNoTracking().Where(p => p.EquipmentType == pagination.Filter.EquipmentType);
+            }
+        }
          var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
          {
@@ -140,6 +147,31 @@ namespace GYM_BE.All.GoodsEquipment
             var res = await (from e in _dbContext.GoodsEquipments.AsNoTracking()
                              from s in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.CODE == typeCode).DefaultIfEmpty()
                              where e.EQUIPMENT_TYPE == s.ID
+                             select new SysOtherListDTO
+                             {
+                                 Id = e.ID,
+                                 Code = e.CODE,
+                                 Name = e.NAME,
+                             }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
+        }
+
+        public async Task<FormatedResponse> GetListByTypeId(long id)
+        {
+            var res = await (from e in _dbContext.GoodsEquipments.AsNoTracking()
+                             where e.EQUIPMENT_TYPE == id
+                             select new SysOtherListDTO
+                             {
+                                 Id = e.ID,
+                                 Code = e.CODE,
+                                 Name = e.NAME,
+                             }).ToListAsync();
+            return new FormatedResponse() { InnerBody = res };
+        }
+
+        public async Task<FormatedResponse> GetList()
+        {
+            var res = await (from e in _dbContext.GoodsEquipments.AsNoTracking()
                              select new SysOtherListDTO
                              {
                                  Id = e.ID,

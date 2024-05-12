@@ -21,7 +21,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
         {
             var joined = from p in _dbContext.GoodsEquipmentFixs.AsNoTracking()
                          from e in _dbContext.GoodsEquipments.AsNoTracking().Where(e => e.ID == p.EQUIPMENT_ID).DefaultIfEmpty()
-                         from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.TYPE_ID).DefaultIfEmpty()
+                         from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == e.EQUIPMENT_TYPE).DefaultIfEmpty()
                          from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.RESULT_ID).DefaultIfEmpty()
                          from emp in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.EMPLOYEE_ID).DefaultIfEmpty()
                          select new GoodsEquipmentFixDTO
@@ -51,38 +51,31 @@ namespace GYM_BE.All.GoodsEquipmentFix
 
         public async Task<FormatedResponse> GetById(long id)
         {
-            var res = await _genericRepository.GetById(id);
-            if (res.InnerBody != null)
+            var joined = await (from p in _dbContext.GoodsEquipmentFixs.AsNoTracking().Where(x => x.ID == id)
+                                from e in _dbContext.GoodsEquipments.AsNoTracking().Where(e => e.ID == p.EQUIPMENT_ID).DefaultIfEmpty()
+                                from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == e.EQUIPMENT_TYPE).DefaultIfEmpty()
+                                from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.RESULT_ID).DefaultIfEmpty()
+                                from emp in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.EMPLOYEE_ID).DefaultIfEmpty()
+                                select new GoodsEquipmentFixDTO
+                                {
+                                    Id = p.ID,
+                                    Code = p.CODE,
+                                    EquipmentId = p.EQUIPMENT_ID,
+                                    EquipmentName = e.NAME,
+                                    TypeId = p.TYPE_ID,
+                                    TypeName = s1.NAME,
+                                    StartDate = p.START_DATE,
+                                    EndDate = p.END_DATE,
+                                    ResultId = p.RESULT_ID,
+                                    Result = s2.NAME,
+                                    Money = p.MONEY,
+                                    ExpectedUseTime = p.EXPECTED_USE_TIME,
+                                    EmployeeId = p.EMPLOYEE_ID,
+                                    EmployeeName = emp.FULL_NAME,
+                                    Note = p.NOTE,
+                                }).FirstOrDefaultAsync();
+            if (joined != null)
             {
-                var response = res.InnerBody;
-                var list = new List<GOODS_EQUIPMENT_FIX>
-                    {
-                        (GOODS_EQUIPMENT_FIX)response
-                    };
-                var joined = (from p in list
-                              from e in _dbContext.GoodsEquipments.AsNoTracking().Where(e => e.ID == p.EQUIPMENT_ID).DefaultIfEmpty()
-                              from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.TYPE_ID).DefaultIfEmpty()
-                              from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.RESULT_ID).DefaultIfEmpty()
-                              from emp in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.EMPLOYEE_ID).DefaultIfEmpty()
-                              select new GoodsEquipmentFixDTO
-                              {
-                                  Id = p.ID,
-                                  Code = p.CODE,
-                                  EquipmentId = p.EQUIPMENT_ID,
-                                  EquipmentName = e.NAME,
-                                  TypeId = p.TYPE_ID,
-                                  TypeName = s1.NAME,
-                                  StartDate = p.START_DATE,
-                                  EndDate = p.END_DATE,
-                                  ResultId = p.RESULT_ID,
-                                  Result = s2.NAME,
-                                  Money = p.MONEY,
-                                  ExpectedUseTime = p.EXPECTED_USE_TIME,
-                                  EmployeeId = p.EMPLOYEE_ID,
-                                  EmployeeName = emp.FULL_NAME,
-                                  Note = p.NOTE,
-                              }).FirstOrDefault();
-
                 return new FormatedResponse() { InnerBody = joined };
             }
             else
@@ -93,6 +86,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
 
         public async Task<FormatedResponse> Create(GoodsEquipmentFixDTO dto, string sid)
         {
+            dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -140,6 +134,23 @@ namespace GYM_BE.All.GoodsEquipmentFix
             throw new NotImplementedException();
         }
 
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.CardIssuances.Count() == 0)
+            {
+                newCode = "BTSC0001";
+            }
+            else
+            {
+                string lastestData = _dbContext.GoodsEquipmentFixs.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 5) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
+        }
     }
 }
 

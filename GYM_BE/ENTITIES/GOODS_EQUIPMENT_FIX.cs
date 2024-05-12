@@ -19,11 +19,11 @@ namespace GYM_BE.Entities
 
        public decimal? MONEY  { get; set; }
 
-       public DateTime? EXPECTED_USE_TIME  { get; set; }
+       public string? EXPECTED_USE_TIME  { get; set; }
 
-       public DateTime? START_DATE  { get; set; }
+       public string? START_DATE  { get; set; }
 
-       public DateTime? END_DATE  { get; set; }
+       public string? END_DATE  { get; set; }
 
 
     }

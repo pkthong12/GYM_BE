@@ -7,12 +7,12 @@ namespace GYM_BE.DTO
        public string? EquipmentName  { get; set; }
        public int? TypeId  { get; set; }
        public string? TypeName  { get; set; }
-       public DateTime? StartDate  { get; set; }
-       public DateTime? EndDate  { get; set; }
+       public string? StartDate  { get; set; }
+       public string? EndDate  { get; set; }
        public long? ResultId  { get; set; }
        public string? Result  { get; set; }
        public decimal? Money  { get; set; }
-       public DateTime? ExpectedUseTime  { get; set; }
+       public string? ExpectedUseTime  { get; set; }
        public long? EmployeeId  { get; set; }
        public string? EmployeeName  { get; set; }
        public string? Note  { get; set; }
