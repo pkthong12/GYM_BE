@@ -85,7 +85,7 @@ namespace GYM_BE.All.Report
                     Value = request.Month,
                 });
             }
-            else if (request.DayLeft != null)
+            if (request.DayLeft != null)
             {
                 cmd.Parameters.Add(new SqlParameter
                 {
