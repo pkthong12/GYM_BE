@@ -107,7 +107,7 @@ namespace GYM_BE.All.SysMenu
         }
         public async Task<FormatedResponse> GetAllAction()
         {
-            var response = await (from p in _dbContext.SysMenus.AsNoTracking() 
+            var response = await (from p in _dbContext.SysMenus.AsNoTracking().Where(p=> p.IS_HIDDEN != true)
                                   select new
                                   {
                                       Id = p.ID,
