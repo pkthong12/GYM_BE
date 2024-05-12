@@ -30,6 +30,7 @@ namespace GYM_BE.All.CardCheckIn
                          from c in _dbContext.PerCustomers.Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
                          from s in _dbContext.SysOtherLists.Where(x => x.ID == i.CARD_TYPE_ID).DefaultIfEmpty()
                          from g in _dbContext.SysOtherLists.Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
+                         orderby p.ID descending
                          select new CardCheckInDTO
                          {
                              Id = p.ID,
