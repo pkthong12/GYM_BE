@@ -2,31 +2,44 @@ namespace GYM_BE.DTO
 {
     public class GoodsListDTO : BaseDTO
     {
-       public long? Quantity  { get; set; }
+        public string? Code { get; set; }
 
-       public long? MeasureId  { get; set; }
+        public string? Name { get; set; }
 
-       public long? ImportPrice  { get; set; }
+        public long? ProductTypeId { get; set; }
+        public string? ProductTypeName { get; set; }
 
-       public long? Price  { get; set; }
+        public string? Supplier { get; set; }
 
-       public long? ProductTypeId  { get; set; }
+        public decimal? ImportPrice { get; set; }
 
-       public bool? IsActive  { get; set; }
+        public decimal? Price { get; set; }
 
-       public long? StockId  { get; set; }
+        public long? Quantity { get; set; }
 
-       public string? Note  { get; set; }
+        public long? MeasureId { get; set; }
+        public string? MeasureName { get; set; }
 
-       public string? Code  { get; set; }
+        public DateTime? ReceivingDate { get; set; }
+        public string? ReceivingDateString { get; set; }
 
-       public string? Name  { get; set; }
+        public DateTime? ExpireDate { get; set; }
+        public string? ExpireDateString { get; set; }
 
-       public string? Supplier  { get; set; }
+        public string? Location { get; set; }
 
-       public DateTime? ExpireDate  { get; set; }
+        public long? Status { get; set; }
+        public string? StatusName { get; set; }
 
-       public DateTime? InputDay  { get; set; }
+        public string? Note { get; set; }
+
+        public string? BatchNo { get; set; }
+        public string? WarrantyInfor { get; set; }
+        public string? Description { get; set; }
+        public string? Source { get; set; }
+
+        public long? ManagerId { get; set; }
+        public string? ManagerName { get; set; }
 
 
     }

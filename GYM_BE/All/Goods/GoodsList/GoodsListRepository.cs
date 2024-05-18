@@ -20,10 +20,35 @@ namespace GYM_BE.All.GoodsList
         public async Task<FormatedResponse> QueryList(PaginationDTO<GoodsListDTO> pagination)
         {
             var joined = from p in _dbContext.GoodsLists.AsNoTracking()
-                                       //tuy chinh
-                       select new GoodsListDTO
+                         from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.PRODUCT_TYPE_ID).DefaultIfEmpty()
+                         from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.MEASURE_ID).DefaultIfEmpty()
+                         from s3 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.STATUS).DefaultIfEmpty()
+                         from e in _dbContext.PerEmployees.AsNoTracking().Where(x => x.ID == p.MANAGER_ID).DefaultIfEmpty()
+                         select new GoodsListDTO
                         {
                             Id = p.ID,
+                            Code = p.CODE,
+                            Name = p.NAME,
+                            ProductTypeId = p.PRODUCT_TYPE_ID,
+                            ProductTypeName = s1.NAME,
+                            Supplier = p.SUPPLIER,
+                            ImportPrice = p.IMPORT_PRICE,
+                            Price = p.PRICE,
+                            Quantity = p.QUANTITY,
+                            MeasureId = p.MEASURE_ID,
+                            MeasureName = s2.NAME,
+                            ReceivingDate = p.RECEIVING_DATE,
+                            ExpireDate = p.EXPIRE_DATE,
+                            Location = p.LOCATION,
+                            Note = p.NOTE,
+                            BatchNo = p.BATCH_NO,
+                            WarrantyInfor = p.WARRANTY_INFOR,
+                            Description = p.DESCRIPTION,
+                            Source = p.SOURCE,
+                            ManagerId = p.MANAGER_ID,
+                            ManagerName = e.FULL_NAME,
+                            Status = p.STATUS,
+                            StatusName = s3.NAME,
                         };
          var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
@@ -34,21 +59,39 @@ namespace GYM_BE.All.GoodsList
 
         public async Task<FormatedResponse> GetById(long id)
         {
-            var res = await _genericRepository.GetById(id);
-            if (res.InnerBody != null)
+            var joined = await (from p in _dbContext.GoodsLists.AsNoTracking().Where(x => x.ID == id)
+                                from s1 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.PRODUCT_TYPE_ID).DefaultIfEmpty()
+                                from s2 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.MEASURE_ID).DefaultIfEmpty()
+                                from s3 in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == p.STATUS).DefaultIfEmpty()
+                                from e in _dbContext.PerEmployees.AsNoTracking().Where(x => x.ID == p.MANAGER_ID).DefaultIfEmpty()
+                                select new GoodsListDTO
+                                {
+                                    Id = p.ID,
+                                    Code = p.CODE,
+                                    Name = p.NAME,
+                                    ProductTypeId = p.PRODUCT_TYPE_ID,
+                                    ProductTypeName = s1.NAME,
+                                    Supplier = p.SUPPLIER,
+                                    ImportPrice = p.IMPORT_PRICE,
+                                    Price = p.PRICE,
+                                    Quantity = p.QUANTITY,
+                                    MeasureId = p.MEASURE_ID,
+                                    MeasureName = s2.NAME,
+                                    ReceivingDate = p.RECEIVING_DATE,
+                                    ExpireDate = p.EXPIRE_DATE,
+                                    Location = p.LOCATION,
+                                    Note = p.NOTE,
+                                    BatchNo = p.BATCH_NO,
+                                    WarrantyInfor = p.WARRANTY_INFOR,
+                                    Description = p.DESCRIPTION,
+                                    Source = p.SOURCE,
+                                    ManagerId = p.MANAGER_ID,
+                                    ManagerName = e.FULL_NAME,
+                                    Status = p.STATUS,
+                                    StatusName = s3.NAME,
+                                }).FirstOrDefaultAsync();
+            if (joined != null)
             {
-                var response = res.InnerBody;
-                var list = new List<GOODS_LIST>
-                    {
-                        (GOODS_LIST)response
-                    };
-                var joined = (from l in list
-                              // JOIN OTHER ENTITIES BASED ON THE BUSINESS
-                              select new GoodsListDTO
-                              {
-                                  Id = l.ID
-                              }).FirstOrDefault();
-
                 return new FormatedResponse() { InnerBody = joined };
             }
             else
@@ -59,6 +102,9 @@ namespace GYM_BE.All.GoodsList
 
         public async Task<FormatedResponse> Create(GoodsListDTO dto, string sid)
         {
+            dto.ReceivingDate = Convert.ToDateTime(dto.ReceivingDate);
+            dto.ExpireDate = Convert.ToDateTime(dto.ExpireDate);
+            dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
             return response;
         }
@@ -102,7 +148,26 @@ namespace GYM_BE.All.GoodsList
 
         public async Task<FormatedResponse> Delete(string id)
         {
-            throw new NotImplementedException();
+            var response = await _genericRepository.Delete(id);
+            return response;
+        }
+
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.GoodsLists.Count() == 0)
+            {
+                newCode = "GOODS001";
+            }
+            else
+            {
+                string lastestData = _dbContext.GoodsLists.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 4) + (int.Parse(lastestData.Substring(lastestData.Length - 3)) + 1).ToString("D3");
+            }
+
+            return newCode;
+
         }
     }
 }
