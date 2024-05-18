@@ -114,14 +114,21 @@ namespace GYM_BE.All.Report
                         worksheet.Range("A1", "G1").Style.Font.Bold = true;
 
                         // Đặt header
-                        worksheet.Cell(3, 1).Value = "STT";
-                        worksheet.Cell(3, 2).Value = "CODE";
-                        worksheet.Cell(3, 3).Value = "FULL NAME";
-                        worksheet.Cell(3, 4).Value = "BIRTH DAY";
-                        worksheet.Cell(3, 5).Value = "GENDER";
-                        worksheet.Cell(3, 6).Value = "PHONE NUMBER";
-                        worksheet.Cell(3, 7).Value = "EMAIL";
+                        //worksheet.Cell(3, 1).Value = "STT";
+                        //worksheet.Cell(3, 2).Value = "CODE";
+                        //worksheet.Cell(3, 3).Value = "FULL NAME";
+                        //worksheet.Cell(3, 4).Value = "BIRTH DAY";
+                        //worksheet.Cell(3, 5).Value = "GENDER";
+                        //worksheet.Cell(3, 6).Value = "PHONE NUMBER";
+                        //worksheet.Cell(3, 7).Value = "EMAIL";
 
+                        worksheet.Cell(3, 1).Value = "STT";
+                        worksheet.Cell(3, 2).Value = "Mã khách hàng";
+                        worksheet.Cell(3, 3).Value = "Tên khách hàng";
+                        worksheet.Cell(3, 4).Value = "Ngày sinh";
+                        worksheet.Cell(3, 5).Value = "Giới tính";
+                        worksheet.Cell(3, 6).Value = "Số điện thoại";
+                        worksheet.Cell(3, 7).Value = "Email";
                         // Đổ dữ liệu từ danh sách object vào file Excel
                         int row = 4;
                         int stt = 1;
@@ -168,17 +175,28 @@ namespace GYM_BE.All.Report
                         worksheet.Range("A1", "J1").Style.Font.Bold = true;
 
                         // Đặt header
+                        //worksheet.Cell(3, 1).Value = "STT";
+                        //worksheet.Cell(3, 2).Value = "CARD CODE";
+                        //worksheet.Cell(3, 3).Value = "CARD TYPE";
+                        //worksheet.Cell(3, 4).Value = "EMPLOYEE CODE";
+                        //worksheet.Cell(3, 5).Value = "FULL NAME";
+                        //worksheet.Cell(3, 6).Value = "GENDER";
+                        //worksheet.Cell(3, 7).Value = "PHONE NUMBER";
+                        //worksheet.Cell(3, 8).Value = "EFFECTED DATE";
+                        //worksheet.Cell(3, 9).Value = "EXPIRED DATE";
+                        //worksheet.Cell(3, 10).Value = "DAY LEFT";
+
+
                         worksheet.Cell(3, 1).Value = "STT";
-                        worksheet.Cell(3, 2).Value = "CARD CODE";
-                        worksheet.Cell(3, 3).Value = "CARD TYPE";
+                        worksheet.Cell(3, 2).Value = "Mã thẻ";
+                        worksheet.Cell(3, 3).Value = "Loại thẻ";
                         worksheet.Cell(3, 4).Value = "EMPLOYEE CODE";
                         worksheet.Cell(3, 5).Value = "FULL NAME";
-                        worksheet.Cell(3, 6).Value = "GENDER";
-                        worksheet.Cell(3, 7).Value = "PHONE NUMBER";
-                        worksheet.Cell(3, 8).Value = "EFFECTED DATE";
-                        worksheet.Cell(3, 9).Value = "EXPIRED DATE";
-                        worksheet.Cell(3, 10).Value = "DAY LEFT";
-
+                        worksheet.Cell(3, 6).Value = "Giới tính";
+                        worksheet.Cell(3, 7).Value = "Số điện thoại";
+                        worksheet.Cell(3, 8).Value = "Ngày hiệu lực";
+                        worksheet.Cell(3, 9).Value = "Ngày hết hạn";
+                        worksheet.Cell(3, 10).Value = "Số ngày còn lại";
                         // Đổ dữ liệu từ danh sách object vào file Excel
                         int row = 4;
                         int stt = 1;
