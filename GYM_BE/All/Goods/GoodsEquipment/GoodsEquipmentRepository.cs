@@ -184,7 +184,7 @@ namespace GYM_BE.All.GoodsEquipment
         public string CreateNewCode()
         {
             string newCode = "";
-            if (_dbContext.CardIssuances.Count() == 0)
+            if (_dbContext.GoodsEquipments.Count() == 0)
             {
                 newCode = "TB0001";
             }

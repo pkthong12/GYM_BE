@@ -20,11 +20,11 @@ namespace GYM_BE.DTO
         public long? MeasureId { get; set; }
         public string? MeasureName { get; set; }
 
-        public DateTime? ReceivingDate { get; set; }
-        public string? ReceivingDateString { get; set; }
+        public DateTime? ReceivingDateTime { get; set; }
+        public string? ReceivingDate { get; set; }
 
-        public DateTime? ExpireDate { get; set; }
-        public string? ExpireDateString { get; set; }
+        public DateTime? ExpireDateTime { get; set; }
+        public string? ExpireDate { get; set; }
 
         public string? Location { get; set; }
 
