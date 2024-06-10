@@ -49,7 +49,14 @@ namespace GYM_BE.All.GoodsDiscountVoucher
                             DistributionChannel = p.DISCOUNT_TYPE_ID,
                             DistributionChannelName = s4.NAME,
                          };
-         var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.DiscountTypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.DiscountTypeId == pagination.Filter.DiscountTypeId);
+                }
+            }
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
          {
              InnerBody = respose,

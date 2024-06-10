@@ -52,7 +52,14 @@ namespace GYM_BE.All.GoodsList
                             Status = p.STATUS,
                             StatusName = s3.NAME,
                         };
-         var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.ProductTypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.ProductTypeId == pagination.Filter.ProductTypeId);
+                }
+            }
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
          {
              InnerBody = respose,

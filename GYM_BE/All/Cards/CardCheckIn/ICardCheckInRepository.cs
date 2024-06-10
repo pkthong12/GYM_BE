@@ -9,6 +9,7 @@ namespace GYM_BE.All.CardCheckIn
     {
         Task<FormatedResponse> QueryList(PaginationDTO<CardCheckInDTO> pagination);
         Task<FormatedResponse> CheckIn(string cardCode, string sid);
+        Task<FormatedResponse> GetListCardCode();
     }
 }
 

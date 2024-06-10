@@ -37,6 +37,7 @@ namespace GYM_BE.All.CardInfo
                              Code = p.CODE,
                              EffectDateString = p.EFFECTED_DATE!,
                              ExpiredDateString = p.EXPIRED_DATE!,
+                             CardTypeId = p.CARD_TYPE_ID,
                              CardTypeName = s.NAME,
                              CustomerName = c.FULL_NAME,
                              GenderName = g.NAME,
@@ -50,6 +51,13 @@ namespace GYM_BE.All.CardInfo
                              ShiftName = sh.NAME,
                              IsHavePt = p.IS_HAVE_PT,
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.CardTypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.CardTypeId == pagination.Filter.CardTypeId);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
@@ -98,9 +106,15 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> Create(CardInfoDTO dto, string sid)
         {
+            var effectedDate = Convert.ToDateTime(dto.EffectedDate);
+            var expiredDate = Convert.ToDateTime(dto.ExpiredDate);
+            if(effectedDate > expiredDate)
+            {
+                return new FormatedResponse() { MessageCode = "Effected Date must be less than Expired Date", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             dto.IsActive = true;
-            dto.EffectedDateTime = Convert.ToDateTime(dto.EffectedDate);
-            dto.ExpiredDateTime = Convert.ToDateTime(dto.ExpiredDate);
+            dto.EffectedDateTime = effectedDate;
+            dto.ExpiredDateTime = expiredDate;
             dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
 
@@ -137,8 +151,14 @@ namespace GYM_BE.All.CardInfo
 
         public async Task<FormatedResponse> Update(CardInfoDTO dto, string sid, bool patchMode = true)
         {
-            dto.EffectedDateTime = Convert.ToDateTime(dto.EffectedDate);
-            dto.ExpiredDateTime = Convert.ToDateTime(dto.ExpiredDate);
+            var effectedDate = Convert.ToDateTime(dto.EffectedDate);
+            var expiredDate = Convert.ToDateTime(dto.ExpiredDate);
+            if (effectedDate > expiredDate)
+            {
+                return new FormatedResponse() { MessageCode = "Effected Date must be less than Expired Date", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+            dto.EffectedDateTime = effectedDate;
+            dto.ExpiredDateTime = expiredDate;
             var response = await _genericRepository.Update(dto, sid, patchMode);
             var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == dto.Id);
 
@@ -218,7 +238,7 @@ namespace GYM_BE.All.CardInfo
             var checkUsed = await _dbContext.CardIssuances.AsNoTracking().AnyAsync(c => id == c.CARD_ID);
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể xóa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Cannot edit data in use", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             var oldDate = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.ID == id);
@@ -251,7 +271,7 @@ namespace GYM_BE.All.CardInfo
             var checkUsed = await _dbContext.CardIssuances.AsNoTracking().AnyAsync(c => ids.Contains(c.CARD_ID!.Value));
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể xóa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Cannot delete data in use", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             foreach (var id in ids)

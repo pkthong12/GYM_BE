@@ -119,6 +119,13 @@ namespace GYM_BE.All.CardCheckIn
             var response = await _CardCheckInRepository.CheckIn(cardCode, sid);
             return Ok(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetListCardCode()
+        {
+            var response = await _CardCheckInRepository.GetListCardCode();
+            return Ok(response);
+        }
     }
 }
 
