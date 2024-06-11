@@ -135,6 +135,10 @@ namespace GYM_BE.All.CardIssuance
 
             var startDate = Convert.ToDateTime(dto.StartDate).Date;
             var endDate = Convert.ToDateTime(dto.EndDate).Date;
+            if(startDate > endDate)
+            {
+                return new FormatedResponse() { MessageCode = "Start Date must be less than End Date", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             var checkExist = await (from p in _dbContext.CardIssuances.AsNoTracking().Where(p => p.CUSTOMER_ID == dto.CustomerId).DefaultIfEmpty()
                                     from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
                                     where (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && c.EXPIRED_DATE_TIME!.Value.Date <= endDate) ||
@@ -144,7 +148,7 @@ namespace GYM_BE.All.CardIssuance
                                     ).AnyAsync();
             if (checkExist)
             {
-                return new FormatedResponse() { MessageCode = "Khách hàng đã được cấp thẻ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "The customer has been issued a card.", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
             var response = await _genericRepository.Create(dto, sid);
             if (response != null)
@@ -188,6 +192,10 @@ namespace GYM_BE.All.CardIssuance
         {
             var startDate = Convert.ToDateTime(dto.StartDate).Date;
             var endDate = Convert.ToDateTime(dto.EndDate).Date;
+            if (startDate > endDate)
+            {
+                return new FormatedResponse() { MessageCode = "Start Date must be less than End Date", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
             var checkExist = await (from p in _dbContext.CardIssuances.AsNoTracking().Where(p => p.CUSTOMER_ID == dto.CustomerId && p.ID != dto.Id).DefaultIfEmpty()
                                     from c in _dbContext.CardInfos.AsNoTracking().Where(c => c.ID == p.CARD_ID).DefaultIfEmpty()
                                     where (c.EFFECTED_DATE_TIME!.Value.Date <= startDate && c.EXPIRED_DATE_TIME!.Value.Date <= endDate) ||
@@ -197,7 +205,7 @@ namespace GYM_BE.All.CardIssuance
                                     ).AnyAsync();
             if (checkExist)
             {
-                return new FormatedResponse() { MessageCode = "Khách hàng đã được cấp thẻ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "The customer has been issued a card", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             var response = await _genericRepository.Update(dto, sid, patchMode);

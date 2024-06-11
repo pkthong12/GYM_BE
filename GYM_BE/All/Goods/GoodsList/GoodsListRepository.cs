@@ -38,7 +38,9 @@ namespace GYM_BE.All.GoodsList
                             MeasureId = p.MEASURE_ID,
                             MeasureName = s2.NAME,
                             ReceivingDate = p.RECEIVING_DATE,
+                            ReceivingDateTime = p.RECEIVING_DATETIME,
                             ExpireDate = p.EXPIRE_DATE,
+                            ExpireDateTime = p.EXPIRE_DATETIME,
                             Location = p.LOCATION,
                             Note = p.NOTE,
                             BatchNo = p.BATCH_NO,
@@ -50,7 +52,14 @@ namespace GYM_BE.All.GoodsList
                             Status = p.STATUS,
                             StatusName = s3.NAME,
                         };
-         var respose = await _genericRepository.PagingQueryList(joined, pagination);
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.ProductTypeId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.ProductTypeId == pagination.Filter.ProductTypeId);
+                }
+            }
+            var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
          {
              InnerBody = respose,
@@ -78,7 +87,9 @@ namespace GYM_BE.All.GoodsList
                                     MeasureId = p.MEASURE_ID,
                                     MeasureName = s2.NAME,
                                     ReceivingDate = p.RECEIVING_DATE,
+                                    ReceivingDateTime = p.RECEIVING_DATETIME,
                                     ExpireDate = p.EXPIRE_DATE,
+                                    ExpireDateTime = p.EXPIRE_DATETIME,
                                     Location = p.LOCATION,
                                     Note = p.NOTE,
                                     BatchNo = p.BATCH_NO,
@@ -102,8 +113,8 @@ namespace GYM_BE.All.GoodsList
 
         public async Task<FormatedResponse> Create(GoodsListDTO dto, string sid)
         {
-            dto.ReceivingDate = Convert.ToDateTime(dto.ReceivingDate);
-            dto.ExpireDate = Convert.ToDateTime(dto.ExpireDate);
+            dto.ReceivingDateTime = Convert.ToDateTime(dto.ReceivingDate);
+            dto.ExpireDateTime = Convert.ToDateTime(dto.ExpireDate);
             dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
             return response;
@@ -119,6 +130,8 @@ namespace GYM_BE.All.GoodsList
 
         public async Task<FormatedResponse> Update(GoodsListDTO dto, string sid, bool patchMode = true)
         {
+            dto.ReceivingDateTime = Convert.ToDateTime(dto.ReceivingDate);
+            dto.ExpireDateTime = Convert.ToDateTime(dto.ExpireDate);
             var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
         }

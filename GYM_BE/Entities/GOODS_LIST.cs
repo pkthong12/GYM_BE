@@ -21,9 +21,13 @@ namespace GYM_BE.Entities
 
         public long? MEASURE_ID  { get; set; }
 
-        public DateTime? RECEIVING_DATE { get; set; }
+        public string? RECEIVING_DATE { get; set; }
 
-        public DateTime? EXPIRE_DATE { get; set; }
+        public string? EXPIRE_DATE { get; set; }
+
+        public DateTime? RECEIVING_DATETIME { get; set; }
+
+        public DateTime? EXPIRE_DATETIME { get; set; }
 
         public string? LOCATION { get; set; }
 

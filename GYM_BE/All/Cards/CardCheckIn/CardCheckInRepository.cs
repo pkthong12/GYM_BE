@@ -49,6 +49,13 @@ namespace GYM_BE.All.CardCheckIn
                              TimeEndShiftString = sh.HOURS_END,
                              ShiftName = sh.NAME,
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.CardCode != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.CardCode == pagination.Filter.CardCode);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {
@@ -206,6 +213,20 @@ namespace GYM_BE.All.CardCheckIn
             {
                 return new FormatedResponse() { MessageCode = ex.Message, ErrorType = EnumErrorType.UNCATCHABLE, StatusCode = EnumStatusCode.StatusCode500 };
             }
+        }
+
+        public async Task<FormatedResponse> GetListCardCode()
+        {
+            var listCode = await (from i in _dbContext.CardInfos.AsNoTracking()
+                                  from c in _dbContext.PerCustomers.AsNoTracking().Where(x => x.ID == i.CUSTOMER_ID).DefaultIfEmpty()
+                                  where i.CUSTOMER_ID != null
+                                  orderby i.CODE
+                                  select new
+                                  {
+                                      Code = i.CODE,
+                                      Name = c.FULL_NAME,
+                                  }).Distinct().ToListAsync();
+            return new FormatedResponse() { InnerBody = listCode };
         }
     }
 }

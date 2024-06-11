@@ -35,6 +35,7 @@ namespace GYM_BE.All.System.SysUser
                          select new SysUserDTO
                          {
                              Id = l.ID,
+                             GroupId = l.GROUP_ID,
                              Username = l.USERNAME,
                              Fullname = l.FULLNAME,
                              GroupName = s.NAME,
@@ -42,6 +43,13 @@ namespace GYM_BE.All.System.SysUser
                              EmployeeId = l.EMPLOYEE_ID,
                              EmployeeCode = e.CODE
                          };
+            if (pagination.Filter != null)
+            {
+                if (pagination.Filter.GroupId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.GroupId == pagination.Filter.GroupId);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {

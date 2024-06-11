@@ -35,7 +35,7 @@ namespace GYM_BE.All.Gym.GymShift
                              HoursEndString = p.HOURS_END,
                              Note = p.NOTE,
                              IsActive = p.IS_ACTIVE,
-                             Status = p.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
+                             Status = p.IS_ACTIVE!.Value ? "Active" : "Inactive"
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
@@ -67,7 +67,7 @@ namespace GYM_BE.All.Gym.GymShift
                                   HoursEndString = l.HOURS_END,
                                   Note = l.NOTE,
                                   IsActive = l.IS_ACTIVE,
-                                  Status = l.IS_ACTIVE!.Value ? "Áp dụng" : "Ngừng áp dụng"
+                                  Status = l.IS_ACTIVE!.Value ? "Active" : "Inactive"
                               }).FirstOrDefault();
 
                 return new FormatedResponse() { InnerBody = joined };
@@ -80,6 +80,22 @@ namespace GYM_BE.All.Gym.GymShift
 
         public async Task<FormatedResponse> Create(GoodsShiftDTO dto, string sid)
         {
+            DateTime hoursStart = DateTime.Parse(dto.HoursStart!);
+            DateTime hoursEnd = DateTime.Parse(dto.HoursEnd!);
+
+            if(dto.TotalDays != null)
+            {
+                if (dto.TotalDays < 0 || dto.TotalDays > 7)
+                {
+                    return new FormatedResponse() { MessageCode = "Number of Days in a Week must between 0 and 7 ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                }
+            }
+
+            if(hoursStart > hoursEnd)
+            {
+                return new FormatedResponse() { MessageCode = "Start Time must less than End Time", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+            dto.Code = CreateNewCode();
             dto.IsActive = true;
             var response = await _genericRepository.Create(dto, sid);
             return response;
@@ -100,7 +116,20 @@ namespace GYM_BE.All.Gym.GymShift
                                    select i.ID).AnyAsync();
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Cannot edit data in use", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+            if (dto.TotalDays != null)
+            {
+                if (dto.TotalDays < 0 || dto.TotalDays > 7)
+                {
+                    return new FormatedResponse() { MessageCode = "Number of Days in a Week must between 0 and 7 ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                }
+            }
+            DateTime hoursStart = DateTime.Parse(dto.HoursStart!);
+            DateTime hoursEnd = DateTime.Parse(dto.HoursEnd!);
+            if (hoursStart > hoursEnd)
+            {
+                return new FormatedResponse() { MessageCode = "Start Time must less than End Time", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
             var response = await _genericRepository.Update(dto, sid, patchMode);
             return response;
@@ -117,7 +146,7 @@ namespace GYM_BE.All.Gym.GymShift
             var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => c.SHIFT_ID == id);
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Cannot delete data in use", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
             var response = await _genericRepository.Delete(id);
             return response;
@@ -135,7 +164,7 @@ namespace GYM_BE.All.Gym.GymShift
             var checkUsed = await _dbContext.CardInfos.AsNoTracking().AnyAsync(c => ids.Contains(c.SHIFT_ID!.Value));
             if (checkUsed)
             {
-                return new FormatedResponse() { MessageCode = "Không thể sửa dữ liệu đang sử dụng", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                return new FormatedResponse() { MessageCode = "Cannot delete data in use", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
             var response = await _genericRepository.DeleteIds(ids);
             return response;
@@ -157,6 +186,24 @@ namespace GYM_BE.All.Gym.GymShift
                                  Name = p.NAME,
                              }).ToListAsync();
             return new FormatedResponse() { InnerBody = res };
+        }
+
+        public string CreateNewCode()
+        {
+            string newCode = "";
+            if (_dbContext.GoodsShifts.Count() == 0)
+            {
+                newCode = "SHIFT0001";
+            }
+            else
+            {
+                string lastestData = _dbContext.GoodsShifts.OrderByDescending(t => t.CODE).First().CODE!.ToString();
+
+                newCode = lastestData.Substring(0, 5) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D4");
+            }
+
+            return newCode;
+
         }
     }
 }
