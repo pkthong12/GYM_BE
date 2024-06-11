@@ -113,7 +113,14 @@ namespace GYM_BE.All.GoodsLocker
             var response = await _GoodsLockerRepository.ToggleActiveIds(model.Ids, model.ValueToBind, sid);
             return Ok(response);
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetLockerStatus(long area)
+        {
+            var sid = Request.Sid(_appSettings);
+            if (sid == null) return Unauthorized();
+            var response = await _GoodsLockerRepository.GetLockerStatus(area);
+            return Ok(response);
+        }
     }
 }
 

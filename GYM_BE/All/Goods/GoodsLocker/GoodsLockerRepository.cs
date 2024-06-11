@@ -192,6 +192,29 @@ namespace GYM_BE.All.GoodsLocker
                 return new FormatedResponse() { InnerBody = res };
             }
         }
+    
+        public async Task<FormatedResponse> GetLockerStatus(long area)
+        {
+            var listLocker = await (from p in _dbContext.GoodsLockers.AsNoTracking().Where(p => p.AREA == area)
+                                    from s in _dbContext.SysOtherLists.AsNoTracking().Where(s => s.ID == p.STATUS_ID).DefaultIfEmpty()
+                                    select new GoodsLockerStatusDTO
+                                    {
+                                        CodeLoc = p.CODE,
+                                        Status = s.CODE == "LOC1" ? "M" : s.CODE == "LOC2" ? "U" :"E"
+                                    }).ToListAsync();
+            var list = new GoodsLockerStatusListAllDTO() { List = new List<GoodsLockerStatusListDTO>() };
+            if (listLocker != null)
+            {
+                var row = listLocker.Count / 10;
+                for(int i = 0; i <= row; i++)
+                {
+                    var items = listLocker.Skip(i*10).Take(10).ToList();
+                    var listItems = new GoodsLockerStatusListDTO() { Items = items };
+                    list.List!.Add(listItems);
+                }
+            }
+            return new FormatedResponse() { InnerBody = list };
+        }
     }
 }
 

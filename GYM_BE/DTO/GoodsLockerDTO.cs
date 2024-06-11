@@ -12,5 +12,20 @@ namespace GYM_BE.DTO
         public string? MaintenanceToDate { get; set; }
         public string? Note { get; set; }
     }
+    public class GoodsLockerStatusListAllDTO
+    {
+        public List<GoodsLockerStatusListDTO>? List { get; set; }
+    }
+    public class GoodsLockerStatusListDTO
+    {
+        public List<GoodsLockerStatusDTO>? Items { get; set; }
+        public bool? Mixed { get; set; }
+    }
+    public class GoodsLockerStatusDTO
+    {
+        public string? CodeLoc { get; set; }
+        public string? Status { get; set; }
+        public bool? OffRegistered { get; set; }
+    }
 }
 
