@@ -1,4 +1,5 @@
 using API;
+using Azure;
 using GYM_BE.All.System.Common.Middleware;
 using GYM_BE.Core.Dto;
 using GYM_BE.DTO;
@@ -116,6 +117,12 @@ namespace GYM_BE.All.Profile.PerCustomer
             var result = _PerCustomerRepository.ExportExcelPerCustomer();
 
             return File(result, "application/force-download", $"per_customer_{dateTimeStr}.xlsx");
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllCustomer()
+        {
+            var response =await _PerCustomerRepository.GetAllCustomer();
+            return Ok(response);
         }
     }
 }

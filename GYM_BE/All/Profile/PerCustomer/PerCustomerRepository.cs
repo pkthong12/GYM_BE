@@ -191,6 +191,16 @@ namespace GYM_BE.All.Profile.PerCustomer
         {
             throw new NotImplementedException();
         }
+        public async Task<FormatedResponse> GetAllCustomer()
+        {
+            var joined = await (from c in _dbContext.PerCustomers.AsNoTracking()
+                                  select new
+                                  {
+                                      Id = c.ID,
+                                      Name =c.CODE +" - "+ c.FULL_NAME
+                                  }).ToListAsync();
+            return new FormatedResponse() { InnerBody = joined };
+        }
 
         public string CreateNewCode()
         {

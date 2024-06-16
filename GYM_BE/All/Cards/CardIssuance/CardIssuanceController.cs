@@ -35,7 +35,6 @@ namespace GYM_BE.All.CardIssuance
             var response = await _CardIssuanceRepository.QueryList(pagination);
             return Ok(response);
         }
-
         [HttpGet]
         public async Task<IActionResult> GetById(long id)
         {

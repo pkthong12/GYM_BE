@@ -66,7 +66,15 @@ namespace GYM_BE.All.CardIssuance
                              TotalPrice = p.TOTAL_PRICE,
                              Wardrobe = p.WARDROBE,
                              Note = p.NOTE,
+                             IsExpired = DateTime.Now.Date < c.EXPIRED_DATE_TIME!.Value.Date ? false:true,
                          };
+            if(pagination.Filter != null)
+            {
+                if(pagination.Filter.CustomerId != null)
+                {
+                    joined = joined.AsNoTracking().Where(p => p.CustomerId == pagination.Filter.CustomerId);
+                }
+            }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse
             {

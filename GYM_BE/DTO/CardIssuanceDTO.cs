@@ -33,6 +33,7 @@ namespace GYM_BE.DTO
         public long? PaidMoney { get; set; }
         public string? Note { get; set; }
         public bool? IsActive { get; set; }
+        public bool? IsExpired { get; set; }
     }
 }
 
