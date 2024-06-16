@@ -160,6 +160,14 @@ namespace GYM_BE.All.CardIssuance
             {
                 return new FormatedResponse() { MessageCode = "The customer has been issued a card.", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
+
+            // check locker status
+            var locker = await _dbContext.GoodsLockers.FirstOrDefaultAsync(x => x.ID == dto.LockerId);
+            if(locker!.STATUS_ID == 10030)
+            {
+                return new FormatedResponse() { MessageCode = "Locker has been maintained.", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+
             var response = await _genericRepository.Create(dto, sid);
             if (response != null)
             {
@@ -232,6 +240,13 @@ namespace GYM_BE.All.CardIssuance
             if (checkExist)
             {
                 return new FormatedResponse() { MessageCode = "The customer has been issued a card", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+            }
+
+            // check locker status
+            var locker = await _dbContext.GoodsLockers.FirstOrDefaultAsync(x => x.ID == dto.LockerId);
+            if (locker!.STATUS_ID == 10030)
+            {
+                return new FormatedResponse() { MessageCode = "Locker has been maintained.", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
             }
 
             var response = await _genericRepository.Update(dto, sid, patchMode);
