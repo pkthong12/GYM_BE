@@ -98,6 +98,7 @@ services.AddSwaggerGen(c =>
     c.SwaggerDoc("locker", new OpenApiInfo { Title = "LOCKER API", Version = "v1" });
     c.SwaggerDoc("goods", new OpenApiInfo { Title = "GOODS API", Version = "v1" });
     c.SwaggerDoc("card", new OpenApiInfo { Title = "CARD API", Version = "v1" });
+    c.SwaggerDoc("order", new OpenApiInfo { Title = "ORDER API", Version = "v1" });
     c.TagActionsBy(api =>
     {
         if (api.GroupName != null)
@@ -194,6 +195,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/locker/swagger.json", "LOCKER API");
         c.SwaggerEndpoint("/swagger/goods/swagger.json", "GOODS API");
         c.SwaggerEndpoint("/swagger/card/swagger.json", "CARD API");
+        c.SwaggerEndpoint("/swagger/order/swagger.json", "ORDER API");
     });
 }
 

@@ -12,11 +12,13 @@ namespace GYM_BE.All.CardIssuance
     {
         private readonly FullDbContext _dbContext;
         private readonly GenericRepository<CARD_ISSUANCE, CardIssuanceDTO> _genericRepository;
+        private readonly GenericRepository<ORD_BILL, OrdBillDTO> _genericOrdBillRepository;
 
         public CardIssuanceRepository(FullDbContext context)
         {
             _dbContext = context;
             _genericRepository = new GenericRepository<CARD_ISSUANCE, CardIssuanceDTO>(_dbContext);
+            _genericOrdBillRepository = new GenericRepository<ORD_BILL, OrdBillDTO>(_dbContext);
         }
 
         public async Task<FormatedResponse> QueryList(PaginationDTO<CardIssuanceDTO> pagination)
@@ -175,6 +177,22 @@ namespace GYM_BE.All.CardIssuance
                             card.CUSTOMER_ID = dto.CustomerId;
                             _dbContext.CardInfos.Update(card);
                             await _dbContext.SaveChangesAsync();
+
+                            var type = _dbContext.SysOtherLists.AsNoTracking().First(p => p.CODE == "TTRANS1").ID;
+
+                            var bill = await _genericOrdBillRepository.Create(new OrdBillDTO
+                            {
+                                CustomerId = dto.CustomerId,
+                                DiscPercent = dto.PercentDiscount,
+                                PercentVat = dto.PercentVat,
+                                MoneyHavePay = dto.MoneyHavePay,
+                                TypeTransfer = type,
+                                TotalMoney = dto.TotalPrice,
+                                PayMethod = 0,
+                                PerSellId = dto.PerSellId,
+                                Code = CreateNewCodeBill(),
+                                PkRef = Convert.ToInt64(response.InnerBody!.GetType().GetProperty("ID")!.GetValue(response.InnerBody, null))
+                            }, sid);
                             return response;
                         }
                         catch (Exception ex)
@@ -287,9 +305,22 @@ namespace GYM_BE.All.CardIssuance
 
                 newCode = lastestData.Substring(0, 8) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D4");
             }
-
             return newCode;
+        }
+        public string CreateNewCodeBill()
+        {
+            string newCode = "";
+            if (_dbContext.OrdBills.Count() == 0)
+            {
+                newCode = "GYM_OD/0001";
+            }
+            else
+            {
+                string lastestData = _dbContext.OrdBills.OrderByDescending(t => t.CODE).First().CODE!.ToString();
 
+                newCode = lastestData.Substring(0, 7) + (int.Parse(lastestData.Substring(lastestData.Length - 4)) + 1).ToString("D4");
+            }
+            return newCode;
         }
     }
 }
