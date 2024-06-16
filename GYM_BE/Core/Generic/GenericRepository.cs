@@ -57,10 +57,11 @@ namespace GYM_BE.Core.Generic
                 {
                     _dbSet.Add(mapped!);
                     await _dbContext.SaveChangesAsync();
+                    await _dbContext.Entry(mapped).ReloadAsync();
                     await _dbContext.Database.CommitTransactionAsync();
                     return new FormatedResponse()
                     {
-                        InnerBody = dto,
+                        InnerBody = mapped,
                         StatusCode = EnumStatusCode.StatusCode200,
                         MessageCode = "CREATE_SUCCESS",
                     };

@@ -14,8 +14,8 @@ namespace GYM_BE.DTO
 
        public long? PayMethod  { get; set; }
 
-       public float? DiscPercent  { get; set; }
-       public float? PercentVat { get; set; }
+       public decimal? DiscPercent  { get; set; }
+       public decimal? PercentVat { get; set; }
        public string? Code  { get; set; }
        public long? PkRef { get; set; }
        public long? VoucherId { get; set; }

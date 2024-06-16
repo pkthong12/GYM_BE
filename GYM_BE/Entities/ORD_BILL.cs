@@ -17,11 +17,11 @@ namespace GYM_BE.Entities
 
         public long? PAY_METHOD { get; set; }
 
-        public float? DISC_PERCENT { get; set; }
+        public decimal? DISC_PERCENT { get; set; }
 
         public string? CODE { get; set; }
         public long? PK_REF { get; set; }
-        public float? PERCENT_VAT { get; set; }
+        public decimal? PERCENT_VAT { get; set; }
         public long? VOUCHER_ID { get; set; }
 
     }
