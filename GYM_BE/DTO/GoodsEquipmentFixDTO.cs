@@ -16,6 +16,7 @@ namespace GYM_BE.DTO
        public long? EmployeeId  { get; set; }
        public string? EmployeeName  { get; set; }
        public string? Note  { get; set; }
+       public long? StatusId { get; set; }
     }
 }
 

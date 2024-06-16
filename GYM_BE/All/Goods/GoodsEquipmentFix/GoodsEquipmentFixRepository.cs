@@ -41,6 +41,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
                             EmployeeId = p.EMPLOYEE_ID,
                             EmployeeName = emp.FULL_NAME,
                             Note = p.NOTE,
+                            StatusId = p.STATUS_ID,
                          };
          var respose = await _genericRepository.PagingQueryList(joined, pagination);
          return new FormatedResponse
@@ -73,6 +74,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
                                     EmployeeId = p.EMPLOYEE_ID,
                                     EmployeeName = emp.FULL_NAME,
                                     Note = p.NOTE,
+                                    StatusId = p.STATUS_ID,
                                 }).FirstOrDefaultAsync();
             if (joined != null)
             {
@@ -88,6 +90,12 @@ namespace GYM_BE.All.GoodsEquipmentFix
         {
             dto.Code = CreateNewCode();
             var response = await _genericRepository.Create(dto, sid);
+
+            // update equipment status
+            var equipment = await _dbContext.GoodsEquipments.FirstOrDefaultAsync(x => x.ID == dto.EquipmentId);
+            equipment!.STATUS_ID = dto.StatusId;
+            await _dbContext.SaveChangesAsync();
+            
             return response;
         }
 
@@ -102,6 +110,12 @@ namespace GYM_BE.All.GoodsEquipmentFix
         public async Task<FormatedResponse> Update(GoodsEquipmentFixDTO dto, string sid, bool patchMode = true)
         {
             var response = await _genericRepository.Update(dto, sid, patchMode);
+            
+            // update equipment status
+            var equipment = await _dbContext.GoodsEquipments.FirstOrDefaultAsync(x => x.ID == dto.EquipmentId);
+            equipment!.STATUS_ID = dto.StatusId;
+            await _dbContext.SaveChangesAsync();
+
             return response;
         }
 
@@ -137,7 +151,7 @@ namespace GYM_BE.All.GoodsEquipmentFix
         public string CreateNewCode()
         {
             string newCode = "";
-            if (_dbContext.CardIssuances.Count() == 0)
+            if (_dbContext.GoodsEquipmentFixs.Count() == 0)
             {
                 newCode = "BTSC0001";
             }
