@@ -157,13 +157,13 @@ namespace GYM_BE.All.CardCheckIn
                 var checkExistCard = await _dbContext.CardInfos.FirstOrDefaultAsync(x => x.CODE!.ToUpper() == cardCode.ToUpper());
                 if (checkExistCard == null)
                 {
-                    return new FormatedResponse() { MessageCode = "Không tìm được thông tin thẻ", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
+                    return new FormatedResponse() { MessageCode = "Can't find card information", ErrorType = EnumErrorType.CATCHABLE, StatusCode = EnumStatusCode.StatusCode400 };
                 }
 
                 // check the gan voi hoi vien
                 if (checkExistCard.CUSTOMER_ID == null)
                 {
-                    return new FormatedResponse() { MessageCode = "Thẻ chưa được gắn với hội viên", StatusCode = EnumStatusCode.StatusCode400 };
+                    return new FormatedResponse() { MessageCode = "The card has not been attached to members", StatusCode = EnumStatusCode.StatusCode400 };
                 }
 
                 string notification = "";
@@ -192,6 +192,13 @@ namespace GYM_BE.All.CardCheckIn
                         DayCheckIn = timeCheckIn.Date,
                     };
                     var response = await _genericRepository.Create(checkIn, sid);
+
+                    // thay doi trang thai tu
+                    var lockerId = _dbContext.CardIssuances.FirstOrDefault(x => x.CARD_ID == cardId)!.LOCKER_ID;
+                    var locker = await _dbContext.GoodsLockers.FirstOrDefaultAsync(x => x.ID == lockerId);
+                    locker!.STATUS_ID = 10031;
+                    await _dbContext.SaveChangesAsync();
+
                     response.MessageCode = notification;
                     return response;
                 }
@@ -205,6 +212,13 @@ namespace GYM_BE.All.CardCheckIn
                     card.TimeStart = checkIn.TIME_START;
                     card.TimeEnd = timeCheckIn;
                     var response = await _genericRepository.Update(card, sid, true);
+
+                    // thay doi trang thai tu
+                    var lockerId = _dbContext.CardIssuances.FirstOrDefault(x => x.CARD_ID == cardId)!.LOCKER_ID;
+                    var locker = await _dbContext.GoodsLockers.FirstOrDefaultAsync(x => x.ID == lockerId);
+                    locker!.STATUS_ID = 10032;
+                    await _dbContext.SaveChangesAsync();
+
                     response.MessageCode = notification;
                     return response;
                 }

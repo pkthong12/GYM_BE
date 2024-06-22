@@ -25,7 +25,7 @@ namespace GYM_BE.Entities
 
        public string? END_DATE  { get; set; }
 
-
+       public long? STATUS_ID { get; set; }
     }
 }
 
