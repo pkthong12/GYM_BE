@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using GYM_BE.All.System.Common.Middleware;
+using GYM_BE.Core.Extentions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GYM_BE.All.OrdBill
 {
     [ApiExplorerSettings(GroupName = "027-ORDER-ORD_BILL")]
     [ApiController]
-    [GymAuthorize]
+    //[GymAuthorize]
     [Route("api/[controller]/[action]")]
     public class OrdBillController : Controller
     {
@@ -108,6 +110,18 @@ namespace GYM_BE.All.OrdBill
             return Ok(response);
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> PrintBills(IdsRequest model)
+        {
+            var result = await _OrdBillRepository.PrintBills(model);
+            if (result == null)
+            {
+                return Ok(new { StatusCode = 404, StatusMessage = "Not Found!" }); // Handle case when invoice is not found
+            }
+
+            return File(result.memoryStream!, "application/pdf", $"BILL.pdf");
+        }
     }
 }
 
