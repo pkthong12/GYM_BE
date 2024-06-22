@@ -20,10 +20,31 @@ namespace GYM_BE.All.OrdBill
         public async Task<FormatedResponse> QueryList(PaginationDTO<OrdBillDTO> pagination)
         {
             var joined = from p in _dbContext.OrdBills.AsNoTracking()
+                         from c in _dbContext.PerCustomers.AsNoTracking().Where(c=> c.ID == p.CUSTOMER_ID).DefaultIfEmpty()
+                         from o in _dbContext.SysOtherLists.AsNoTracking().Where(o => o.ID == p.PAY_METHOD).DefaultIfEmpty()
+                         from e in _dbContext.PerEmployees.AsNoTracking().Where(e => e.ID == p.PER_SELL_ID).DefaultIfEmpty()
+                         from t in _dbContext.SysOtherLists.AsNoTracking().Where(t => t.ID == p.TYPE_TRANSFER).DefaultIfEmpty()
+                         from v in _dbContext.GoodsDiscountVouchers.AsNoTracking().Where(v=> v.ID == p.VOUCHER_ID).DefaultIfEmpty()
+
                              //tuy chinh
                          select new OrdBillDTO
                          {
                              Id = p.ID,
+                             Code= p.CODE,
+                             CreatedDate = p.CREATED_DATE,
+                             MoneyHavePay= p.MONEY_HAVE_PAY,
+                             TotalMoney = p.TOTAL_MONEY,
+                             DiscPercent= p.DISC_PERCENT,
+                             PercentVat = p.PERCENT_VAT,
+                             VoucherId= p.VOUCHER_ID,
+                             TypeTransfer= p.TYPE_TRANSFER,
+                             TypeTransferName  = t.NAME,
+                             CustomerName = c.FULL_NAME,
+                             PerSellName= e.FULL_NAME,
+                             PayMethodName = o.NAME,
+                             IsConfirm = p.IS_CONFIRM,
+                             Printed = p.PRINTED,
+                             PrintNumber = p.PRINT_NUMBER,
                          };
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
             return new FormatedResponse

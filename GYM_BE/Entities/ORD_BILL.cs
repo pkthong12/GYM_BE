@@ -23,6 +23,9 @@ namespace GYM_BE.Entities
         public long? PK_REF { get; set; }
         public decimal? PERCENT_VAT { get; set; }
         public long? VOUCHER_ID { get; set; }
+        public bool? IS_CONFIRM { get; set; }
+        public bool? PRINTED { get; set; }
+        public int? PRINT_NUMBER { get; set; }
 
     }
 }

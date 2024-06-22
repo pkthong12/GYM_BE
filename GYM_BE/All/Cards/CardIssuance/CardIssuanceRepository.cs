@@ -191,6 +191,9 @@ namespace GYM_BE.All.CardIssuance
                                 PayMethod = 0,
                                 PerSellId = dto.PerSellId,
                                 Code = CreateNewCodeBill(),
+                                IsConfirm= false,
+                                Printed = false,
+                                PrintNumber =0,
                                 PkRef = Convert.ToInt64(response.InnerBody!.GetType().GetProperty("Id")!.GetValue(response.InnerBody, null))
                             }, sid);
                             return response;
