@@ -176,7 +176,7 @@ namespace GYM_BE.All.GoodsList
             {
                 string lastestData = _dbContext.GoodsLists.OrderByDescending(t => t.CODE).First().CODE!.ToString();
 
-                newCode = lastestData.Substring(0, 4) + (int.Parse(lastestData.Substring(lastestData.Length - 3)) + 1).ToString("D3");
+                newCode = lastestData.Substring(0, 5) + (int.Parse(lastestData.Substring(lastestData.Length - 3)) + 1).ToString("D3");
             }
 
             return newCode;
