@@ -9,7 +9,7 @@ namespace GYM_BE.All.CardHistory
     public class CardHistoryRepository : ICardHistoryRepository
     {
         private readonly FullDbContext _dbContext;
-       private readonly GenericRepository<CARD_HISTORY, CardHistoryDTO> _genericRepository;
+        private readonly GenericRepository<CARD_HISTORY, CardHistoryDTO> _genericRepository;
 
         public CardHistoryRepository(FullDbContext context)
         {
@@ -26,27 +26,27 @@ namespace GYM_BE.All.CardHistory
                          from g in _dbContext.SysOtherLists.AsNoTracking().Where(x => x.ID == c.GENDER_ID).DefaultIfEmpty()
                          from u in _dbContext.SysUsers.AsNoTracking().Where(x => x.ID == p.CREATED_BY).DefaultIfEmpty()
                          select new CardHistoryDTO
-                        {
-                            Id = p.ID,
-                            Code = p.CODE,
-                            EffectDateString = p.EFFECTED_DATE!,
-                            ExpiredDateString = p.EXPIRED_DATE!,
-                            CardTypeName = s.NAME,
-                            CustomerName = c.FULL_NAME,
-                            GenderName = g.NAME,
-                            LockerId = p.LOCKER_ID,
-                            Status = p.IS_ACTIVE!.Value == true ? "Hoạt động" : "Ngừng hoạt động",
-                            Note = p.NOTE,
-                            CodeCus = c.CODE,
-                            Wardrobe = p.WARDROBE,
-                            Price = p.PRICE,
-                            ShiftId = p.SHIFT_ID,
-                            ShiftName = sh.NAME,
-                            Action = p.ACTION,
-                            ActionStr = p.ACTION!.Value == 1 ? "Thêm mới" : (p.ACTION!.Value == 2 ? "Sửa" : "Xóa") ,
-                            IsHavePt = p.IS_HAVE_PT,
-                            CreatedDateStr = p.CREATED_DATE!.Value.ToString("HH:mm:ss dd/MM/yyyy"),
-                            CreatedByUsername = u.FULLNAME,
+                         {
+                             Id = p.ID,
+                             Code = p.CODE,
+                             EffectDateString = p.EFFECTED_DATE!,
+                             ExpiredDateString = p.EXPIRED_DATE!,
+                             CardTypeName = s.NAME,
+                             CustomerName = c.FULL_NAME,
+                             GenderName = g.NAME,
+                             LockerId = p.LOCKER_ID,
+                             Status = p.IS_ACTIVE!.Value == true ? "Hoạt động" : "Ngừng hoạt động",
+                             Note = p.NOTE,
+                             CodeCus = c.CODE,
+                             Wardrobe = p.WARDROBE,
+                             Price = p.PRICE,
+                             ShiftId = p.SHIFT_ID,
+                             ShiftName = sh.NAME,
+                             Action = p.ACTION,
+                             ActionStr = p.ACTION!.Value == 1 ? "Thêm mới" : (p.ACTION!.Value == 2 ? "Sửa" : "Xóa"),
+                             IsHavePt = p.IS_HAVE_PT,
+                             CreatedDateStr = p.CREATED_DATE!.Value.ToString("HH:mm:ss dd/MM/yyyy"),
+                             CreatedByUsername = u.FULLNAME,
                          };
             if (pagination.Filter != null)
             {
@@ -56,10 +56,10 @@ namespace GYM_BE.All.CardHistory
                 }
             }
             var respose = await _genericRepository.PagingQueryList(joined, pagination);
-             return new FormatedResponse
-             {
-                 InnerBody = respose,
-             };
+            return new FormatedResponse
+            {
+                InnerBody = respose,
+            };
         }
 
         public async Task<FormatedResponse> GetById(long id)
