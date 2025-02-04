@@ -1,6 +1,7 @@
 ﻿using API;
 using Azure.Core;
 using GYM_BE.All.System.Common.Middleware;
+using GYM_BE.All.System.SysUser;
 using GYM_BE.Core.Dto;
 using GYM_BE.Entities;
 using GYM_BE.ENTITIES;
@@ -23,7 +24,7 @@ namespace GYM_BE.All.System.Authentication
     public class AuthenticationController : Controller
     {
         private readonly AppSettings _appSettings;
-        private readonly GYM_BE.All.System.SysUser.SysUserRepository _sysUserRepository;
+        private readonly SysUserRepository _sysUserRepository;
         private readonly FullDbContext _dbContext;
 
         public AuthenticationController(
@@ -37,12 +38,11 @@ namespace GYM_BE.All.System.Authentication
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> ClientsLogin([FromBody] LoginTenantViewModel Credentials)
+        public async Task<IActionResult> ClientsLogin([FromBody] ClientLoginRequest Credentials)
         {
             try
             {
                 if (Credentials == null) return Unauthorized();
-                string ipAddress = IpAddress();
                 var r = await _sysUserRepository.ClientsLogin(Credentials.Username, Credentials.Password);
                 if (r.MessageCode != "")
                 {
@@ -271,14 +271,6 @@ namespace GYM_BE.All.System.Authentication
         }
     }
 
-
-
-    public class LoginTenantViewModel
-    {
-
-        public required string Username { get; set; }
-        public required string Password { get; set; }
-    }
 
     public class AuthResponse
     {
